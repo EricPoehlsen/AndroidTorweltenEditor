@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Torwelten Editor</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="install_title">Datenbank wird eingerichtet...</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="charselect_name">Charaktername</string>
+</resources>
