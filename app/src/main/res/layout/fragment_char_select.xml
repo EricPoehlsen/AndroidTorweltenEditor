@@ -5,7 +5,7 @@
     android:id="@+id/charselect_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CharacterSelect">
+    tools:context=".CharSelectFragment">
 
     <EditText
         android:id="@+id/charselect_name"

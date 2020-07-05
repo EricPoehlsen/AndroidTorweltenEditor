@@ -1,10 +1,8 @@
 package de.aequinoktium.twedit
 
-import android.content.SharedPreferences
 import android.database.sqlite.SQLiteDatabase
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 
 class MainActivity : AppCompatActivity() {
     lateinit var dbc: DatabaseConnect
@@ -21,19 +19,12 @@ class MainActivity : AppCompatActivity() {
 
         var installed = prefs.getBoolean("installed", false)
         if (!installed) {
-            fm
-                .beginTransaction()
-                .replace(R.id.main_frame, SetupAndUpgrade())
-                .commit()
+
         }
 
         dbc = DatabaseConnect(this.applicationContext)
         db = dbc.writableDatabase
 
-        fm
-            .beginTransaction()
-            .replace(R.id.main_frame, CharacterSelect())
-            .commit()
 
     }
 

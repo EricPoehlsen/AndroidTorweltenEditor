@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/char_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CharacterFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <TextView
+        android:id="@+id/cv_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/charselect_name"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/cv_phy_label"
+        android:layout_width="64dp"
+        android:layout_height="wrap_content"
+        android:background="#515151"
+        android:text="@string/phy"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toStartOf="@id/cv_men_label"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cv_name" />
+
+    <TextView
+        android:id="@+id/cv_phy"
+        android:layout_width="64dp"
+        android:layout_height="wrap_content"
+        android:background="#7A7A7A"
+        android:text="0"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        app:layout_constraintStart_toStartOf="@id/cv_phy_label"
+        app:layout_constraintTop_toBottomOf="@id/cv_phy_label" />
+
+    <TextView
+        android:id="@+id/cv_men_label"
+        android:layout_width="64dp"
+        android:layout_height="wrap_content"
+        android:background="#515151"
+        android:text="@string/men"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toStartOf="@id/cv_soz_label"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@id/cv_phy_label"
+        app:layout_constraintTop_toBottomOf="@id/cv_name" />
+
+    <TextView
+        android:id="@+id/cv_men"
+        android:layout_width="64dp"
+        android:layout_height="wrap_content"
+        android:background="#7A7A7A"
+        android:text="0"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        app:layout_constraintStart_toStartOf="@id/cv_men_label"
+        app:layout_constraintTop_toBottomOf="@id/cv_men_label" />
+
+    <TextView
+        android:id="@+id/cv_soz_label"
+        android:layout_width="64dp"
+        android:layout_height="wrap_content"
+        android:background="#515151"
+        android:text="@string/soz"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toStartOf="@id/cv_nk_label"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@id/cv_men_label"
+        app:layout_constraintTop_toBottomOf="@id/cv_name" />
+
+    <TextView
+        android:id="@+id/cv_soz"
+        android:layout_width="64dp"
+        android:layout_height="wrap_content"
+        android:background="#7A7A7A"
+        android:text="0"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        app:layout_constraintStart_toStartOf="@id/cv_soz_label"
+        app:layout_constraintTop_toBottomOf="@id/cv_soz_label" />
+
+    <TextView
+        android:id="@+id/cv_nk_label"
+        android:layout_width="64dp"
+        android:layout_height="wrap_content"
+        android:background="#515151"
+        android:text="@string/nk"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toStartOf="@id/cv_fk_label"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@id/cv_soz_label"
+        app:layout_constraintTop_toBottomOf="@id/cv_name" />
+
+    <TextView
+        android:id="@+id/cv_nk"
+        android:layout_width="64dp"
+        android:layout_height="wrap_content"
+        android:background="#7A7A7A"
+        android:text="0"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        app:layout_constraintStart_toStartOf="@id/cv_nk_label"
+        app:layout_constraintTop_toBottomOf="@id/cv_nk_label" />
+
+    <TextView
+        android:id="@+id/cv_fk_label"
+        android:layout_width="64dp"
+        android:layout_height="wrap_content"
+        android:background="#515151"
+        android:text="@string/fk"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@id/cv_nk_label"
+        app:layout_constraintTop_toBottomOf="@id/cv_name" />
+
+    <TextView
+        android:id="@+id/cv_fk"
+        android:layout_width="64dp"
+        android:layout_height="wrap_content"
+        android:background="#7A7A7A"
+        android:text="0"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        app:layout_constraintStart_toStartOf="@id/cv_fk_label"
+        app:layout_constraintTop_toBottomOf="@id/cv_fk_label" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

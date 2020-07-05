@@ -2,7 +2,6 @@ package de.aequinoktium.twedit
 
 import android.content.ContentValues
 import android.database.Cursor
-import android.database.DatabaseUtils
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -10,9 +9,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.fragment.app.FragmentActivity
+import androidx.core.os.bundleOf
+import androidx.navigation.fragment.findNavController
 
-class CharacterSelect : Fragment() {
+
+class CharSelectFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -24,7 +25,7 @@ class CharacterSelect : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val root: View = inflater.inflate(
-            R.layout.fragment_character_select,
+            R.layout.fragment_char_select,
             container,
             false
         )
@@ -91,30 +92,28 @@ class CharacterSelect : Fragment() {
         }
     }
 
+    /**
+     * Create a new character
+     * gets value from TextEdit and creates a new Character in the database ...
+     */
     fun newChar() {
         var act = activity as MainActivity
 
+
         var name = act.findViewById<EditText>(R.id.charselect_name).text.toString()
-        name = name.replace("'", "\u2019")
-        var data = ContentValues()
-        data.put("name", name as String)
-        data.put("xp_total", 330)
-        act.db.insert("char_core", null, data)
+        if (name.length > 1) {
+            name = name.replace("'", "\u2019")
+            var data = ContentValues()
+            data.put("name", name)
+            data.put("xp_total", 330)
+            act.db.insert("char_core", null, data)
+        }
 
         listChars()
     }
 
-    fun openChar(id: Int) {
-        Log.d("info", "Tried to open char: $id")
-        var act = activity as MainActivity
-
-        var fm = act.supportFragmentManager
-        fm
-            .beginTransaction()
-            .replace(R.id.main_frame, CharAttribs(id))
-            .commit()
-
+    fun openChar(char_id: Int) {
+        val bundle: Bundle = bundleOf("char_id" to char_id)
+        this.findNavController().navigate(R.id.action_cs_to_ce, bundle)
     }
-
-
 }

@@ -1,9 +1,22 @@
 <resources>
     <string name="app_name">Torwelten Editor</string>
+    <string name="phy">PHY</string>
+    <string name="men">MEN</string>
+    <string name="soz">SOZ</string>
+    <string name="nk">NK</string>
+    <string name="fk">FK</string>
+    <string name="lp">LP</string>
+    <string name="ep">EP</string>
+    <string name="mp">MP</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="install_title">Datenbank wird eingerichtet...</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string name="charselect_name">Charaktername</string>
+    <string name="menu_cs">Charakterauswahl</string>
+    <string name="dialog_attrib_edit_title">Attribut ändern ...</string>
+    <string name="dialog_edit_attrib_xp">XP: </string>
+    <string name="dialog_ok">OK</string>
+    <string name="dialog_cancel">Abbrechen</string>
 </resources>

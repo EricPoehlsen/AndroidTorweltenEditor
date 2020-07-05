@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/menuFragment">
+    <fragment
+        android:id="@+id/menuFragment"
+        android:name="de.aequinoktium.twedit.MenuFragment"
+        android:label="fragment_menu"
+        tools:layout="@layout/fragment_menu" >
+        <action
+            android:id="@+id/action_menu_to_cs"
+            app:destination="@id/charSelectFragment" />
+        <action
+            android:id="@+id/action_menu_to_test"
+            app:destination="@id/testFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/charSelectFragment"
+        android:name="de.aequinoktium.twedit.CharSelectFragment"
+        android:label="fragment_char_select"
+        tools:layout="@layout/fragment_char_select" >
+        <action
+            android:id="@+id/action_cs_to_ce"
+            app:destination="@id/characterFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/characterFragment"
+        android:name="de.aequinoktium.twedit.CharacterFragment"
+        android:label="fragment_char_edit"
+        tools:layout="@layout/fragment_character" >
+    </fragment>
+    <fragment
+        android:id="@+id/testFragment"
+        android:name="de.aequinoktium.twedit.TestFragment"
+        android:label="fragment_test"
+        tools:layout="@layout/fragment_test" />
+</navigation>
