@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -17,8 +18,6 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
-
-// TODO: Rename parameter arguments, choose names that match
 
 /**
  * The main character view.
@@ -74,6 +73,12 @@ class CharacterFragment: Fragment(), EditAttribDialog.EditAttribDialogListener {
         }
 
         data.close()
+
+        var b_skills = act.findViewById<Button>(R.id.cv_skills)
+        b_skills.setOnClickListener {
+            val bundle: Bundle = bundleOf("char_id" to char_id)
+            this.findNavController().navigate(R.id.action_cv_to_cs, bundle)
+        }
     }
 
     fun editAttribs(char_attrib: String, cur_value: Int) {

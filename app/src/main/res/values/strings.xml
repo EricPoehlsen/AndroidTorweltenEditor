@@ -17,6 +17,18 @@
     <string name="menu_cs">Charakterauswahl</string>
     <string name="dialog_attrib_edit_title">Attribut ändern ...</string>
     <string name="dialog_edit_attrib_xp">XP: </string>
+    <string name="dialog_edit_skill_lvl0">gefährliches Halbwissen</string>
+    <string name="dialog_edit_skill_lvl1">ordentliche Grundkenntnisse</string>
+    <string name="dialog_edit_skill_lvl2">umfassender Erfahrungensschatz</string>
+    <string name="dialog_edit_skill_lvl3">profundes Expertenwissen</string>
+    <string name="dialog_edit_skill_del">entfernen ...</string>
+
+
     <string name="dialog_ok">OK</string>
     <string name="dialog_cancel">Abbrechen</string>
+    <string name="search">🔍</string>
+    <string name="add">+</string>
+    <string name="skillselect_name">Fertigkeit</string>
+    <string name="cv_skills">Fertigkeiten</string>
+    <string name="cs_add_skill">Fertigkeiten hinzufügen</string>
 </resources>

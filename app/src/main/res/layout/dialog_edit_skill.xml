@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/dia_skill_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="Fertigkeit"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        app:layout_constraintEnd_toStartOf="@+id/textView"
+        app:layout_constraintStart_toEndOf="@+id/dia_skill_type"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/dia_skill_lvl_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="@string/dialog_edit_skill_lvl0"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dia_skill_title" />
+
+    <ImageView
+        android:id="@+id/dia_skill_lvl"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginTop="4dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintEnd_toStartOf="@+id/dia_skill_right"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/dia_skill_left"
+        app:layout_constraintTop_toBottomOf="@+id/dia_skill_lvl_txt"
+        app:srcCompat="@drawable/pips_3_0" />
+
+    <ImageView
+        android:id="@+id/dia_skill_right"
+        android:layout_width="48dp"
+        android:layout_height="32dp"
+        android:layout_marginTop="4dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/dia_skill_lvl"
+        app:layout_constraintTop_toBottomOf="@+id/dia_skill_lvl_txt"
+        app:srcCompat="@drawable/arrow_right" />
+
+    <ImageView
+        android:id="@+id/dia_skill_left"
+        android:layout_width="48dp"
+        android:layout_height="32dp"
+        android:layout_marginTop="4dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintEnd_toStartOf="@+id/dia_skill_lvl"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dia_skill_lvl_txt"
+        app:srcCompat="@drawable/arrow_left" />
+
+    <ImageView
+        android:id="@+id/dia_skill_type"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/hand" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="@string/dialog_edit_attrib_xp"
+        app:layout_constraintEnd_toStartOf="@+id/dia_skill_xp"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/dia_skill_xp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="4dp"
+        android:maxEms="2"
+        android:minEms="2"
+        android:text="0"
+        android:textAlignment="textEnd"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

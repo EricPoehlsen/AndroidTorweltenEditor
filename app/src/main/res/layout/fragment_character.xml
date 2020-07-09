@@ -135,4 +135,12 @@
         app:layout_constraintStart_toStartOf="@id/cv_fk_label"
         app:layout_constraintTop_toBottomOf="@id/cv_fk_label" />
 
+    <Button
+        android:id="@+id/cv_skills"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/cv_skills"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

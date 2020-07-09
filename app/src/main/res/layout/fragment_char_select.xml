@@ -23,9 +23,9 @@
         android:id="@+id/charselect_add"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="+"
-        app:layout_constraintHorizontal_weight="1"
+        android:text="@string/add"
         app:layout_constraintEnd_toStartOf="@+id/charselect_search"
+        app:layout_constraintHorizontal_weight="1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/charselect_name" />
 
@@ -33,11 +33,11 @@
         android:id="@+id/charselect_search"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="🔍"
-        app:layout_constraintHorizontal_weight="1"
+        android:text="@string/search"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/charselect_add"
-        app:layout_constraintStart_toEndOf="@+id/charselect_add" />
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toEndOf="@+id/charselect_add"
+        app:layout_constraintTop_toTopOf="@+id/charselect_add" />
 
     <ScrollView
         android:id="@+id/charselect_scroller"

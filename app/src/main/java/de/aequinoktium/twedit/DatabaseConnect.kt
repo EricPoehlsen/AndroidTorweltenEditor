@@ -68,7 +68,33 @@ class DatabaseConnect(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 char_id INT, 
                 skill_id INT,
-                lvl INT,
+                lvl INT DEFAULT 0,
+                signature_skill BOOLEAN DEFAULT FALSE, 
+                FOREIGN KEY (char_id) REFERENCES char_core(id),
+                FOREIGN KEY (skill_id) REFERENCES skills(id)
+            );
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            CREATE TABLE traits (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name VARCHAR(255) NOT NULL UNIQUE, 
+                cls INT DEFAULT 0, 
+                grp VARCHAR(255) DEFAULT "",
+                min_rank INT DEFAULT 1, 
+                max_rank INT DEFAULT 1
+            );
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            CREATE TABLE char_skills (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                char_id INT, 
+                skill_id INT,
+                lvl INT DEFAULT 0,
+                signature_skill BOOLEAN DEFAULT FALSE, 
                 FOREIGN KEY (char_id) REFERENCES char_core(id),
                 FOREIGN KEY (skill_id) REFERENCES skills(id)
             );

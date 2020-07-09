@@ -30,10 +30,27 @@
         android:name="de.aequinoktium.twedit.CharacterFragment"
         android:label="fragment_char_edit"
         tools:layout="@layout/fragment_character" >
+        <action
+            android:id="@+id/action_cv_to_cs"
+            app:destination="@id/charSkillFragment" />
     </fragment>
     <fragment
         android:id="@+id/testFragment"
         android:name="de.aequinoktium.twedit.TestFragment"
         android:label="fragment_test"
         tools:layout="@layout/fragment_test" />
+    <fragment
+        android:id="@+id/skillSelectFragment"
+        android:name="de.aequinoktium.twedit.SkillSelectFragment"
+        android:label="fragment_skill_select"
+        tools:layout="@layout/fragment_skill_select" />
+    <fragment
+        android:id="@+id/charSkillFragment"
+        android:name="de.aequinoktium.twedit.CharSkillFragment"
+        android:label="CharSkillFragment"
+        tools:layout="@layout/fragment_char_skill">
+        <action
+            android:id="@+id/action_cs_to_ss"
+            app:destination="@id/skillSelectFragment" />
+    </fragment>
 </navigation>
