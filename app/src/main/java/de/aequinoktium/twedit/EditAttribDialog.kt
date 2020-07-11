@@ -46,7 +46,7 @@ class EditAttribDialog(char_attrib: String, cur_value: Int): DialogFragment() {
         return activity?.let {
             val builder = AlertDialog.Builder(it)
 
-            builder.setTitle(R.string.dialog_attrib_edit_title)
+            builder.setTitle(R.string.dialog_edit_attrib_title)
             var inflater: LayoutInflater = this.layoutInflater
             var content: View = inflater.inflate(R.layout.dialog_edit_attrib, null)
 
