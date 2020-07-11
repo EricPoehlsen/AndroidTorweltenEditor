@@ -2,13 +2,13 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/charskills_outer"
+    android:id="@+id/chartraits_outer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SkillSelectFragment">
+    tools:context=".CharTraitFragment">
 
     <Button
-        android:id="@+id/charskills_add"
+        android:id="@+id/chartraits_add"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:text="@string/add"
@@ -17,18 +17,17 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <ScrollView
-        android:id="@+id/charskills_scrollbox"
+        android:id="@+id/chartraits_scrollbox"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
-            android:id="@+id/charskills_layout"
+            android:id="@+id/chartraits_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" />
     </ScrollView>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

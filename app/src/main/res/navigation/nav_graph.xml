@@ -33,6 +33,9 @@
         <action
             android:id="@+id/action_cv_to_cs"
             app:destination="@id/charSkillFragment" />
+        <action
+            android:id="@+id/action_cv_to_ct"
+            app:destination="@id/charTraitFragment" />
     </fragment>
     <fragment
         android:id="@+id/testFragment"
@@ -52,5 +55,19 @@
         <action
             android:id="@+id/action_cs_to_ss"
             app:destination="@id/skillSelectFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/traitSelectFragment"
+        android:name="de.aequinoktium.twedit.TraitSelectFragment"
+        android:label="fragment_trait_select"
+        tools:layout="@layout/fragment_trait_select" />
+    <fragment
+        android:id="@+id/charTraitFragment"
+        android:name="de.aequinoktium.twedit.CharTraitFragment"
+        android:label="fragment_char_trait"
+        tools:layout="@layout/fragment_char_trait" >
+        <action
+            android:id="@+id/action_ct_to_ts"
+            app:destination="@id/traitSelectFragment" />
     </fragment>
 </navigation>

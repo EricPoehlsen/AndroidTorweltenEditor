@@ -36,7 +36,6 @@ class TraitSelectFragment : Fragment() {
          * @param char_id character_id
          * @return A new instance of fragment TraitSelectFragment.
          */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(char_id: Int) =
             TraitSelectFragment().apply {

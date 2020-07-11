@@ -8,15 +8,16 @@
     <string name="lp">LP</string>
     <string name="ep">EP</string>
     <string name="mp">MP</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="install_title">Datenbank wird eingerichtet...</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <!-- MENU STRINGS -->
+    <string name="menu_cs">Charakterauswahl</string>
     <string name="charselect_title">Charakterauswahl</string>
+
+    <!-- CHAR_SELECT FRAGMENT -->
     <string name="charselect_name">Charaktername</string>
 
-    <string name="menu_cs">Charakterauswahl</string>
     <string name="dialog_edit_attrib_title">Attribut ändern ...</string>
     <string name="dialog_edit_attrib_xp">XP: </string>
     <string name="dialog_edit_skill_lvl0">gefährliches Halbwissen</string>

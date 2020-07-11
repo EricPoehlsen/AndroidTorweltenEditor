@@ -1,11 +1,8 @@
 package de.aequinoktium.twedit
 
-import android.content.ContentValues
-import android.content.Context
 import android.database.Cursor
 import android.graphics.Typeface
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -13,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.core.os.bundleOf
-import androidx.core.view.marginTop
 import androidx.navigation.fragment.findNavController
 
 /**
@@ -42,7 +38,7 @@ class CharSkillFragment : Fragment(), EditSkillDialog.EditSkillDialogListener {
         var act = activity as MainActivity
 
         // switch to skill selector fragment
-        var b_add_skills = act.findViewById<Button>(R.id.charskill_add)
+        var b_add_skills = act.findViewById<Button>(R.id.charskills_add)
         b_add_skills.setOnClickListener {
             val bundle: Bundle = bundleOf("char_id" to char_id)
             this.findNavController().navigate(R.id.action_cs_to_ss, bundle)
@@ -54,7 +50,7 @@ class CharSkillFragment : Fragment(), EditSkillDialog.EditSkillDialogListener {
 
         var act = activity as MainActivity
 
-        var skill_container = act.findViewById<LinearLayout>(R.id.charskill_layout)
+        var skill_container = act.findViewById<LinearLayout>(R.id.charskills_layout)
         skill_container.removeAllViews()
 
         var sql: String = """                            

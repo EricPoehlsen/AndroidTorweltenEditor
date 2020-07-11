@@ -77,10 +77,18 @@ class CharacterFragment: Fragment(), EditAttribDialog.EditAttribDialogListener {
 
         data.close()
 
+        // button: switch to skills
         var b_skills = act.findViewById<Button>(R.id.cv_skills)
         b_skills.setOnClickListener {
             val bundle: Bundle = bundleOf("char_id" to char_id)
             this.findNavController().navigate(R.id.action_cv_to_cs, bundle)
+        }
+
+        // button: switch to traits
+        var b_traits = act.findViewById<Button>(R.id.cv_traits)
+        b_traits.setOnClickListener {
+            val bundle: Bundle = bundleOf("char_id" to char_id)
+            this.findNavController().navigate(R.id.action_cv_to_ct, bundle)
         }
     }
 
@@ -128,7 +136,6 @@ class CharacterFragment: Fragment(), EditAttribDialog.EditAttribDialogListener {
          * @param char_id the character id in the database.
          * @return A new instance of fragment CharEditFragment.
          */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(char_id: Int) =
             CharacterFragment().apply {
