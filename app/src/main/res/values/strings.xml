@@ -13,7 +13,9 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <string name="charselect_title">Charakterauswahl</string>
     <string name="charselect_name">Charaktername</string>
+
     <string name="menu_cs">Charakterauswahl</string>
     <string name="dialog_edit_attrib_title">Attribut ändern ...</string>
     <string name="dialog_edit_attrib_xp">XP: </string>
@@ -27,6 +29,11 @@
     <string name="search">🔍</string>
     <string name="add">+</string>
     <string name="skillselect_name">Fertigkeit</string>
+    <string name="skillselect_title">Fertigkeiten aktivieren/entfernen …</string>
     <string name="cv_skills">Fertigkeiten</string>
-    <string name="cs_add_skill">Fertigkeiten hinzufügen</string>
+    <string name="cv_traits">Eigenschaften</string>
+    <string name="ts_title">Eigenschaft wählen</string>
+    <string name="ts_advantages">Vorteile</string>
+    <string name="ts_disadvantages">Nachteile</string>
+    <string name="ts_groups">Gruppen</string>
 </resources>

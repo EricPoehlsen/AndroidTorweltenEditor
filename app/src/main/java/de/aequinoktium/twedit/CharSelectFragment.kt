@@ -45,6 +45,9 @@ class CharSelectFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        var act = activity as MainActivity
+        var tb = act.supportActionBar
+        tb?.title = getString(R.string.charselect_title)
         listChars()
     }
 

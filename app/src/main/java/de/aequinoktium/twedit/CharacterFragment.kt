@@ -46,14 +46,17 @@ class CharacterFragment: Fragment(), EditAttribDialog.EditAttribDialogListener {
 
         var act = activity as MainActivity
 
+
         var data: Cursor = act.db.rawQuery(
             "SELECT * FROM char_core WHERE id = $char_id",
             null
         )
 
         data.moveToFirst()
-        val nametag = act.findViewById<TextView>(R.id.cv_name)
-        nametag.text = data.getString(data.getColumnIndex("name"))
+
+        var tb = act.supportActionBar
+        tb?.title = data.getString(data.getColumnIndex("name"))
+
 
         val attrib_list = arrayOf("phy", "men", "soz", "nk", "fk")
         for (a in attrib_list) {
