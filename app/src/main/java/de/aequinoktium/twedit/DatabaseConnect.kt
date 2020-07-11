@@ -13,6 +13,12 @@ class DatabaseConnect(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
     }
 
     override fun onUpgrade(db: SQLiteDatabase, old: Int, new: Int) {
+
+        db.execSQL("DROP TABLE IF EXISTS 'char_traits'")
+        db.execSQL("DROP TABLE IF EXISTS 'trait_vars'")
+        db.execSQL("DROP TABLE IF EXISTS 'traits'")
+        db.execSQL("DROP TABLE IF EXISTS 'trait_grp'")
+        db.execSQL("DROP TABLE IF EXISTS 'traits_cls'")
         db.execSQL("DROP TABLE IF EXISTS 'char_skills'")
         db.execSQL("DROP TABLE IF EXISTS 'skills'")
         db.execSQL("DROP TABLE IF EXISTS 'char_info'")
@@ -77,31 +83,75 @@ class DatabaseConnect(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
         db.execSQL(sql)
 
         sql = """
-            CREATE TABLE traits (
+            CREATE TABLE trait_cls (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name VARCHAR(255) NOT NULL UNIQUE, 
-                cls INT DEFAULT 0, 
-                grp VARCHAR(255) DEFAULT "",
-                min_rank INT DEFAULT 1, 
-                max_rank INT DEFAULT 1
+                name VARCHAR(255) NOT NULL UNIQUE 
             );
         """.trimIndent()
         db.execSQL(sql)
 
         sql = """
-            CREATE TABLE char_skills (
+            CREATE TABLE trait_grp (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                char_id INT, 
-                skill_id INT,
-                lvl INT DEFAULT 0,
-                signature_skill BOOLEAN DEFAULT FALSE, 
-                FOREIGN KEY (char_id) REFERENCES char_core(id),
-                FOREIGN KEY (skill_id) REFERENCES skills(id)
+                name VARCHAR(255) NOT NULL UNIQUE 
             );
         """.trimIndent()
         db.execSQL(sql)
 
-        // add core data ...
+        sql = """
+            CREATE TABLE traits (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name VARCHAR(255) NOT NULL UNIQUE, 
+                cls INT, 
+                grp INT,
+                txt TEXT,
+                min_rank INT DEFAULT 1, 
+                max_rank INT DEFAULT 1,
+                xp_cost INT,
+                FOREIGN KEY (cls) REFERENCES trait_cls(id)
+                FOREIGN KEY (grp) REFERENCES trait_grp(id)
+            );
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            CREATE TABLE trait_vars (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                trait_id INT,
+                name VARCHAR(255),
+                xp_factor FLOAT,
+                oper INT, 
+                grp VARCHAR(255),
+                txt TEXT,
+                FOREIGN KEY (trait_id) REFERENCES traits(id)
+            );
+        """.trimIndent()
+
+        db.execSQL(sql)
+        sql = """
+            CREATE TABLE char_traits (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                char_id INT, 
+                trait_id INT,
+                var1_id INT,
+                var2_id INT,
+                var3_id INT,
+                var4_id INT,
+                xp_cost INT,
+                name VARCHAR(255),
+                txt TEXT,
+                is_reduced BOOLEAN DEFAULT FALSE,
+                FOREIGN KEY (var1_id) REFERENCES trait_vars(id), 
+                FOREIGN KEY (var2_id) REFERENCES trait_vars(id), 
+                FOREIGN KEY (var3_id) REFERENCES trait_vars(id), 
+                FOREIGN KEY (var4_id) REFERENCES trait_vars(id), 
+                FOREIGN KEY (char_id) REFERENCES char_core(id),
+                FOREIGN KEY (trait_id) REFERENCES traits(id)
+            );
+        """.trimIndent()
+        db.execSQL(sql)
+
+        // add skill data ...
         sql = """
              INSERT INTO skills (id, name, base_skill, skill, is_active) VALUES 
              (10000,'Athletik',0,0,1),
@@ -424,6 +474,77 @@ class DatabaseConnect(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
         """.trimIndent()
         db.execSQL(sql)
 
+        // trait classes
+        sql = """
+            INSERT INTO trait_cls (id, name) VALUES
+            (1, 'Körperlich');
+        """.trimIndent()
+        db.execSQL(sql)
+
+        // trait groups
+        sql = """
+            INSERT INTO trait_grp (id, name) VALUES
+            (1, 'Sehen'),
+            (2, 'Hören'),
+            (3, 'Tasten & Fühlen'),
+            (4, 'Sonstige Wahrnehmung'),
+            (5, 'Körperbau'),
+            (6, 'Schmecken & Riechen'),
+            (7, 'Spezialisierte Fertigkeiten');
+        """.trimIndent()
+        db.execSQL(sql)
+
+        // inserting traits ...
+        sql = """
+            INSERT INTO traits (id, name, xp_cost, cls, grp, txt) VALUES
+            (1, 'Blind', -18, 1, 1, 'Der Charakter kann Licht im für Menschen üblicherweise sichtbaren Spektrum nicht wahrnehmen.<br/>Dieser Nachteil schließt nicht aus, dass der Charakter möglicherweise durch den Vorteil <i>Infrarotsicht</i> oder <i>UV-Sicht</i> sehen kann.'),
+            (2, 'Dämmerungssicht', 3, 1, 1, 'Dieser Vorteil erhöht die Lichtempfindlichkeit der Augen. Ein Modifikator für schlechte Lichtverhältnisse wird für diesen Charakter nur bei absoluter Dunkelheit angewendet. Bereits eine einzelne Leuchtdiode oder Sternenlicht reichen dem Charakter um sich zu orientieren.'),
+            (3, 'Infrarotsicht', 6, 1, 1, 'Der Charaktere ist in der Lage Licht im Infrarotspektrum wahrzunehmen.'),
+            (4, 'UV-Sicht', 6, 1, 1, 'Der Charakter ist in der Lage Licht im ultravioletten Spektrum zu sehen'),
+            (5, 'Infraschallgehör', 3, 1, 2, 'Der Charakter ist in der Lage Schall mit Frequenzen von weniger als 20Hz zu hören.'),
+            (6, 'Ultraschallgehör', 3, 1, 2, 'Ein Charakter mit diesem Vorteil kann Töne jenseits von 30kHz wahrnehmen.'),
+            (7, 'Sensibles Gehör', 6, 1, 2, 'Die Hörschwelle liegt niedriger als bei einem normalen Menschen, der Charakter ist in der Lage auch sehr leise Töne wahrzunehmen. Wahrnehmungsproben werden um -1 erleichtert.'),
+            (8, 'Schwerhörig', -6, 1, 2, 'Mit diesem Nachteil liegt die Hörschwelle des Charakters deutlich höher, als bei einem normalen Menschen. Eine schwerhörige Person kann leise Geräusche nicht wahrnehmen und hat ernsthafte Schwierigkeiten einem geflüsterten Gespräch zu folgen. Der entsprechende Probenmodifikator beträgt +1.'),
+            (9, 'Empfindliches Gehör', -3, 1, 2, 'Das Hörorgan des Charakters verträgt laute Geräusche nicht so gut, die Schmerzschwelle liegt niedriger als bei den meisten Menschen. Bereits ab 100dB empfindet der Charakter Schmerzen und Unwohlsein.'),
+            (10, 'Robustes Gehör', 3, 1, 2, 'Die Ohren des Charakters sind ziemlich unempfindlich und erst ein Schalldruck jenseits von 140dB verursacht Schmerzen und Unwohlsein.'),
+            (11, 'Taub', -9, 1, 2, 'Ein Charakter mit diesem Nachteil kann Töne und Klänge im üblichen menschlichen Wahrnehmungsbereich nicht hören.'),
+            (12, 'Vermindertes Schmerzempfinden', -3, 1, 3, 'Schmerzen sind ein Warnsignal, dass irgendetwas mit dem Körper nicht in Ordnung ist, somit handelt es sich um einen Nachteil. Ein Charakter mit diesem Nachteil muss eine unmodifizierte MEN-Probe ablegen, um eine Verletzung zu registrieren.'),
+            (13, 'Kein Schmerzempfinden', -3, 1, 3, 'Dieser Charakter hat überhaupt kein Schmerzempfinden. Das kann zwar in gewissen Situationen durchaus von Vorteil sein, allerdings muss er eine um 2 erschwerte MEN-Probe ablegen, um eine Verletzung zu registrieren.'),
+            (14, 'Hohe Schmerzempfindlichkeit', -3, 1, 3, 'Der Charakter empfindet bereits kleinere Verletzungen als schmerzhaft. Wird der Charakter verletzt und verliert LP, muss er eine unmodifizierte MEN-Probe bestehen. Bei einem Misserfolg ist er W10 Kampfrunden benommen und alle Proben werden um +1 erschwert.'),
+            (15, 'Ausgeprägte Temperaturwahrnehmung', -3, 1, 3, 'Der Charakter kann sehr feine Temperaturgradienten unterscheiden und auch ziemlich genau abschätzen, wie warm oder kalt ein Gegenstand ist.'),
+            (16, 'Keinerlei Temperaturempfindung', -3, 1, 3, 'Mit diesem Nachteil ist der Charakter nicht in der Lage festzustellen, ob ein Gegenstand oder eine Flüssigkeit möglicherweise zu heiß oder zu kalt ist. Sofern der Charakter allerdings über ein normales Schmerzempfinden verfügt, bemerkt er, wenn er sich verbrennt oder Erfrierungen zuzieht.'),
+            (17, 'Synesthesie', 3, 1, 4, 'Der Charakter besitzt kombinierte Sinne - kann Farben schmecken oder Geräusche sehen.'),
+            (18, '0-G-Intoleranz', -6, 1, 4, 'Der Charakter verträgt keine Schwerelosigkeit. Jedes Mal, wenn er Schwerelosigkeit ausgesetzt wird muss er eine PHY-Probe ablegen. Bei Gelingen sind alle Proben in Schwerelosigkeit um einen Punkt erschwert. Bei Misslingen hat der Charakter mit Schwindel, Übelkeit, Sturzgefühlen und ähnlichem zu kämpfen. Seine Proben sind um 3 Punkte erschwert.'),
+            (19, 'Flügel', -6, 1, 5, 'Der Charakter besitzt einen Satz Flügel. Du liest das schon korrekt, das ist ein Nachteil! Flügel sind unhandlich und groß. Und allein der Umstand, dass der Charakter über diese Gliedmaßen verfügt, bedeutet noch lange nicht, dass er auch wirklich fliegen kann. Das wird über entsprechende Fertigkeiten und Talente abgewickelt, die zusätzlich erworben werden müssen.'),
+            (20, 'Beidhändigkeit', 9, 1, 5, 'Der Charakter kann mit beiden Händen gleich gut umgehen. Insbesondere vermag er zwei gleichartige einhändige Waffen zu führen die als ein Angriff gewertet werden.');
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO traits (id, name, xp_cost, cls, grp, txt, min_rank, max_rank) VALUES
+            (21, 'Feine Nase', 3, 1, 6, 'Der Geruchssinn dieses Charakters ist deutlich besser ausgeprägt, als der eines Menschen. Er kann Aromastoffe in deutlich geringeren Spuren wahrnehmen. Wahrnehmungsproben die sich auf den Geruchssinn stützen, werden um einen Punkt pro Rang erleichtert. Um die Aromastoffe auch zuzuordnen, benötigt der Charakter passende Wissensfertigkeiten, beispielsweise <i>Geruchskenntnis (Drogen)</i> oder <i>Geruchskenntnis (Gewürze)</i>.', 1, 6),
+            (22, 'Geruchsblind', -3, 1, 6, 'Der Charakter hat einen deutlich unterdurchschnittlich ausgeprägten Geruchssinn. Wahrnehmungsproben, die sich auf den Geruchssinn stützen (etwa auch das Wahrnehmen von Rauchgeruch) werden um einen Punkt pro Rang erschwert. Ein Charakter mit diesem Nachteil sollte nicht als Schiffskoch tätig werden, er neigt dazu beim Kochen deutlich zu überwürzen.', 1, 6),
+            (23, 'Verminderter Tastsinn', -3, 1, 3, 'Der Charakter hat ein deutlich weniger ausgeprägtes Tastgefühl, als die meisten Menschen. Er weiß zwar, wenn sich seine Hände um einen Gegenstand schließen, kann aber höchstens durch Sicht abschätzen, wie fest er jetzt zudrückt. Proben bei denen es auf Fingerfertigkeit ankommt, werden um einen Punkt pro Rang erschwert. Das können auch Proben sein, bei denen es ganz allgemein auf einen festen uns sicheren Griff ankommen, wie etwa <i>Klettern</i>.', 1, 6),
+            (24, 'Ausgeprägter Tastsinn', 3, 1, 3, 'Durch diesen Vorteil ist der Charakter in der Lage, deutlich feinere Strukturen zu erstasten, als ein Mensch das könnte. Der Charakter erkennt feinste Unebenheiten oder Risse in  Oberflächen. Entsprechende Proben werden um einen Punkt pro Rang erleichtert. Ab Rang zwei, kann ein Charakter einen gedruckten Text durch Tasten lesen, wenn er die entsprechende Übung hat (was sich in einer entsprechenden Wissensfertigkeit ausdrücken sollte).', 1, 6),
+            (25, 'Kräftig', 6, 1, 7, 'Der Charakter ist besonders muskulös und athlethisch. Für Athletikproben und auf rohe Kraft bezogene Proben, ist das effektive PHY-Attribut um einen Punkt pro Rang höher.', 1, 3),
+            (26, 'Schwach', -6, 1, 7, 'Die Kraft des Charakters lässt zu wünschen übrig. Für alle Fertigkeitsproben, bei denen es auf die Körperkraft ankommt, ist der effektive PHY-Wert um 1 pro Rang niedriger.', 1, 3),
+            (27, 'Gelenkig', 6, 1, 7, 'Durch diesen Vorteil ist der Charakter besonders beweglich, er kann sich durch sehr schmale Ritzen schieben. Der effektive PHY-Wert für Proben, bei denen die Beweglichkeit eine Rolle spielt wird um eins pro Rang erhöht.', 1, 3),
+            (28, 'Ungelenkig', -6, 1, 7, 'Dieser Charakter ist eher unbeweglich und hat Schwierigkeiten mit komplexen, koordinierten Körperbewegungen. Für Proben, bei denen es auf die Gewandtheit ankommt, ist der effektive PHY-Wert um ein pro Rang in diesem Nachteil niedriger.', 1, 3),
+            (29, 'Fingerfertig', 6, 1, 7, 'Durch diesen Vorteil hat der Charakter besonders flinke Finger und eine gute Hand-Auge-Koordination. Der effektive PHY-Wert für Proben, bei denen es auf geschickte Finger ankommt, wird um eins pro Rang erhöht.', 1, 3),
+            (30, 'Grobmotoriker', -6, 1, 7, 'Dieser Nachteil ist für Charaktere gedacht, die sich regelmäßig die Finger verknoten. Alle Proben in diesem Fertigkeitskomplex werden mit einem effektiven PHY-Attribut behandelt, das um eins pro Rang in diesem Nachteil gesenkt ist.', 1, 3),
+            (31, 'Schnell', 3, 1, 7, 'Für alle Berechnungen zur Bewegungsgewschwindigkeit des Charakters, wird das PHY-Attribut um den Rang des Vorteils erhöht.', 1, 3),
+            (32, 'Langsam', 3, 1, 7, 'Zur Berechnung der Bewegungsgeschwindigkeit des Charakters wird das PHY-Attribut pro Rang des Nachteils um einen Punkt gesenkt.', 1, 3),
+            (33, 'Eiserner Lebenswille', 3, 1, 7, 'Der Charakter ist ein zäher Brocken. Er überlebt auch Verletzungen, die jeden anderen töten würden. Die Todesschwelle erhöht sich um zwei Punkte pro Rang.<br/><i>Beispiel: Ein Charakter mit 5 LP und 2 Rängen in diesem Vorteil hat eine Todesschwelle von -9</i>
+            ', 1, 3);
+        """.trimIndent()
+        db.execSQL(sql)
+
+        /*
+        sql = """
+
+        """.trimIndent()
+        db.execSQL(sql)
+        */
         Log.d("info", "... tables created")
     }
 
