@@ -10,18 +10,28 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.ActionBar
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.*
 
 /**
  * The SkillSelectFragment helps players to select new skills
  */
 class SkillSelectFragment : Fragment() {
-    var char_id: Int = 0
+    private val c: CharacterViewModel by activityViewModels()
+    private var char_id: Int = 0
+
+    class SkillData {
+        var id: Int = 0
+        var name: String = ""
+        var base_skill: Boolean = false
+        var specialty: Boolean = false
+        var activated: Boolean = false
+        var has_level: Boolean = false
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            char_id = it.getInt("char_id",0)
-        }
     }
 
     override fun onCreateView(
@@ -34,25 +44,35 @@ class SkillSelectFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        var act = activity as MainActivity
-        var search_input = act.findViewById<EditText>(R.id.skillselect_searchfield)
-        var search_button = act.findViewById<Button>(R.id.skillselect_search)
+        val act = activity as MainActivity
+        val search_input = act.findViewById<EditText>(R.id.skillselect_searchfield)
+        val search_button = act.findViewById<Button>(R.id.skillselect_search)
         search_button.setOnClickListener {
-            findSkills(search_input)
+            val input: String = search_input.text.toString()
+            search(input)
         }
     }
 
-    fun findSkills(input: EditText) {
+    fun search(input: String) {
+        c.viewModelScope.launch {
+            val skills = findSkills(input)
+            withContext(Dispatchers.Main) {
+                updateView(skills)
+            }
+        }
+    }
+
+    fun findSkills(input: String): Array<SkillData> {
         // select skills from global skill list based on search
-        var search = input.text.toString()
-        search = search.replace("'", "\u2019")
-        var sql = "SELECT id, name, base_skill, skill FROM skills WHERE name LIKE '%" + search + "%'"
-        var act = activity as MainActivity
-        var data: Cursor = act.db.rawQuery(sql, null)
+        val search = input.replace("'", "\u2019")
+
+        var sql =
+            "SELECT id, name, base_skill, skill FROM skills WHERE name LIKE '%" + search + "%'"
+        val data: Cursor = c.db.rawQuery(sql, null)
 
         // select all skills the character has activated
         sql = "SELECT skill_id, lvl FROM char_skills WHERE char_id = " + char_id
-        var char_data: Cursor = act.db.rawQuery(sql, null)
+        val char_data: Cursor = c.db.rawQuery(sql, null)
         var activated_skills = arrayOf<Int>()
         var actual_skills = arrayOf<Int>()
         for (i in 0 until char_data.count) {
@@ -64,77 +84,85 @@ class SkillSelectFragment : Fragment() {
             }
         }
 
-        var containerview = act.findViewById<LinearLayout>(R.id.skillselect_container)
-        containerview.removeAllViews()
-        if (data.count > 0) {
-            data.moveToFirst()
-            do {
-                var list_entry = SkillSelectView(context)
-                list_entry.text = data.getString(1)
-                var skill_id = data.getInt(0)
-                list_entry.skill_id = skill_id
+        var result = emptyArray<SkillData>()
 
-                // format base skills and specialties
-                // if field base skill == 0 it is a base_skill
-                if (data.getInt(2) == 0) {
-                    list_entry.setTypeface(null, Typeface.BOLD)
-                }
-                // if field id != skill it is a specialty
-                if (data.getInt(0) != data.getInt(3) && data.getInt(2) != 0) {
-                    list_entry.setTypeface(null, Typeface.ITALIC)
-                }
+        while (data.moveToNext()) {
+            val skill = SkillData()
+            skill.id = data.getInt(0)
+            skill.name = data.getString(1)
 
-                // set activated skills checked
-                if (skill_id in activated_skills) {
-                    list_entry.isChecked = true
-                }
+            if (data.getInt(2) == 0) {
+                skill.base_skill = true
+            } else if (data.getInt(0) != data.getInt(3)) {
+                skill.specialty = true
+            }
 
-                // disable skills in which the character has a level
-                if (skill_id in actual_skills) {
-                    list_entry.isEnabled = false
+            if (skill.id in activated_skills) {
+                skill.activated = true
+                if (skill.id in actual_skills) {
+                    skill.has_level = true
                 }
-                
-                list_entry.setOnCheckedChangeListener{ button, b ->
-                    setSkill(list_entry)
-                }
-
-                containerview.addView(list_entry)
-            } while (data.moveToNext())
+            }
+            result += skill
         }
+
         data.close()
         char_data.close()
+
+        return result
+    }
+
+    fun updateView(skills: Array<SkillData>) {
+        val act = activity as MainActivity
+        val containerview = act.findViewById<LinearLayout>(R.id.skillselect_container)
+        containerview.removeAllViews()
+
+        for (skill in skills) {
+            val list_entry = SkillSelectView(context)
+            list_entry.text = skill.name
+            list_entry.skill_id = skill.id
+
+            if (skill.base_skill) {
+                list_entry.setTypeface(null, Typeface.BOLD)
+            } else if (skill.specialty) {
+                list_entry.setTypeface(null, Typeface.ITALIC)
+            }
+
+            if (skill.activated) {
+                list_entry.isChecked = true
+            }
+
+            if (skill.has_level) {
+                list_entry.isEnabled = false
+            }
+
+            list_entry.setOnCheckedChangeListener{ button, b ->
+                setSkill(list_entry)
+            }
+
+            containerview.addView(list_entry)
+        }
     }
 
     fun setSkill(ssv: SkillSelectView) {
         val skill_id = ssv.skill_id.toString()
-        val act = activity as MainActivity
 
         if (ssv.isChecked) { // add skill
-            var data = ContentValues()
-            data.put("char_id", char_id)
-            data.put("skill_id", skill_id)
-            act.db.insert("char_skills", null, data)
+            c.viewModelScope.launch {
+                val data = ContentValues()
+                data.put("char_id", char_id)
+                data.put("skill_id", skill_id)
+                c.db.insert("char_skills", null, data)
+            }
         } else { // remove skill
-            val s_str = skill_id.toString()
-            val c_str = char_id.toString()
-            var sql = "DELETE FROM char_skills WHERE skill_id = $s_str AND char_id = $c_str"
-            act.db.execSQL(sql)
+            c.viewModelScope.launch {
+                val s_str = skill_id.toString()
+                val c_str = char_id.toString()
+                val sql = "DELETE FROM char_skills WHERE skill_id = $s_str AND char_id = $c_str"
+                c.db.execSQL(sql)
+            }
         }
     }
 
-    companion object {
-        /**
-         * This factory method creates an instance of the skill select fragment
-         *
-         * @param char_id character id
-         * @return A new instance of fragment SkillSelectFragment.
-         */
-        @JvmStatic
-        fun newInstance(char_id: Int) =
-            SkillSelectFragment().apply {
-                arguments = Bundle().apply {
-                    putInt("char_id", char_id)
-                }
-            }
-    }
+
 }

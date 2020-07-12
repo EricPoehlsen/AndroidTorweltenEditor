@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 
 class MenuFragment : Fragment() {
@@ -33,7 +34,8 @@ class MenuFragment : Fragment() {
         }
         var m_test = act.findViewById<Button>(R.id.menu_test)
         m_test.setOnClickListener {
-            this.findNavController().navigate(R.id.action_menu_to_test)
+            val bundle: Bundle = bundleOf("char_id" to 1)
+            this.findNavController().navigate(R.id.action_menu_to_ts, bundle)
         }
 
     }

@@ -3,6 +3,7 @@ package de.aequinoktium.twedit
 import android.database.sqlite.SQLiteDatabase
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.activity.viewModels
 
 class MainActivity : AppCompatActivity() {
     lateinit var dbc: DatabaseConnect
@@ -13,6 +14,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
 
+        dbc = DatabaseConnect(this.applicationContext)
+        db = dbc.writableDatabase
+
+        val c: CharacterViewModel by viewModels()
+        c.setDatabase(db)
         // first run?
         var prefs = this.getSharedPreferences("base", 0)
 
@@ -21,8 +27,6 @@ class MainActivity : AppCompatActivity() {
 
         }
 
-        dbc = DatabaseConnect(this.applicationContext)
-        db = dbc.writableDatabase
 
 
     }

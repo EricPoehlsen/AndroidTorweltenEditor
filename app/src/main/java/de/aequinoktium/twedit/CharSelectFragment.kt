@@ -10,10 +10,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.core.os.bundleOf
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 
 
 class CharSelectFragment : Fragment() {
+    private val c: CharacterViewModel by activityViewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -116,7 +118,7 @@ class CharSelectFragment : Fragment() {
     }
 
     fun openChar(char_id: Int) {
-        val bundle: Bundle = bundleOf("char_id" to char_id)
-        this.findNavController().navigate(R.id.action_cs_to_ce, bundle)
+        c.char_id = char_id
+        this.findNavController().navigate(R.id.action_cs_to_ce)
     }
 }

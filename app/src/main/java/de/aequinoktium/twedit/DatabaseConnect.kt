@@ -49,9 +49,10 @@ class DatabaseConnect(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
             CREATE TABLE char_info (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 char_id INT,
-                species VARCHAR(255),
-                sex VARCHAR(255),
-                age INT,
+                concept VARCHAR(255) DEFAULT "",
+                species VARCHAR(255) DEFAULT "",
+                sex VARCHAR(255) DEFAULT "",
+                age INT DEFAULT 0,
                 FOREIGN KEY (char_id) REFERENCES char_core(id)
             );
         """.trimIndent()

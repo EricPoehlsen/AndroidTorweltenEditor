@@ -16,6 +16,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 
@@ -24,13 +25,12 @@ import androidx.navigation.fragment.findNavController
  * primary character selector is the char_id
  */
 class CharacterFragment: Fragment(), EditAttribDialog.EditAttribDialogListener {
-    var char_id = 0
+    private val c: CharacterViewModel by activityViewModels()
+    private var char_id: Int = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            char_id = it.getInt("char_id")
-        }
-
+        char_id = c.char_id
     }
 
     override fun onCreateView(
@@ -46,8 +46,7 @@ class CharacterFragment: Fragment(), EditAttribDialog.EditAttribDialogListener {
 
         var act = activity as MainActivity
 
-
-        var data: Cursor = act.db.rawQuery(
+        var data: Cursor = c.db.rawQuery(
             "SELECT * FROM char_core WHERE id = $char_id",
             null
         )
@@ -80,15 +79,13 @@ class CharacterFragment: Fragment(), EditAttribDialog.EditAttribDialogListener {
         // button: switch to skills
         var b_skills = act.findViewById<Button>(R.id.cv_skills)
         b_skills.setOnClickListener {
-            val bundle: Bundle = bundleOf("char_id" to char_id)
-            this.findNavController().navigate(R.id.action_cv_to_cs, bundle)
+            this.findNavController().navigate(R.id.action_cv_to_cs)
         }
 
         // button: switch to traits
         var b_traits = act.findViewById<Button>(R.id.cv_traits)
         b_traits.setOnClickListener {
-            val bundle: Bundle = bundleOf("char_id" to char_id)
-            this.findNavController().navigate(R.id.action_cv_to_ct, bundle)
+            this.findNavController().navigate(R.id.action_cv_to_ct)
         }
     }
 
@@ -116,7 +113,6 @@ class CharacterFragment: Fragment(), EditAttribDialog.EditAttribDialogListener {
         var view: TextView = act.findViewById(view_id)
         view.text = dialog.new_value.toString()
 
-
         var data = ContentValues()
         data.put(dialog.char_attrib, dialog.new_value)
         act.db.update("char_core", data, "id = $char_id", null)
@@ -128,6 +124,7 @@ class CharacterFragment: Fragment(), EditAttribDialog.EditAttribDialogListener {
     }
 
 
+    /*
     companion object {
         /**
          * Use this factory method to create a new instance of
@@ -144,4 +141,6 @@ class CharacterFragment: Fragment(), EditAttribDialog.EditAttribDialogListener {
                 }
             }
     }
+
+     */
 }
