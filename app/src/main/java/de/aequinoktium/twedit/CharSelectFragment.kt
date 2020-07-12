@@ -9,13 +9,29 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.database.getStringOrNull
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class CharSelectFragment : Fragment() {
     private val c: CharacterViewModel by activityViewModels()
+
+    class CharInfo {
+        var id: Int = 0
+        var name: String = ""
+        var concept: String = ""
+        var xp_free: Int = 0
+        var xp_total: Int = 0
+    }
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -54,6 +70,66 @@ class CharSelectFragment : Fragment() {
     }
 
     /**
+     * Retrieves some character info from the database
+     * @param name partial search string used to formulate the WHERE clause
+     * @return an array of CharInfo
+     */
+    fun findCharacters(name: String): Array<CharInfo> {
+        var result = emptyArray<CharInfo>()
+
+        var sql = """
+            SELECT 
+                char_core.id as id, 
+                char_core.name as name, 
+                char_core.xp_used as xp_used, 
+                char_core.xp_total as xp_total, 
+                char_info.concept as concept 
+            FROM 
+                char_core 
+            LEFT JOIN 
+                char_info 
+            ON 
+                char_core.id = char_info.char_id 
+        """.trimIndent()
+
+        if (name.length > 0) {
+            var select = name.replace("'", "\u2019")
+            sql += " WHERE name LIKE '%$select%'"
+        }
+
+        sql += " ORDER BY name"
+
+        val data: Cursor = c.db.rawQuery(sql, null)
+
+        while (data.moveToNext()) {
+            val char_info = CharInfo()
+            char_info.id = data.getInt(0)
+            char_info.name = data.getString(1)
+            char_info.xp_free = data.getInt(3) - data.getInt(2)
+            char_info.xp_total = data.getInt(3)
+            char_info.concept = data.getStringOrNull(4).toString()
+            result += char_info
+        }
+        return result
+    }
+
+    fun displayCharacters(characters: Array<CharInfo>) {
+        // retrieve and clear the list+
+        val act = activity as MainActivity
+        var ll: LinearLayout = act.findViewById(R.id.charselect_charlist)
+        ll.removeAllViews()
+
+        for (char in characters) {
+        // add entries to the list ...
+            var tv = CharSelectView(context)
+            tv.name.text = char.name
+            tv.xp.text = char.xp_free.toString() + "/" + char.xp_total.toString()
+            tv.setOnClickListener { openChar(char.id) }
+            ll.addView(tv)
+        }
+    }
+
+    /**
      * Listing existing characters and filter by name if given
      */
     fun listChars() {
@@ -61,39 +137,12 @@ class CharSelectFragment : Fragment() {
 
         // get the name as search string
         var name: String = act.findViewById<EditText>(R.id.charselect_name).text.toString()
-        var selection: String?
-        if (name.length > 0) {
-            name = name.replace("'", "\u2019")
-            Log.d("info", name)
-            selection = "name LIKE '%$name%'"
-        } else {
-            selection = null
-        }
 
-        // query the database
-        var result: Cursor = act.db.query(
-            "char_core",
-            arrayOf("id", "name", "xp_total"),
-            selection,
-            null,
-            null,
-            null,
-            "name"
-        )
-
-        // retrieve and clear the list
-        var ll: LinearLayout = act.findViewById(R.id.charselect_charlist)
-        ll.removeAllViews()
-
-        // add entries to the list ...
-        result.moveToFirst()
-        repeat(result.count) {
-            var tv = TextView(context)
-            tv.text = result.getString(1)
-            var char_id = result.getInt(0)
-            tv.setOnClickListener { openChar(char_id) }
-            ll.addView(tv)
-            result.moveToNext()
+        c.viewModelScope.launch {
+            var characters = findCharacters(name)
+            withContext(Dispatchers.Main) {
+                displayCharacters(characters)
+            }
         }
     }
 
@@ -118,7 +167,13 @@ class CharSelectFragment : Fragment() {
     }
 
     fun openChar(char_id: Int) {
-        c.char_id = char_id
-        this.findNavController().navigate(R.id.action_cs_to_ce)
+        var fragment = this
+        c.viewModelScope.launch {
+            c.loadCharData(char_id)
+            withContext(Dispatchers.Main) {
+                fragment.findNavController().navigate(R.id.action_cs_to_ce)
+            }
+        }
+
     }
 }

@@ -46,17 +46,10 @@ class CharacterFragment: Fragment(), EditAttribDialog.EditAttribDialogListener {
 
         var act = activity as MainActivity
 
-        var data: Cursor = c.db.rawQuery(
-            "SELECT * FROM char_core WHERE id = $char_id",
-            null
-        )
-
-        data.moveToFirst()
-
         var tb = act.supportActionBar
-        tb?.title = data.getString(data.getColumnIndex("name"))
+        tb?.title = c.name
 
-
+        // initializes attribute buttons
         val attrib_list = arrayOf("phy", "men", "soz", "nk", "fk")
         for (a in attrib_list) {
             var view_id = when {
@@ -67,14 +60,11 @@ class CharacterFragment: Fragment(), EditAttribDialog.EditAttribDialogListener {
                 a == "fk" -> R.id.cv_fk
                 else -> 0
             }
-
             val attr_view = act.findViewById<TextView>(view_id)
-            val attr_value = data.getInt(data.getColumnIndex(a))
+            val attr_value = c.attribs[a]?: 0
             attr_view.text = attr_value.toString()
             attr_view.setOnClickListener { editAttribs(a, attr_value) }
         }
-
-        data.close()
 
         // button: switch to skills
         var b_skills = act.findViewById<Button>(R.id.cv_skills)
@@ -115,11 +105,11 @@ class CharacterFragment: Fragment(), EditAttribDialog.EditAttribDialogListener {
 
         var data = ContentValues()
         data.put(dialog.char_attrib, dialog.new_value)
-        act.db.update("char_core", data, "id = $char_id", null)
+        c.db.update("char_core", data, "id = $char_id", null)
         var sql = "UPDATE char_core SET xp_used = xp_used + " +
                    dialog.xp_cost.toString() +
                    " WHERE id = " + char_id.toString()
-        act.db.execSQL(sql)
+        c.db.execSQL(sql)
 
     }
 
