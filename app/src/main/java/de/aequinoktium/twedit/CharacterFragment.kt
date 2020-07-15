@@ -1,23 +1,14 @@
 package de.aequinoktium.twedit
 
 import android.content.ContentValues
-import android.database.Cursor
-import android.graphics.Point
 import android.os.Bundle
-import android.util.Log
-import android.view.Display
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.os.bundleOf
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 
 /**
@@ -112,25 +103,4 @@ class CharacterFragment: Fragment(), EditAttribDialog.EditAttribDialogListener {
         c.db.execSQL(sql)
 
     }
-
-
-    /*
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param char_id the character id in the database.
-         * @return A new instance of fragment CharEditFragment.
-         */
-        @JvmStatic
-        fun newInstance(char_id: Int) =
-            CharacterFragment().apply {
-                arguments = Bundle().apply {
-                    putInt("char_id", char_id)
-                }
-            }
-    }
-
-     */
 }

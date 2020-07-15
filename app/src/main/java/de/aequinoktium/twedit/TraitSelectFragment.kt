@@ -9,6 +9,10 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.core.view.marginBottom
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * A simple [Fragment] subclass.
@@ -17,10 +21,13 @@ import androidx.fragment.app.activityViewModels
  */
 class TraitSelectFragment : Fragment() {
     private val c: CharacterViewModel by activityViewModels()
-    private var char_id: Int = 0
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    class TraitData {
+        var id = 0
+        var name = ""
+        var xp = 0
+        var max_rank = 0
+        var variants = false
     }
 
     override fun onCreateView(
@@ -34,16 +41,22 @@ class TraitSelectFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        c.viewModelScope.launch {
+            var traits = findTraits()
+            withContext(Dispatchers.Main) {
+                displayTraits(traits)
+            }
+        }
+    }
+
+    fun displayTraits(traits: Array<TraitData>) {
         val act = activity as MainActivity
-
-        val traits: Cursor = act.db.rawQuery(
-            "SELECT id, name, xp_cost FROM traits",
-            null
-        )
-
         val container = act.findViewById<LinearLayout>(R.id.traitselect_container)
-        while (traits.moveToNext()) {
+
+        for (trait in traits) {
             var tv = TraitView(context)
+            tv.c = c
+
             var lp = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
@@ -51,18 +64,53 @@ class TraitSelectFragment : Fragment() {
             lp.setMargins(0, 0, act.calc_dp(4), 0)
 
             tv.layoutParams = lp
-            tv.trait_id = traits.getInt(0)
-            tv.title.text = traits.getString(1)
-            tv.xp.text = traits.getInt(2).toString()
+            tv.setTraitId(trait.id)
+            tv.setName(trait.name)
+            tv.setComplex(trait.variants, trait.max_rank)
+            tv.setXp(trait.xp)
 
             container.addView(tv)
-
-
-
-
         }
+    }
 
+    fun findTraits(): Array<TraitData> {
+        var traits = arrayOf<TraitData>()
+        var sql = """
+            SELECT trait_id FROM trait_vars    
+        """.trimIndent()
+        var data = c.db.rawQuery(sql, null)
+        var variant_traits = arrayOf<Int>()
+        while (data.moveToNext()) {
+            if (data.getInt(0) !in variant_traits) {
+                variant_traits += data.getInt(0)
+            }
+        }
+        data.close()
 
-
+        sql = """
+            SELECT
+                id, 
+                name,
+                xp_cost, 
+                max_rank
+            FROM 
+                traits
+            ORDER BY
+                grp
+        """.trimIndent()
+        data = c.db.rawQuery(sql, null)
+        while(data.moveToNext()) {
+            var trait = TraitData()
+            trait.id = data.getInt(0)
+            trait.name = data.getString(1)
+            trait.xp = data.getInt(2)
+            trait.max_rank = data.getInt(3)
+            if (trait.id in variant_traits) {
+                trait.variants = true
+            }
+            traits += trait
+        }
+        data.close()
+        return traits
     }
 }

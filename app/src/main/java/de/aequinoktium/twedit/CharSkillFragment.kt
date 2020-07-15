@@ -3,6 +3,7 @@ package de.aequinoktium.twedit
 import android.database.Cursor
 import android.graphics.Typeface
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -49,6 +50,7 @@ class CharSkillFragment : Fragment(), EditSkillDialog.EditSkillDialogListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         var act = activity as MainActivity
+        char_id = c.char_id
 
         // switch to skill selector fragment
         var b_add_skills = act.findViewById<Button>(R.id.charskills_add)
@@ -192,6 +194,7 @@ class CharSkillFragment : Fragment(), EditSkillDialog.EditSkillDialogListener {
                 """.trimIndent()
             }
             c.db.execSQL(sql)
+            Log.d("info", sql)
 
             // update xp ...
             sql = """
@@ -199,6 +202,7 @@ class CharSkillFragment : Fragment(), EditSkillDialog.EditSkillDialogListener {
                 SET xp_used = xp_used + $xp_cost
                 WHERE id = $char_id
             """.trimIndent()
+            Log.d("info", sql)
             c.db.execSQL(sql)
 
             val skills = loadSkills()

@@ -4,6 +4,7 @@ import android.database.sqlite.SQLiteDatabase
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
+import androidx.fragment.app.FragmentManager
 
 class MainActivity : AppCompatActivity() {
     lateinit var dbc: DatabaseConnect
@@ -26,10 +27,10 @@ class MainActivity : AppCompatActivity() {
         if (!installed) {
 
         }
-
-
-
     }
+
+
+
 
     override fun onDestroy() {
         db.close()

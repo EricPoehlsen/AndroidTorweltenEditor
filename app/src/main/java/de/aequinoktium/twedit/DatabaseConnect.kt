@@ -5,6 +5,11 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 
+
+/**
+ * This class provides the interface to the SQLite Database.
+ * it contains the database structure and the default data
+ */
 class DatabaseConnect(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, VERSION) {
 
     override fun onCreate(db: SQLiteDatabase) {
@@ -21,6 +26,7 @@ class DatabaseConnect(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
         db.execSQL("DROP TABLE IF EXISTS 'traits_cls'")
         db.execSQL("DROP TABLE IF EXISTS 'char_skills'")
         db.execSQL("DROP TABLE IF EXISTS 'skills'")
+        db.execSQL("DROP TABLE IF EXISTS 'char_desc'")
         db.execSQL("DROP TABLE IF EXISTS 'char_info'")
         db.execSQL("DROP TABLE IF EXISTS 'char_core'")
     }
@@ -51,8 +57,25 @@ class DatabaseConnect(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
                 char_id INT,
                 concept VARCHAR(255) DEFAULT "",
                 species VARCHAR(255) DEFAULT "",
+                culture VARCHAR(255) DEFAULT "",
+                homeworld VARCHAR(255) DEFAULT "",
                 sex VARCHAR(255) DEFAULT "",
                 age INT DEFAULT 0,
+                FOREIGN KEY (char_id) REFERENCES char_core(id)
+            );
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            CREATE TABLE char_desc (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                char_id INT,
+                skin_type INT DEFAULT 0,
+                skin_color VARCHAR(255) DEFAULT "",
+                eye_color VARCHAR(255) DEFAULT "",
+                height INT DEFAULT 0,
+                weight INT DEFAULT 0,
+                appearance TEXT DEFAULT "",
                 FOREIGN KEY (char_id) REFERENCES char_core(id)
             );
         """.trimIndent()
@@ -134,6 +157,7 @@ class DatabaseConnect(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 char_id INT, 
                 trait_id INT,
+                rank INT,
                 var1_id INT,
                 var2_id INT,
                 var3_id INT,

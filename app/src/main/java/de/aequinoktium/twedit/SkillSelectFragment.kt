@@ -44,6 +44,7 @@ class SkillSelectFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        char_id = c.char_id
         val act = activity as MainActivity
         val search_input = act.findViewById<EditText>(R.id.skillselect_searchfield)
         val search_button = act.findViewById<Button>(R.id.skillselect_search)
