@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.viewModelScope
@@ -15,7 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class CharTraitEditFragment : Fragment() {
+class CharTraitEditFragment : Fragment(), RemoveTraitDialog.RemoveTraitDialogListener {
     private val c: CharacterViewModel by activityViewModels()
     private var default_data = TraitData()
     private var trait_data = CharTrait()
@@ -46,10 +47,18 @@ class CharTraitEditFragment : Fragment() {
         tv_name = act.findViewById<TextView>(R.id.traitedit_name)
         tv_xp = act.findViewById<TextView>(R.id.traitedit_xp)
         tv_txt = act.findViewById<TextView>(R.id.traitedit_text)
-        var b_ok = act.findViewById<Button>(R.id.traitedit_ok)
-        b_ok.setOnClickListener {saveTrait()}
         var b_cancel = act.findViewById<Button>(R.id.traitedit_cancel)
         b_cancel.setOnClickListener{backToCharTraits()}
+        var b_ok = act.findViewById<Button>(R.id.traitedit_ok)
+        b_ok.setOnClickListener {saveTrait()}
+        var b_collapse = act.findViewById<ImageButton>(R.id.traitedit_collapse)
+        b_collapse.setOnClickListener {collapseTrait()}
+        var b_delete = act.findViewById<ImageButton>(R.id.traitedit_delete)
+        b_delete.setOnClickListener {deleteTraitDialog()}
+
+
+
+
         c.viewModelScope.launch {
             loadData()
             withContext(Dispatchers.Main) {
@@ -135,45 +144,88 @@ class CharTraitEditFragment : Fragment() {
 
 
     fun saveTrait() {
-        updateTrait()
+
+        c.viewModelScope.launch {
+            updateTrait()
 
 
-        var sql = """
-            UPDATE 
-                char_traits
-            SET 
-                name = '${trait_data.name}',
-                txt = '${trait_data.txt}',
-                xp_cost = ${trait_data.xp_cost},
-                rank = ${trait_data.rank}
-            WHERE
-                id = ${trait_data.id}
-        """.trimIndent()
-        c.db.execSQL(sql)
+            var sql = """
+                UPDATE 
+                    char_traits
+                SET 
+                    name = '${trait_data.name}',
+                    txt = '${trait_data.txt}',
+                    xp_cost = ${trait_data.xp_cost},
+                    rank = ${trait_data.rank}
+                WHERE
+                    id = ${trait_data.id}
+            """.trimIndent()
+            c.db.execSQL(sql)
 
-        var delta_xp = trait_data.xp_cost - trait_data.xp_old
-        Log.d("info", "oid_xp: ${trait_data.xp_old}")
-        sql = """
-            UPDATE
-                char_core
-            SET
-                xp_used = xp_used + $delta_xp
-            WHERE
-                id = ${c.char_id}
-        """.trimIndent()
+            var delta_xp = trait_data.xp_cost - trait_data.xp_old
+            sql = """
+                UPDATE
+                    char_core
+                SET
+                    xp_used = xp_used + $delta_xp
+                WHERE
+                    id = ${c.char_id}
+            """.trimIndent()
 
-        Log.d("info", "SQL: $sql")
-        c.db.execSQL(sql)
+            Log.d("info", "SQL: $sql")
+            c.db.execSQL(sql)
 
-        backToCharTraits()
+            withContext(Dispatchers.Main) {
+                backToCharTraits()
+            }
+        }
+    }
 
+    fun deleteTraitDialog() {
+        val act = activity as MainActivity
+        val fm = this.parentFragmentManager
+        val dialog = RemoveTraitDialog(trait_data.name)
+        dialog.setTargetFragment(this, 300)
+        dialog.show(fm, null)
+    }
 
+    fun deleteTrait() {
+        c.viewModelScope.launch {
+            var sql = """
+                DELETE FROM 
+                    char_traits
+                WHERE
+                    id = ${trait_data.id}
+            """.trimIndent()
+            c.db.execSQL(sql)
 
+            sql = """
+                UPDATE
+                    char_core
+                SET
+                    xp_used = xp_used - ${trait_data.xp_old}
+                WHERE
+                    id = ${c.char_id}
+            """.trimIndent()
+
+            c.db.execSQL(sql)
+            withContext(Dispatchers.Main) {
+                backToCharTraits()
+            }
+        }
+    }
+
+    fun collapseTrait() {
 
     }
 
+
     fun backToCharTraits() {
         this.findNavController().popBackStack()
+    }
+
+    override fun onRemoveTraitDialogPositiveClick(dialog: RemoveTraitDialog) {
+        deleteTrait()
     }
 
 }

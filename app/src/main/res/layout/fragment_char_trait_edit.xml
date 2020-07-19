@@ -33,10 +33,11 @@
     <EditText
         android:id="@+id/traitedit_text"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:ems="10"
         android:gravity="start|top"
         android:inputType="textMultiLine"
+        app:layout_constraintBottom_toTopOf="@+id/traitedit_ok"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -86,7 +87,7 @@
         android:layout_height="wrap_content"
         android:text="@string/dialog_ok"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toEndOf="@+id/traitedit_cancel" />
 
     <Button
         android:id="@+id/traitedit_cancel"
@@ -94,5 +95,26 @@
         android:layout_height="wrap_content"
         android:text="@string/dialog_cancel"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/traitedit_ok" />
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageButton
+        android:id="@+id/traitedit_collapse"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:padding="8dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/collapse"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/traitedit_delete" />
+
+    <ImageButton
+        android:id="@+id/traitedit_delete"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:padding="8dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/remove_red"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

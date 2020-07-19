@@ -8,7 +8,7 @@
     <string name="lp">LP</string>
     <string name="ep">EP</string>
     <string name="mp">MP</string>
-    <string name="install_title">Datenbank wird eingerichtet...</string>
+    <string name="install_title">Datenbank wird eingerichtet…</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <!-- MENU STRINGS -->
@@ -18,13 +18,16 @@
     <!-- CHAR_SELECT FRAGMENT -->
     <string name="charselect_name">Charaktername</string>
 
-    <string name="dialog_edit_attrib_title">Attribut ändern ...</string>
+    <string name="dialog_edit_attrib_title">Attribut ändern …</string>
     <string name="dialog_edit_attrib_xp">XP: </string>
     <string name="dialog_edit_skill_lvl0">gefährliches Halbwissen</string>
     <string name="dialog_edit_skill_lvl1">ordentliche Grundkenntnisse</string>
     <string name="dialog_edit_skill_lvl2">umfassender Erfahrungensschatz</string>
     <string name="dialog_edit_skill_lvl3">profundes Expertenwissen</string>
-    <string name="dialog_edit_skill_del">entfernen ...</string>
+    <string name="dialog_edit_skill_del">entfernen …</string>
+    <string name="dialog_remove_trait_title">Eigenschaft löschen …</string>
+    <string name="dialog_remove_trait_msg">Entfernt %1$s und korrigiert die Erfahrungspunkte.</string>
+
     <string name="dialog_ok">OK</string>
     <string name="dialog_cancel">Abbrechen</string>
     <string name="search">🔍</string>
@@ -41,5 +44,6 @@
     <string name="te_name">Eigenschaft</string>
     <string name="te_rank">Rang</string>
     <string name="te_xp">XP</string>
+    <string name="te_del">Löschen</string>
 
 </resources>
