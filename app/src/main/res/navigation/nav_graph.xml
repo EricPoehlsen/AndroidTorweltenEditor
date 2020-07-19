@@ -72,5 +72,13 @@
         <action
             android:id="@+id/action_ct_to_ts"
             app:destination="@id/traitSelectFragment" />
+        <action
+            android:id="@+id/action_ct_to_cet"
+            app:destination="@id/charTraitEditFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/charTraitEditFragment"
+        android:name="de.aequinoktium.twedit.CharTraitEditFragment"
+        android:label="fragment_char_trait_edit"
+        tools:layout="@layout/fragment_char_trait_edit" />
 </navigation>

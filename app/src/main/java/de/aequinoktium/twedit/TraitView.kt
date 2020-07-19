@@ -25,81 +25,76 @@ class TraitView: LinearLayout {
         init()
     }
 
-    /**
-     * Object to hold the data of a trait
-     */
-    class TraitData {
-        var id = 0
-        var name = ""
-        var xp = 0
-        var txt = ""
-        var min_rank = 0
-        var max_rank = 0
-        var cur_rank = 0
-        var new_rank = 0
-        var rank_xp = 0
-        var total_xp = 0
-        var cls = 0
-        var grp = 0
-        var variants: MutableMap<String, Array<TraitVariant>> = mutableMapOf()
-        var complex = false
-    }
-
-    class TraitVariant {
-        var var_id = 0
-        var grp = ""
-        var xp_factor = 0f
-        var oper = 0
-        var name = ""
-        var txt = ""
-        var selected = false
-    }
-
     lateinit var c: CharacterViewModel
     private var data = TraitData()
+    private var char_trait = CharTrait()
 
-    private var vName = TextView(context)
-    private var vXp = TextView(context)
-    private var vTitle = LinearLayout(context)
-    lateinit private var vText: TextView
-    lateinit private var vRanks: LinearLayout
-    lateinit private var vDecRank: ImageView
-    lateinit private var vIncRank: ImageView
-    lateinit private var vRank: TextView
-    lateinit private var vVariant1: RadioGroup
-    lateinit private var vVariant2: RadioGroup
-    lateinit private var vVariant3: RadioGroup
-    lateinit private var vVariant4: RadioGroup
+    // the main views of the layout
+    private val ll_title = LinearLayout(context)
+    private val tv_name = TextView(context)
+    private val tv_xp = TextView(context)
+    private val tv_desc = TextView(context)
+    private val ll_rank = LinearLayout(context)
+    private val iv_dec_rank = ImageView(context)
+    private val iv_inc_rank = ImageView(context)
+    private val tv_rank = TextView(context)
+    private val rg_variant1 = RadioGroup(context)
+    private val rg_variant2 = RadioGroup(context)
+    private val rg_variant3 = RadioGroup(context)
+    private val rg_variant4 = RadioGroup(context)
+    private val bt_add_trait = Button(context)
 
 
     /**
-     * initialize the layout with necessary views
+     * initializes the layout and the views
      */
-    fun init() {
-        this.orientation = VERTICAL
+    private fun init() {
+        orientation = VERTICAL
+
+        var lp = LayoutParams(
+            LayoutParams.MATCH_PARENT,
+            LayoutParams.WRAP_CONTENT
+        )
+
+        this.layoutParams = lp
+
+        ll_title.orientation = HORIZONTAL
+        ll_title.addView(tv_name)
+        ll_title.addView(tv_xp)
+        this.addView(ll_title)
+
+        bt_add_trait.text = resources.getText(R.string.ts_add_trait)
+        bt_add_trait.setOnClickListener {addTrait()}
+
+        var views = arrayOf(
+            tv_desc,
+            ll_rank,
+            rg_variant1,
+            rg_variant2,
+            rg_variant3,
+            rg_variant4,
+            bt_add_trait
+        )
+
+        for (v in views) {
+            this.addView(v)
+            v.visibility = GONE
+        }
+
         this.background = ResourcesCompat.getDrawable(
             resources, R.drawable.simple_border,
             null
         )
 
-        this.addView(vTitle)
-        var title_layout = LayoutParams(
-            LayoutParams.MATCH_PARENT,
-            LayoutParams.WRAP_CONTENT
-        )
-        vTitle.layoutParams = title_layout
-        vTitle.orientation = HORIZONTAL
-        vTitle.addView(vName)
-        vTitle.addView(vXp)
-        vTitle.setOnClickListener {expandView()}
-        vName.setTypeface(null, Typeface.BOLD)
+        ll_title.setOnClickListener {expandView()}
+        tv_name.setTypeface(null, Typeface.BOLD)
 
         var xp_layout = LayoutParams(
             LayoutParams.MATCH_PARENT,
             LayoutParams.WRAP_CONTENT
         )
-        vXp.layoutParams = xp_layout
-        vXp.gravity = Gravity.RIGHT
+        tv_xp.layoutParams = xp_layout
+        tv_xp.gravity = Gravity.RIGHT
     }
 
     /**
@@ -117,27 +112,37 @@ class TraitView: LinearLayout {
      */
     fun setName(n: String) {
         data.name = n
-        vName.text = n
+        tv_name.text = n
     }
 
+    /**
+     * is this a complex trait ...
+     */
     fun setComplex(variants: Boolean, max_rank: Int) {
         if (variants or (max_rank > 1)) {
             data.complex = true
         }
     }
 
+    /**
+     * set the initial xp (only displays numbers for trivial skills)
+     */
     fun setXp(xp: Int) {
         data.xp = xp
         if (!data.complex) {
-            vXp.text = xp.toString()
+            tv_xp.text = xp.toString()
         } else if (xp > 0) {
-            vXp.text = "?"
+            tv_xp.text = "?"
         } else {
-            vXp.text = "-?"
+            tv_xp.text = "-?"
         }
     }
 
-    fun expandView() {
+    /**
+     * the view should be expanded (or collapsed)
+     * retrieves additional trait data on first call
+     */
+    private fun expandView() {
         if (data.max_rank == 0) {
             c.viewModelScope.launch {
                 var traitData = loadTrait(data)
@@ -155,7 +160,7 @@ class TraitView: LinearLayout {
      * @param data a TraitData object which needs to contain an id
      * @return a TraitData object with all available trait data from the database
      */
-    suspend fun loadTrait(data: TraitData): TraitData {
+    private suspend fun loadTrait(data: TraitData): TraitData {
         val result = data
         var sql = """
             SELECT 
@@ -182,6 +187,7 @@ class TraitView: LinearLayout {
             result.cls = trait.getInt(4)
             result.grp = trait.getInt(5)
             result.rank_xp = trait.getInt(6)
+            result.total_xp = result.rank_xp * result.min_rank
         }
         trait.close()
 
@@ -222,136 +228,104 @@ class TraitView: LinearLayout {
         return result
     }
 
-    fun toggleDetails(td: TraitData) {
-        this.data = td
-        toggleDetails()
-    }
-    fun toggleDetails() {
-        updateXp()
+    private fun updateContent() {
+        tv_desc.setText(HtmlCompat.fromHtml(
+            data.txt,
+            HtmlCompat.FROM_HTML_MODE_LEGACY)
+        )
 
-        if (!this::vText.isInitialized) {
-            vText = TextView(context)
-            this.addView(vText)
-            vText.setText(HtmlCompat.fromHtml(
-                data.txt,
-                HtmlCompat.FROM_HTML_MODE_LEGACY)
-            )
-            vText.visibility = GONE
+        if (data.max_rank > 1) {
+            var act = context as MainActivity
 
-            if (data.max_rank > 1) {
-                vRanks = LinearLayout(context)
-                vRanks.orientation = HORIZONTAL
-                vDecRank = ImageView(context)
-                vRank = TextView(context)
-                vIncRank = ImageView(context)
+            var lp = LayoutParams(act.calc_dp(32), act.calc_dp(32))
 
-                var act = context as MainActivity
-
-                var lp = LayoutParams(act.calc_dp(32), act.calc_dp(32))
-
-
-                vDecRank.setImageResource(R.drawable.arrow_left)
-                vDecRank.layoutParams = lp
-                vDecRank.setOnClickListener {
-                    updateRank(-1)
-                }
-                vIncRank.setImageResource(R.drawable.arrow_right)
-                vIncRank.layoutParams = lp
-                vIncRank.setOnClickListener {
-                    updateRank(+1)
-                }
-                vRank.text = data.min_rank.toString()
-                vRank.minEms = 2
-                vRank.textAlignment = TextView.TEXT_ALIGNMENT_CENTER
-
-                vRanks.gravity = Gravity.CENTER
-                vRanks.addView(vDecRank)
-                vRanks.addView(vRank)
-                vRanks.addView(vIncRank)
-
-                this.addView(vRanks)
-
-                vRanks.visibility = GONE
+            iv_dec_rank.setImageResource(R.drawable.arrow_left)
+            iv_dec_rank.layoutParams = lp
+            iv_dec_rank.setOnClickListener {
+                updateRank(-1)
             }
-
-            // create views for variants ...
-            lateinit var grp: RadioGroup
-            var i = 0
-            for (key in data.variants.keys) {
-                when (i) {
-                    0 -> {
-                        vVariant1 = RadioGroup(context)
-                        grp = vVariant1
-                    }
-                    1 -> {
-                        vVariant2 = RadioGroup(context)
-                        grp = vVariant2
-                    }
-                    2 -> {
-                        vVariant3 = RadioGroup(context)
-                        grp = vVariant3
-                    }
-                    3 -> {
-                        vVariant4 = RadioGroup(context)
-                        grp = vVariant4
-                    }
-                }
-
-                var vVarTitle = TextView(context)
-                vVarTitle.text = key
-                grp.addView(vVarTitle)
-                var trait_vars = data.variants[key] as Array<TraitVariant>
-                for (variant in trait_vars) {
-                    var rb = RadioButton(context)
-                    rb.text = variant.name
-                    grp.addView(rb)
-                    var txt = TextView(context)
-                    txt.text = variant.txt
-                    grp.addView(txt)
-                }
-
-                grp.setOnCheckedChangeListener{ grp, id ->
-                    onVariantSelectionChanged(grp, id)
-                }
-
-
-                this.addView(grp)
-                grp.visibility = GONE
-
-
-                i++
-                if (i > 3) break
+            iv_inc_rank.setImageResource(R.drawable.arrow_right)
+            iv_inc_rank.layoutParams = lp
+            iv_inc_rank.setOnClickListener {
+                updateRank(+1)
             }
+            tv_rank.text = data.min_rank.toString()
+            tv_rank.minEms = 2
+            tv_rank.textAlignment = TextView.TEXT_ALIGNMENT_CENTER
 
-
-
-
-
+            ll_rank.gravity = Gravity.CENTER
+            ll_rank.addView(iv_dec_rank)
+            ll_rank.addView(tv_rank)
+            ll_rank.addView(iv_inc_rank)
         }
 
+        // create views for variants ...
+        lateinit var grp: RadioGroup
+        var i = 0
+        for (key in data.variants.keys) {
+            when (i) {
+                0 -> grp = rg_variant1
+                1 -> grp = rg_variant2
+                2 -> grp = rg_variant3
+                3 -> grp = rg_variant4
+            }
+
+            val tv_variant_title = TextView(context)
+            tv_variant_title.text = key
+            grp.addView(tv_variant_title)
+            val trait_vars = data.variants[key] as Array<TraitVariant>
+
+            for (variant in trait_vars) {
+                val rb = RadioButton(context)
+                rb.text = variant.name
+                grp.addView(rb)
+                val txt = TextView(context)
+                txt.text = variant.txt
+                grp.addView(txt)
+            }
+
+            grp.setOnCheckedChangeListener{ grp, id ->
+                onVariantSelectionChanged(grp, id)
+            }
+
+            i++
+            if (i > 3) break
+        }
+    }
+
+    /**
+     * toggles the visibility for the detail views
+     */
+    private fun toggleDetails(td: TraitData) {
+        this.data = td
+        updateContent()
+        toggleDetails()
+    }
+    private fun toggleDetails() {
+
         // set visibility for description text
-        if (vText.visibility == VISIBLE) {
-            vText.visibility = GONE
+        if (tv_desc.visibility == VISIBLE) {
+            tv_desc.visibility = GONE
         } else {
-            vText.visibility = VISIBLE
+            tv_desc.visibility = VISIBLE
         }
 
         // set visibility for rank selector
         if (data.max_rank > 1) {
-            if (vRanks.visibility == VISIBLE) {
-                vRanks.visibility = GONE
+            if (ll_rank.visibility == VISIBLE) {
+                ll_rank.visibility = GONE
             } else {
-                vRanks.visibility = VISIBLE
+                ll_rank.visibility = VISIBLE
             }
         }
 
         // set visibility for variants ...
         var variants = arrayOf<RadioGroup>()
         var s = data.variants.size
-        if (s >= 1) variants += vVariant1
-        if (s >= 2) variants += vVariant2
-        if (s >= 3) variants += vVariant3
-        if (s >= 4) variants += vVariant4
+        if (s >= 1) variants += rg_variant1
+        if (s >= 2) variants += rg_variant2
+        if (s >= 3) variants += rg_variant3
+        if (s >= 4) variants += rg_variant4
         for (v in variants) {
             if (v.visibility == VISIBLE) {
                 v.visibility = GONE
@@ -359,9 +333,15 @@ class TraitView: LinearLayout {
                 v.visibility = VISIBLE
             }
         }
-   }
 
-    fun updateRank(delta: Int) {
+        if (bt_add_trait.visibility == VISIBLE) {
+            bt_add_trait.visibility = GONE
+        } else {
+            bt_add_trait.visibility = VISIBLE
+        }
+    }
+
+    private fun updateRank(delta: Int) {
         var new_rank = data.cur_rank + delta
         if (new_rank <= data.min_rank) {
             new_rank = kotlin.math.max(new_rank, data.min_rank)
@@ -370,18 +350,117 @@ class TraitView: LinearLayout {
         }
         data.cur_rank = new_rank
         data.total_xp = new_rank * data.rank_xp
-        vRank.text = new_rank.toString()
-        vXp.text = data.total_xp.toString()
+        tv_rank.text = new_rank.toString()
+        tv_xp.text = data.total_xp.toString()
     }
 
-    fun updateXp() {
+    /**
+     * Updating the xp if rank or variants are changed ...
+     */
+    private fun updateXp() {
+        // for ranked traits
         if (data.max_rank > 1) {
             data.total_xp = data.cur_rank * data.xp
-            vXp.text = data.total_xp.toString()
         }
+        // for variant traits
+        if (data.variants.size > 0) {
+            var new_xp = 0f
+            for (variant_group in data.variants.values) {
+                for (variant in variant_group) {
+                    if (variant.selected) {
+                        if (variant.oper == 0) {
+                            new_xp += variant.xp_factor
+                        } else {
+                            new_xp *= variant.xp_factor
+                        }
+                    }
+                }
+            }
+            data.total_xp = kotlin.math.ceil(new_xp).toInt()
+        }
+        tv_xp.text = data.total_xp.toString()
     }
 
-    fun onVariantSelectionChanged(grp: RadioGroup?, id: Int) {
-        Log.d("info", id.toString())
+    /**
+     * Listener for selection changes on radio buttons
+     * updates data.variants to reflect which variants are selected
+     * calls updateXp()
+     */
+    private fun onVariantSelectionChanged(grp: RadioGroup?, id: Int) {
+        var k = -1
+        when (grp) {
+            rg_variant1 -> k = 0
+            rg_variant2 -> k = 1
+            rg_variant3 -> k = 2
+            rg_variant4 -> k = 3
+        }
+
+        val keys = data.variants.keys.toTypedArray()
+        val key = keys[k]
+        val variants = data.variants[key] as Array<TraitVariant>
+        for (variant in variants) {
+            variant.selected = false
+        }
+        variants[id-1].selected = true
+
+        when (k) {
+            0 -> char_trait.var1_id = variants[id-1].var_id
+            1 -> char_trait.var2_id = variants[id-1].var_id
+            2 -> char_trait.var3_id = variants[id-1].var_id
+            3 -> char_trait.var4_id = variants[id-1].var_id
+        }
+
+        updateXp()
+    }
+
+    private fun addTrait() {
+        var var_id1 = "NULL"
+        var var_id2 = "NULL"
+        var var_id3 = "NULL"
+        var var_id4 = "NULL"
+        if (char_trait.var1_id > 0) var_id1 = char_trait.var1_id.toString()
+        if (char_trait.var2_id > 0) var_id1 = char_trait.var2_id.toString()
+        if (char_trait.var3_id > 0) var_id1 = char_trait.var3_id.toString()
+        if (char_trait.var4_id > 0) var_id1 = char_trait.var4_id.toString()
+
+        var rank = 0
+        if (data.max_rank > 1) rank = data.cur_rank
+
+        var sql = """
+            INSERT INTO char_traits (
+                char_id, 
+                trait_id,
+                rank,
+                var1_id,
+                var2_id,
+                var3_id,
+                var4_id,
+                xp_cost,
+                name, 
+                txt
+            ) VALUES (
+                ${c.char_id},
+                ${data.id},
+                $rank,
+                $var_id1,
+                $var_id2,
+                $var_id3,
+                $var_id4,
+                ${data.total_xp},
+                '${data.name}',
+                ''
+            )
+        """.trimIndent()
+        c.db.execSQL(sql)
+
+        sql = """
+            UPDATE
+                char_core
+            SET
+                xp_used = xp_used + ${data.total_xp}
+            WHERE
+                id = ${c.char_id}
+        """.trimIndent()
+        c.db.execSQL(sql)
     }
 }

@@ -30,6 +30,8 @@ class CharacterViewModel: ViewModel() {
     var xp_used: Int = 0
     var xp_total: Int = 0
 
+    var edit_trait = 0
+
 
     fun setDatabase(db: SQLiteDatabase) {
         this.db = db

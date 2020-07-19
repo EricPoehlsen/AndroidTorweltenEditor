@@ -564,6 +564,20 @@ class DatabaseConnect(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
         """.trimIndent()
         db.execSQL(sql)
 
+        sql = """
+            INSERT INTO traits (id, name, xp_cost, cls, grp, txt) VALUES
+            (34, 'Vermindertes Spektrum', -3, 1, 1, 'Durch diesen Nachteil werden verschiedene Spielarten der Farbenblindheit abgedeckt. Charaktere erleiden negative Modifikatoren auf Proben, bei denen es auch auf Farben ankommen - etwa die Beurteilung von Kunstwerken oder das Erkennen von gefälschten Geldscheinen, aber auch für Proben auf elektronische Reparaturen.')
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO trait_vars(trait_id, name, xp_factor, oper, grp, txt) VALUES 
+            (34, 'Rot-Grün-Blind', -3, 0, 'Ausprägung', 'Der Charakter kann Rot- und Grüntöne nur als hell/dunkel wahrnehmen'),
+            (34, 'Farbenblind', -6, 0, 'Ausprägung', 'Ein Charakter mit diesem Nachteil kann Farben gar nicht unterscheiden, nur die Helligkeit.'),
+            (34, 'Kurzes Spektrum', -6, 0, 'Ausprägung', 'Der Charakter kann den oberen oder unteren Bereich des für Menschen sichtbaren Spektrums gar nicht wahrnehmen.')
+        """.trimIndent()
+        db.execSQL(sql)
+
         /*
         sql = """
 
