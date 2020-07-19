@@ -214,32 +214,36 @@ class CharTraitView: LinearLayout {
         } else {
             html_text = data.txt
         }
-        tv_desc.setText(HtmlCompat.fromHtml(
-            html_text,
-            HtmlCompat.FROM_HTML_MODE_LEGACY)
+        tv_desc.setText(
+            HtmlCompat.fromHtml(
+                html_text,
+                HtmlCompat.FROM_HTML_MODE_LEGACY
+            )
         )
 
         // create views for variants ...
-        var variants = arrayOf(
-            char_trait.var1_id,
-            char_trait.var2_id,
-            char_trait.var3_id,
-            char_trait.var4_id
-        )
+        if (char_trait.reduced == 0) {
+            var variants = arrayOf(
+                char_trait.var1_id,
+                char_trait.var2_id,
+                char_trait.var3_id,
+                char_trait.var4_id
+            )
 
-        for (var_id in variants) {
-            if (var_id > 0) {
-                val tv_variant_title = TextView(context)
-                tv_variant_title.text = trait_vars[var_id]?.grp
-                ll_more_info.addView(tv_variant_title)
+            for (var_id in variants) {
+                if (var_id > 0) {
+                    val tv_variant_title = TextView(context)
+                    tv_variant_title.text = trait_vars[var_id]?.grp
+                    ll_more_info.addView(tv_variant_title)
 
-                val tv_variant_name = TextView(context)
-                tv_variant_name.text = trait_vars[var_id]?.name
-                ll_more_info.addView(tv_variant_name)
+                    val tv_variant_name = TextView(context)
+                    tv_variant_name.text = trait_vars[var_id]?.name
+                    ll_more_info.addView(tv_variant_name)
 
-                val tv_variant_text = TextView(context)
-                tv_variant_text.text = trait_vars[var_id]?.txt
-                ll_more_info.addView(tv_variant_text)
+                    val tv_variant_text = TextView(context)
+                    tv_variant_text.text = trait_vars[var_id]?.txt
+                    ll_more_info.addView(tv_variant_text)
+                }
             }
         }
     }

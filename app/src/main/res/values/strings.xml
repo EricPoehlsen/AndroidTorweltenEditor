@@ -27,7 +27,8 @@
     <string name="dialog_edit_skill_del">entfernen …</string>
     <string name="dialog_remove_trait_title">Eigenschaft löschen …</string>
     <string name="dialog_remove_trait_msg">Entfernt %1$s und korrigiert die Erfahrungspunkte.</string>
-
+    <string name="dialog_collapse_trait_title">Varianten bearbeiten …</string>
+    <string name="dialog_collapse_trait_msg">Fügt die gewählten Varianten dem bearbeitbaren Text hinzu.</string>
     <string name="dialog_ok">OK</string>
     <string name="dialog_cancel">Abbrechen</string>
     <string name="search">🔍</string>

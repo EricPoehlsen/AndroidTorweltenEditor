@@ -12,25 +12,25 @@ import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 
 /**
- * This dialog is used to confirm if the user wants to remove a
- * character trait in the CharTraitEditFragment
+ * This dialog is used to confirm if the user wants to
+ * collapse the selected trait variants into the editable text
+ * in the CharTraitEditFragment
  */
-class RemoveTraitDialog(trait_name: String): DialogFragment() {
-    var trait_name = trait_name
-    internal lateinit var listener: RemoveTraitDialogListener
+class CollapseTraitDialog: DialogFragment() {
+    internal lateinit var listener: CollapseTraitDialogListener
 
     /* The activity that creates an instance of this dialog fragment must
      * implement this interface in order to receive event callbacks.
      * Each method passes the DialogFragment in case the host needs to query it. */
-    interface RemoveTraitDialogListener {
-        fun onRemoveTraitDialogPositiveClick(dialog: RemoveTraitDialog)
+    interface CollapseTraitDialogListener {
+        fun onCollapseTraitDialogPositiveClick(dialog: CollapseTraitDialog)
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         try {
             // Instantiate the NoticeDialogListener so we can send events to the host
-            listener = targetFragment as RemoveTraitDialogListener
+            listener = targetFragment as CollapseTraitDialogListener
         } catch (e: ClassCastException) {
             // The activity doesn't implement the interface, throw exception
             throw ClassCastException((context.toString() +
@@ -46,14 +46,12 @@ class RemoveTraitDialog(trait_name: String): DialogFragment() {
         return activity?.let {
             val builder = AlertDialog.Builder(it)
 
-            var msg = getString(R.string.dialog_remove_trait_msg, trait_name)
-            builder.setIcon(R.drawable.remove_red)
-            builder.setTitle(R.string.dialog_remove_trait_title)
-            builder.setMessage(msg)
+            builder.setTitle(R.string.dialog_collapse_trait_title)
+            builder.setMessage(R.string.dialog_collapse_trait_msg)
 
             builder.setPositiveButton(R.string.dialog_ok,
                     DialogInterface.OnClickListener { dialog, id ->
-                        listener.onRemoveTraitDialogPositiveClick(this)
+                        listener.onCollapseTraitDialogPositiveClick(this)
 
                     }
             )

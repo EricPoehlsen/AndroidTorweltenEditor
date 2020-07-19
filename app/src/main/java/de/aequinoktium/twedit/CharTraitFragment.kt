@@ -78,6 +78,7 @@ class CharTraitFragment : Fragment() {
             trait.name = trait_data.getString(trait_data.getColumnIndex("name"))
             trait.txt = trait_data.getString(trait_data.getColumnIndex("txt"))
             trait.reduced = trait_data.getInt(trait_data.getColumnIndex("is_reduced"))
+            Log.d("info", "Trait is reduced? ${trait.reduced}")
             result += trait
         }
         trait_data.close()

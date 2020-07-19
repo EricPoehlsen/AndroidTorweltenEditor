@@ -16,16 +16,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class CharTraitEditFragment : Fragment(), RemoveTraitDialog.RemoveTraitDialogListener {
+class CharTraitEditFragment : Fragment(),
+        RemoveTraitDialog.RemoveTraitDialogListener,
+        CollapseTraitDialog.CollapseTraitDialogListener{
     private val c: CharacterViewModel by activityViewModels()
     private var default_data = TraitData()
     private var trait_data = CharTrait()
     private var trait_vars = arrayOf<TraitVariant>()
 
-
     private lateinit var tv_name: TextView
     private lateinit var tv_xp: TextView
     private lateinit var tv_txt: TextView
+    private lateinit var b_collapse: ImageButton
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,6 +42,9 @@ class CharTraitEditFragment : Fragment(), RemoveTraitDialog.RemoveTraitDialogLis
         return inflater.inflate(R.layout.fragment_char_trait_edit, container, false)
     }
 
+    /**
+     * Initialize the view after it has been created ...
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -47,26 +52,35 @@ class CharTraitEditFragment : Fragment(), RemoveTraitDialog.RemoveTraitDialogLis
         tv_name = act.findViewById<TextView>(R.id.traitedit_name)
         tv_xp = act.findViewById<TextView>(R.id.traitedit_xp)
         tv_txt = act.findViewById<TextView>(R.id.traitedit_text)
-        var b_cancel = act.findViewById<Button>(R.id.traitedit_cancel)
+
+        // set onClickListeners ...
+        val b_cancel = act.findViewById<Button>(R.id.traitedit_cancel)
         b_cancel.setOnClickListener{backToCharTraits()}
-        var b_ok = act.findViewById<Button>(R.id.traitedit_ok)
+        val b_ok = act.findViewById<Button>(R.id.traitedit_ok)
         b_ok.setOnClickListener {saveTrait()}
-        var b_collapse = act.findViewById<ImageButton>(R.id.traitedit_collapse)
-        b_collapse.setOnClickListener {collapseTrait()}
-        var b_delete = act.findViewById<ImageButton>(R.id.traitedit_delete)
+        b_collapse = act.findViewById<ImageButton>(R.id.traitedit_collapse)
+        b_collapse.setOnClickListener {collapseTraitDialog()}
+        b_collapse.visibility = View.GONE
+        val b_delete = act.findViewById<ImageButton>(R.id.traitedit_delete)
         b_delete.setOnClickListener {deleteTraitDialog()}
 
-
-
-
+        // load trait data from database and display ...
         c.viewModelScope.launch {
             loadData()
+            Log.d("info", "trait data reduced: ${trait_data.reduced}")
             withContext(Dispatchers.Main) {
+                if (trait_data.reduced == 0 && trait_vars.size > 0){
+                    b_collapse.visibility = View.VISIBLE
+                }
                 displayTrait()
             }
         }
     }
 
+    /**
+     * displays the character trait,
+     * transforms html entities into markdown ...
+     */
     fun displayTrait() {
         if (trait_data.name.length > 0) {
             tv_name.text = trait_data.name
@@ -78,18 +92,25 @@ class CharTraitEditFragment : Fragment(), RemoveTraitDialog.RemoveTraitDialogLis
         if (trait_data.txt.length > 0) {
             text = trait_data.txt
         } else {
-             text = default_data.txt
+            text = default_data.txt
+            trait_data.txt = default_data.txt
         }
 
         text = text.replace("<br/>", "\n")
-        text = text.replace("<", "[")
-        text = text.replace(">", "]")
+        text = text.replace("<b>", "**")
+        text = text.replace("</b>", "**")
+        text = text.replace("<u>", "__")
+        text = text.replace("</u>", "__")
+        text = text.replace("<i>", "//")
+        text = text.replace("</i>", "//")
         tv_txt.text = text
 
         tv_xp.text = trait_data.xp_cost.toString()
     }
 
-
+    /**
+     * retrieves the trait data from the SQLite database
+     */
     fun loadData() {
         var sql = """
             SELECT
@@ -97,7 +118,12 @@ class CharTraitEditFragment : Fragment(), RemoveTraitDialog.RemoveTraitDialogLis
                 trait_id,
                 txt,
                 xp_cost, 
-                rank
+                rank,
+                var1_id,
+                var2_id,
+                var3_id,
+                var4_id,
+                is_reduced
             FROM 
                 char_traits
             WHERE
@@ -112,6 +138,11 @@ class CharTraitEditFragment : Fragment(), RemoveTraitDialog.RemoveTraitDialogLis
             trait_data.xp_cost = data.getInt(3)
             trait_data.xp_old = data.getInt(3)
             trait_data.rank = data.getInt(4)
+            trait_data.var1_id = data.getInt(5)
+            trait_data.var2_id = data.getInt(6)
+            trait_data.var3_id = data.getInt(7)
+            trait_data.var4_id = data.getInt(8)
+            trait_data.reduced = data.getInt(9)
         }
         data.close()
         sql = """
@@ -129,25 +160,98 @@ class CharTraitEditFragment : Fragment(), RemoveTraitDialog.RemoveTraitDialogLis
             default_data.name = data.getString(0)
             default_data.txt = data.getString(1)
         }
+        data.close()
+
+        sql = """
+            SELECT
+                name, 
+                txt
+            FROM 
+                trait_vars
+            WHERE
+                id 
+            IN (
+                ${trait_data.var1_id}, 
+                ${trait_data.var2_id}, 
+                ${trait_data.var3_id}, 
+                ${trait_data.var4_id}
+            )
+        """.trimIndent()
+        data = c.db.rawQuery(sql, null)
+        while (data.moveToNext()) {
+            var v = TraitVariant()
+            v.name = data.getString(0)
+            v.txt = data.getString(1)
+            trait_vars += v
+        }
+        data.close()
     }
 
+    /**
+     * updates the trait data before it is written back to the database
+     * contains a simple markdown parser to replace:
+     * ** with <b>/</b>
+     * // with <i>/</i>
+     * __ with <u>/</u>
+     * \n with <br/>
+     *
+     * adds a closing tag if the user did leave not close the pairs ...
+     */
     fun updateTrait() {
         trait_data.name = tv_name.text.toString()
         trait_data.xp_cost = tv_xp.text.toString().toInt()
         var txt = tv_txt.text.toString()
-        txt = txt.replace("[", "<")
-        txt = txt.replace("]", ">")
+
+        var b = false
+        while ("**" in txt) {
+            if (!b) {
+                txt = txt.replaceFirst("**", "<b>")
+                b = true
+            } else {
+                txt = txt.replaceFirst("**", "</b>")
+                b = false
+            }
+        }
+        if (b) txt += "</b>"
+
+        var u = false
+        while ("__" in txt) {
+            if (!u) {
+                txt = txt.replaceFirst("__", "<u>")
+                u = true
+            } else {
+                txt = txt.replaceFirst("__", "</u>")
+                u = false
+            }
+        }
+        if (u) txt += "</u>"
+
+        var i = false
+        while ("//" in txt) {
+            if (!i) {
+                txt = txt.replaceFirst("//", "<i>")
+                i = true
+            } else {
+                txt = txt.replaceFirst("//", "</i>")
+                i = false
+            }
+        }
+        if (i) txt += "</i>"
+
         txt = txt.replace("\n", "<br/>")
 
         trait_data.txt = txt
+
     }
 
-
+    /**
+     * saves the changes to the character trait to the SQLite database
+     * and invokes the return to the CharTraitFragment
+     */
     fun saveTrait() {
 
         c.viewModelScope.launch {
             updateTrait()
-
 
             var sql = """
                 UPDATE 
@@ -156,7 +260,8 @@ class CharTraitEditFragment : Fragment(), RemoveTraitDialog.RemoveTraitDialogLis
                     name = '${trait_data.name}',
                     txt = '${trait_data.txt}',
                     xp_cost = ${trait_data.xp_cost},
-                    rank = ${trait_data.rank}
+                    rank = ${trait_data.rank},
+                    is_reduced = ${trait_data.reduced} 
                 WHERE
                     id = ${trait_data.id}
             """.trimIndent()
@@ -172,7 +277,7 @@ class CharTraitEditFragment : Fragment(), RemoveTraitDialog.RemoveTraitDialogLis
                     id = ${c.char_id}
             """.trimIndent()
 
-            Log.d("info", "SQL: $sql")
+            Log.d("info", "reduced?: {${trait_data.reduced}}")
             c.db.execSQL(sql)
 
             withContext(Dispatchers.Main) {
@@ -181,6 +286,9 @@ class CharTraitEditFragment : Fragment(), RemoveTraitDialog.RemoveTraitDialogLis
         }
     }
 
+    /**
+     * creates a DeleteTraitDialog and displays it
+     */
     fun deleteTraitDialog() {
         val act = activity as MainActivity
         val fm = this.parentFragmentManager
@@ -189,6 +297,21 @@ class CharTraitEditFragment : Fragment(), RemoveTraitDialog.RemoveTraitDialogLis
         dialog.show(fm, null)
     }
 
+    /**
+     * creates a CollapseTraitDialog and displays it
+     */
+    fun collapseTraitDialog() {
+        val act = activity as MainActivity
+        val fm = this.parentFragmentManager
+        val dialog = CollapseTraitDialog()
+        dialog.setTargetFragment(this, 300)
+        dialog.show(fm, null)
+    }
+
+    /**
+     * remove trait from the database and correct the XP value
+     * invokes back stack to return to CharTraitFragment
+     */
     fun deleteTrait() {
         c.viewModelScope.launch {
             var sql = """
@@ -216,7 +339,13 @@ class CharTraitEditFragment : Fragment(), RemoveTraitDialog.RemoveTraitDialogLis
     }
 
     fun collapseTrait() {
+        for (v in trait_vars) {
+            trait_data.txt = trait_data.txt + "\n${v.name}\n${v.txt}"
+            trait_data.reduced = 1
+            displayTrait()
+            b_collapse.visibility = View.GONE
 
+        }
     }
 
 
@@ -224,8 +353,18 @@ class CharTraitEditFragment : Fragment(), RemoveTraitDialog.RemoveTraitDialogLis
         this.findNavController().popBackStack()
     }
 
+    /**
+     * Implementation of the listener for the RemoveTraitDialog
+     */
     override fun onRemoveTraitDialogPositiveClick(dialog: RemoveTraitDialog) {
         deleteTrait()
+    }
+
+    /**
+     * Implementation of the listener for the CollapseTraitDialog
+     */
+    override fun onCollapseTraitDialogPositiveClick(dialog: CollapseTraitDialog) {
+        collapseTrait()
     }
 
 }
