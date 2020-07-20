@@ -578,6 +578,98 @@ class DatabaseConnect(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
         """.trimIndent()
         db.execSQL(sql)
 
+        sql = """
+            INSERT INTO traits (id, name, xp_cost, cls, grp, txt, min_rank, max_rank) VALUES
+            (35, 'Erweitertes Sichtfeld', 3, 1, 1,'Ein Charakter mit diesem Vorteil besitzt ein Sichtfeld von deutlich über 180°. Das heißt es ist schwieriger, den Charakter zu überraschen. Jeder Rang in diesem Vorteil erweitert das Sichtfeld um 30°. Für ein Sichtfeld von 270° also drei Ränge und für Rundumsicht von 360° sechs Ränge.', 1, 6),
+            (36, 'Eingeschränktes Sichtfeld', -3, 1, 1, 'Der Charakter hat ein eingeengtes Gesichtfeld. Hierunter fallen Erkrankungen, die einen Tunnelblick verursachen, aber auch der Umstand, dass der Charakter nur ein Auge besitzt. Analog zum <i>Erweiterten Sichtfeld</i> bringt entspricht jeder Rang einer Reduktion des Blickfelds von 30°. Rang 2 entspricht mit 120° dem Sichtfeld eines Einäugigen. Ein Sichtfeld von weniger als 30° sollte über den Nachteil <i>Blind</i> abgehandelt werden.', 1, 6)
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO traits (id, name, xp_cost, cls, grp, txt) VALUES
+            (37, 'Kurzsichtig', -1, 1, 1, 'Die Augen des Charakters sind nicht in der Lage auf große Entfernungen zu fokussieren. Ohne Brille oder Kontaktlinsen kann der Charakter weiter entfernte Objekte nur schwer oder gar nicht erkennen.')
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO trait_vars(trait_id, name, xp_factor, oper, grp, txt) VALUES 
+            (37, 'Geringe Beeinträchtigung', -1, 0, 'Ausprägung', 'Modifikator +1 für Wahrnehmungsproben auf Sicht bei einer Distanz von mehr als 5m.'),
+            (37, 'Deutliche Sehschwäche', -3, 0, 'Ausprägung', 'der Modifikator steigt +1 alle 3m.'),
+            (37, 'Extrem kurzsichtig', -6, 0, 'Ausprägung', 'Modifikator +1 pro Meter Entfernung.')
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO traits (id, name, xp_cost, cls, grp, txt) VALUES
+            (38, 'Weitsichtig', -1, 1, 1, 'Die Augen des Charakters können auf Nahe Objekte nicht korriekt fokussieren.')
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO trait_vars(trait_id, name, xp_factor, oper, grp, txt) VALUES 
+            (38, 'Geringe Beeinträchtigung', -1, 0, 'Ausprägung', 'Modifikator +1 für Wahrnehmungsproben auf Sicht bei einer Distanz von weniger als 5m.'),
+            (38, 'Deutliche Sehschwäche', -3, 0, 'Ausprägung', 'der Modifikator beträgt +3 für Objekte, die weniger als 2m entfernt sind. Alle 3m reduziert sich der Modifikator um 1.'),
+            (38, 'Extrem weitsichtig', -6, 0, 'Ausprägung', 'der Modifikator liegt bei +6 für Objekte, die weniger als 2m entfernt sind. Alle 3m reduziert sich der Modifikator um 1.')
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO traits (id, name, xp_cost, cls, grp, txt) VALUES
+            (39, 'Riesenwuchs/Gigant', -3, 1, 5, 'Der Charakter ist nach dem Maßstab der Gesellschaft zu groß. Er hat Schwierigkeiten, passende Kleidung zu finden. Standardmäßige Betten und Räume sind ihm zu eng und zu niedrig. Er neigt dazu, sich an Türstöcken anzustoßen oder ständig gebeugt zu gehen. Zudem reagieren manche Menschen negativ auf ihn – vorwiegend mit Angst und entsprechender Abneigung.<br/>Ein Charakter mit diesem Nachteil sollte ein PHY-Attribut von mindestens 5 besitzen.')
+        """.trimIndent()
+
+        db.execSQL(sql)
+        sql = """
+            INSERT INTO trait_vars(trait_id, name, xp_factor, oper, grp, txt) VALUES 
+            (39, 'Riesenwuchs', -3, 0, 'Ausprägung', 'Für Charaktere mit einer Körpergröße von 2,10m - 2,50m.'),
+            (39, 'Gigant', -6, 0, 'Ausprägung', 'Für Charaktere über 2,50m.')
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO traits (id, name, xp_cost, cls, grp, txt) VALUES
+            (40, 'Zwergenwuchs/Winzig', -3, 1, 5, 'Der Charakter ist zu klein für die Gesellschaft. Es ist eine Herausforderung, passende Kleidung zu finden, alle Möbel und Gerätschaften sind zu groß. Außerdem reagieren Fremde auf den Charakter mit Mitleid oder Vorurteilen...')
+        """.trimIndent()
+
+        db.execSQL(sql)
+        sql = """
+            INSERT INTO trait_vars(trait_id, name, xp_factor, oper, grp, txt) VALUES 
+            (40, 'Zwergenwuchs', -3, 0, 'Ausprägung', 'bei einer Körpergröße von 1,00m bis 1,50m'),
+            (40, 'Winzig', -6, 0, 'Ausprägung', 'bei einer Größe unter 1,00m')
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO traits (id, name, xp_cost, cls, grp, txt) VALUES
+            (41, 'Richtungssinn', 6, 1, 4, 'Der Charakter hat ein ausgesprochen gutes Gespür für Richtungen und Dimensionen, er weiß in welche Richtung er sich bewegt und wie weit. Selbst in auf dem Meer oder in der Wüste schafft er es geradeaus zu gehen. Auch kann er die Größe von Räumen oder Objekten ziemlich gut abschätzen.')
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO trait_vars(trait_id, name, xp_factor, oper, grp, txt) VALUES 
+            (41, 'unter Schwerkraft', 6, 0, 'Ausprägung', 'der Richtungssinn ist von einer stabilen Schwerkraftlage abhängig'),
+            (41, 'bei Schwerelosigkeit', 9, 0, 'Ausprägung', 'der Charakter kann sich selbst bei Schwerelosigkeit mühelos orientieren.')
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO traits (id, name, xp_cost, cls, grp, txt) VALUES
+            (42, 'Fehlende oder verkrüppelte Gliedmaßen', -1, 1, 5, 'Hierbei handelt es sich um einen Nachteil, der in seinen Ausprägungen und auch seiner tatsächlichen Wirkung extrem vielschichtig ist.<br/>Die nachfolgende Auflistung erhebt aus diesem Grund auch keinen Anspruch auf vollständigkeit und soll nur einen groben Rahmen darstellen.<br/>Viele der Einschränkungen können prinzipiell mit Prothesen ausgeglichen werden. Die Wirkung verschiedener Hilfsmittel wird in der Ausrüstungsliste beschrieben. Natürlich ist es möglich, Prothesen zur Charaktererschaffung mit dem Vorteil <i>Startkapital</i> zu erwerben.<br/>Gliedmaßen, die aufgrund von Erkrankungen oder Verletzungen im Laufe des Lebens verloren wurden, können durchaus auch wiederhergestellt werden. Die entsprechende medizinische Prozedur ist allerdings eher unangenehm und sehr teuer.<br/>Besonders bei der mehrfachen Wahl dieses Nachteils, sollte man die Spielbarkeit des Charakters im Auge behalten.')
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO trait_vars(trait_id, name, xp_factor, oper, grp, txt) VALUES 
+            (42, 'Einzelne verkrüppelte oder fehlende Finger', -1, 0, 'Ausprägung', 'Bei speziellen Fingerfertigkeitsproben, wie <i>Musizieren</i>, kann ein +1 Modifikator zum Tragen kommen.'),
+            (42, 'Steifes Handgelenk', -3, 0, 'Ausprägung', 'Bestimmte Fingerfertigkeits oder Gewandtheitsproben können um +1 erschwert werden.'),
+            (42, 'Verkrüppelte Hand', -6, 0, 'Ausprägung', 'Eine fingerlose oder stark verkrüppelte Hand mit eingeschränkter Beweglichkeit. Fingerfertigkeitsproben, bei denen üblicherweise beide Hände zum Einsatz kommen, werden um bis zu zwei Punkte erschwert. Dieser Nachteilsausprägung entsprechen auch Hände die zu <i>Klauen</i> ausgebildet sind.'),
+            (42, 'Amputation Unterarm', -9, 0, 'Ausprägung', 'Der Arm endet unterhalb des Ellbogen und kann nur sehr eingeschränkt eingesetzt werden. Fertigkeitsproben wie Klettern werden um +2 erschwert. Gewisse Aufgaben können auch tatsächlich unmöglich sein, etwa die Verwendung zweihändiger Nahkampfwaffen.'),
+            (42, 'Fehlender Arm', -12, 0, 'Ausprägung', 'Die Erschwernis für Athletikproben kann bis +3 reichen. Während der Charakter mit dem (-9) Nachteil ein Gewehr noch über den Unterarm legen kann, fällt das bei diesem Grad der Behinderung aus.'),
+            (42, 'Steifes Knie', -6, 0, 'Ausprägung', 'Die effektive BEW des Charakters reduziert sich um 1, bestimmte Athletikproben können erschwert sein.'),
+            (42, 'Fehlendes Bein', -9, 0, 'Ausprägung', 'Teil- oder Vollamputation eines Beines. Der Charakter benötigt Prothesen, Krücken, einen Rollstuhl oder einen Antigrav-Rucksack zur Fortbewegung. Bestimmte Athletische Proben können erschwert oder unmöglich sein, die effektive BEW sinkt um 3.')
+        """.trimIndent()
+        db.execSQL(sql)
+
         /*
         sql = """
 

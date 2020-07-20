@@ -6,7 +6,6 @@ import android.graphics.Typeface
 import android.util.AttributeSet
 import android.util.Log
 import android.view.Gravity
-import android.view.View
 import android.widget.*
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.text.HtmlCompat
@@ -214,15 +213,15 @@ class TraitView: LinearLayout {
             variant.grp = trait_var.getString(4)
             variant.txt = trait_var.getString(5)
 
-            var entry = arrayOf(variant)
+            var map = mutableMapOf<Int, TraitVariant>()
 
             if (data.variants[variant.grp] != null) {
-                var new_array = data.variants[variant.grp] as Array<TraitVariant>
-                new_array += entry
-                data.variants[variant.grp] = new_array
+                map = data.variants[variant.grp] as MutableMap<Int, TraitVariant>
             } else {
-                data.variants[variant.grp] = entry
+                data.variants[variant.grp] = mutableMapOf<Int, TraitVariant>()
+                map = data.variants[variant.grp]  as MutableMap<Int, TraitVariant>
             }
+            map[variant.var_id] = variant
         }
 
         return result
@@ -273,10 +272,12 @@ class TraitView: LinearLayout {
             val tv_variant_title = TextView(context)
             tv_variant_title.text = key
             grp.addView(tv_variant_title)
-            val trait_vars = data.variants[key] as Array<TraitVariant>
+            val trait_vars = data.variants[key] as MutableMap<Int, TraitVariant>
 
-            for (variant in trait_vars) {
+            for (key in trait_vars.keys) {
+                val variant = trait_vars[key] as TraitVariant
                 val rb = RadioButton(context)
+                rb.id = variant.var_id
                 rb.text = variant.name
                 grp.addView(rb)
                 val txt = TextView(context)
@@ -366,7 +367,8 @@ class TraitView: LinearLayout {
         if (data.variants.size > 0) {
             var new_xp = 0f
             for (variant_group in data.variants.values) {
-                for (variant in variant_group) {
+                for (key in variant_group.keys) {
+                    var variant = variant_group[key] as TraitVariant
                     if (variant.selected) {
                         if (variant.oper == 0) {
                             new_xp += variant.xp_factor
@@ -387,6 +389,7 @@ class TraitView: LinearLayout {
      * calls updateXp()
      */
     private fun onVariantSelectionChanged(grp: RadioGroup?, id: Int) {
+        Log.d("info", "selected: $id")
         var k = -1
         when (grp) {
             rg_variant1 -> k = 0
@@ -397,19 +400,22 @@ class TraitView: LinearLayout {
 
         val keys = data.variants.keys.toTypedArray()
         val key = keys[k]
-        val variants = data.variants[key] as Array<TraitVariant>
-        for (variant in variants) {
-            variant.selected = false
-        }
-        variants[id-1].selected = true
+        val variants = data.variants[key] as MutableMap<Int, TraitVariant>
+        for (var_key in variants.keys) {
+            var variant = variants[var_key] as TraitVariant
 
-        when (k) {
-            0 -> char_trait.var1_id = variants[id-1].var_id
-            1 -> char_trait.var2_id = variants[id-1].var_id
-            2 -> char_trait.var3_id = variants[id-1].var_id
-            3 -> char_trait.var4_id = variants[id-1].var_id
+            if (id == var_key) {
+                variant.selected = true
+                when (k) {
+                    0 -> char_trait.var1_id = id
+                    1 -> char_trait.var2_id = id
+                    2 -> char_trait.var3_id = id
+                    3 -> char_trait.var4_id = id
+                }
+            } else {
+                variant.selected = false
+            }
         }
-
         updateXp()
     }
 
@@ -419,9 +425,9 @@ class TraitView: LinearLayout {
         var var_id3 = "NULL"
         var var_id4 = "NULL"
         if (char_trait.var1_id > 0) var_id1 = char_trait.var1_id.toString()
-        if (char_trait.var2_id > 0) var_id1 = char_trait.var2_id.toString()
-        if (char_trait.var3_id > 0) var_id1 = char_trait.var3_id.toString()
-        if (char_trait.var4_id > 0) var_id1 = char_trait.var4_id.toString()
+        if (char_trait.var2_id > 0) var_id2 = char_trait.var2_id.toString()
+        if (char_trait.var3_id > 0) var_id3 = char_trait.var3_id.toString()
+        if (char_trait.var4_id > 0) var_id4 = char_trait.var4_id.toString()
 
         var rank = 0
         if (data.max_rank > 1) rank = data.cur_rank

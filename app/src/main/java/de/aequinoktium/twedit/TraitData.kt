@@ -15,7 +15,7 @@ class TraitData {
     var total_xp = 0
     var cls = 0
     var grp = 0
-    var variants: MutableMap<String, Array<TraitVariant>> = mutableMapOf()
+    var variants: MutableMap<String, MutableMap<Int, TraitVariant>> = mutableMapOf()
     var complex = false
 }
 
