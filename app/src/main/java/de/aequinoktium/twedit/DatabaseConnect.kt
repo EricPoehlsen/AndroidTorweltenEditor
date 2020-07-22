@@ -503,6 +503,9 @@ class DatabaseConnect(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
         sql = """
             INSERT INTO trait_cls (id, name) VALUES
             (1, 'Körperlich');
+            (2, 'Mental'),
+            (3, 'Sozial'),
+            (4, 'Psionisch');
         """.trimIndent()
         db.execSQL(sql)
 
@@ -515,7 +518,17 @@ class DatabaseConnect(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
             (4, 'Sonstige Wahrnehmung'),
             (5, 'Körperbau'),
             (6, 'Schmecken & Riechen'),
-            (7, 'Spezialisierte Fertigkeiten');
+            (7, 'Spezialisierte Attribute'),
+            (8, 'Natürliche Waffen'),
+            (9, 'Krankheiten'),
+            (10, 'Verhaltensweisen'),
+            (11, 'Fertigkeiten'),
+            (12, 'Kultur'),
+            (13, 'Charisma'),
+            (14, 'Kommunikation'),
+            (15, 'Status'),
+            (16, 'Information'),
+            (17, 'Besitz');
         """.trimIndent()
         db.execSQL(sql)
 
@@ -667,6 +680,386 @@ class DatabaseConnect(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
             (42, 'Fehlender Arm', -12, 0, 'Ausprägung', 'Die Erschwernis für Athletikproben kann bis +3 reichen. Während der Charakter mit dem (-9) Nachteil ein Gewehr noch über den Unterarm legen kann, fällt das bei diesem Grad der Behinderung aus.'),
             (42, 'Steifes Knie', -6, 0, 'Ausprägung', 'Die effektive BEW des Charakters reduziert sich um 1, bestimmte Athletikproben können erschwert sein.'),
             (42, 'Fehlendes Bein', -9, 0, 'Ausprägung', 'Teil- oder Vollamputation eines Beines. Der Charakter benötigt Prothesen, Krücken, einen Rollstuhl oder einen Antigrav-Rucksack zur Fortbewegung. Bestimmte Athletische Proben können erschwert oder unmöglich sein, die effektive BEW sinkt um 3.')
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO traits (id, name, xp_cost, cls, grp, txt) VALUES
+            (43, 'Schwanz', 0, 1, 5, 'Der Charakter besitzt zusätzlich zu Armen und Beinen einen ausgeprägten Schwanz.')
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO trait_vars(trait_id, name, xp_factor, oper, grp, txt) VALUES 
+            (43, 'Einfacher Schwanz', 0, 0, 'Ausprägung', 'Ein einfacher Schwanz zählt nur als kosmetische Modifikation und kostet keine Punkte.'),
+            (43, 'Balanceschwanz', 3, 0, 'Ausprägung', 'Dieser Schwanz ist deutlich beweglicher und kontrollierter, als der einfache Schwanz. Er ist kräftig genug um einen Gegenstand gezielt wegzuschieben oder einen Hebel zu betätigen. Auf Balanceproben kann es eine Erleichterung geben.'),
+            (43, 'Greifschwanz', 9, 0, 'Ausprägung', 'Der Charakter kann seinen Schwanz fast wie einen normalen Arm/Tentakel einsetzen. Er kann angreifen, eine entsprechend gearbeitete Waffe verwenden und gewöhnliche, nicht all zu filigrane Gegenstände umfassen und bewegen.')
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO traits (id, name, xp_cost, cls, grp, txt) VALUES
+            (44, 'Tentakeln', 1, 1, 5, 'Der Charakter verfügt über Tentakeln. Die Kosten für diesen Vorteil setzen sich aus einer Reihe von Faktoren zusammen.<br/>Es mag durchaus Spezies gegeben, die statt Armen Tentakeln besitzen. Ein Satz von vier Tentakeln (4) mit einer Kraft von (6) und einfacher Armlänge (2) kostet insgesamt (12) und kompensiert somit genau einmal den Nachteil <i>Fehlender Arm</i>.<br/>Jeder Satz Tentakeln mit einer Anzahl von vier oder acht, kann als <i>Hand</i> gewertet werden.')
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO trait_vars(trait_id, name, xp_factor, oper, grp, txt) VALUES 
+            (44, '2 Stück', 1, 0, 'Anzahl', 'Ein Satz von zwei Tentakeln'),
+            (44, '4 Stück', 3, 0, 'Anzahl', 'Ein Satz von vier Tentakeln'),
+            (44, '8 Stück', 6, 0, 'Anzahl', 'Ein Satz von acht Tentakeln'),
+            (44, 'zart', 1, 0, 'Stärke', 'Die Tentakeln können ½x PHY kg heben'),
+            (44, 'dürr', 2, 0, 'Stärke', 'Die Tentakeln können 1x PHY kg heben'),
+            (44, 'schwach', 3, 0, 'Stärke', 'Die Tentakeln können 2x PHY kg heben'),
+            (44, 'normal', 4, 0, 'Stärke', 'Die Tentakeln können 3x PHY kg heben'),
+            (44, 'kräftig', 5, 0, 'Stärke', 'Die Tentakeln können 5x PHY kg heben'),
+            (44, 'stark', 6, 0, 'Stärke', 'Die Tentakeln können 10x PHY kg heben'),
+            (44, 'kurz', 2, 0, 'Länge', 'etwa so lang wie normale Arme'),
+            (44, 'lang', 4, 0, 'Länge', 'bis etwa zwei Meter Länge'),
+            (44, 'enorm', 6, 0, 'Länge', 'wirklich lange Tentakeln')
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO traits (id, name, xp_cost, cls, grp, txt, min_rank, max_rank) VALUES
+            (45, 'Weiteres Armpaar', 9, 1, 5, 'Der Charakter besitzt mehr als zwei Arme. Diesen Vorteil gibt es in zwei Rängen.<br/>Auf Rang 1 sind diese Arme sind kürzer, schwächer oder weniger fingerfertig, als die Hauptarme. Dennoch ist der Charakter möglicherweise in der Lage, mit diesen Armen schon einmal den Ersatzclip aus der Gürteltasche zu ziehen, während er mit den anderen Armen noch schießen.<br/>Bei Rang 2 besitzt der Charakter ein weiteres voll ausgebildetes Armpaar. Er ist prinzipiell in der Lage, zwei zweihändige Waffen zu führen und bekommt deutliche Erleichterungen auf bestimmte Athletikproben, etwa <i>Klettern</i><br/>Charaktere die multitasken, etwa eine Leiter hochklettern und gleichzeitig mit den anderen Armen schießen, erhalten auf die Aktionen entsprechende Erschwernisse analog zu <i>Aktionen während der Bewegung</i>.<br/>Ja, es mag Spezies geben, bei denen der der doppelt gewählte Nachteil <i>Fehlende/Verkrüppelte Gliedmaßen: Bein</i> durch diesen Vorteil ausgeglichen wird.',1 ,2)
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO traits (id, name, xp_cost, cls, grp, txt) VALUES
+            (46, 'Natürliche Panzerung', 9, 1, 5, 'Die Haut des Charakters besitzt eine besonders robuste Beschaffenheit und ist schwer zu verletzen. Der Charakter besitzt 0/+1 Schadensresistenz.')
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO traits (id, name, xp_cost, cls, grp, txt) VALUES
+            (47, 'Raubtiergebiss', 1, 1, 8, 'Der Charakter besitzt einen kräftigen Kiefer und besonders spitze, sowie scharfe Zähne. Bei einem erfolgreichen Angriff, verursacht sein Biss schwerere Verletzungen. Ein Raubtiergebiss findet man bei vielen Hazaru-Unterarten aber auch bei den Reynora und den Douwg. Insbesondere in den extremeren Ausprägungen, kann diese Eigenschaft auch Auswirkungen auf soziale Interaktionen haben.')
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO trait_vars(trait_id, name, xp_factor, oper, grp, txt) VALUES 
+            (47, 'Starker Kiefer', 1, 0, 'Ausprägung', 'Der Angriff mit Biss hat einen Schaden von 1/-1'),
+            (47, 'Böse Reißzähne', 3, 0, 'Ausprägung', 'Hat einen Schadenswert von 2/0'),
+            (47, 'Kräftiges Raubtiergebiss', 6, 0, 'Ausprägung', 'Ein Angriff von 2/-2')
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO traits (id, name, xp_cost, cls, grp, txt) VALUES
+            (48, 'Krallen und Klauen', 1, 1, 8, 'Die Finger und/oder Zehen des Charakters laufen in ernsthafte Krallen oder Klauen aus. Bei einem erfolgreichen Angriff verursachen sie klaffende Wunden und schwere Verletzungen.<br/>Je nach Länge der Krallen, bietet es sich an, dazu eine entsprechende Einschränkung der Fingerfertigkeit in Betracht zu ziehen')
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO trait_vars(trait_id, name, xp_factor, oper, grp, txt) VALUES 
+            (48, 'Gefährliche Pranken', 1, 0, 'Ausprägung', 'Der Hieb verursacht einen Schaden von 1/-1'),
+            (48, 'Scharfe Krallen', 3, 0, 'Ausprägung', 'Hat einen Schadenswert von 2/0'),
+            (48, 'Eindrucksvolle Klauen', 6, 0, 'Ausprägung', 'Ein Angriff von 2/-2')
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO traits (id, name, xp_cost, cls, grp, txt) VALUES
+            (49, 'Allergien und Asthma', -1, 1, 9, 'Der Charakter ist gegen eine oder mehrere Substanzen allergisch. Der Punktwert hängt von der Schwere der Allergie und der Art des Auslösers ab.<br/>An dieser Stelle ist der Spielleiter gefragt. Macht euch gemeinsam Gedanken, welche Auswirkungen die Allergie auf den Charakter hat. Eine Kontaktallergie die nässende Ausschläge verursacht wird eher die handwerklichen Fähigkeiten des Charakters beeinflussen. Eine Atemwegsallergie kann sich im Normalfall auf Ausdauer oder Wahrnehmung niederschlagen. Wenn im folgenden Text von <i>betroffenen Fertigkeiten</i> die Rede ist, dann sind dei Fertigkeiten gemeint, die durch die jeweilige Allergie in Mitleidenschaft gezogen werden.<br/>Allergien lassen sich aus Symptomen und Auslösern kombinieren.<br/>Die Punkte für die Symptome werden mit dem Auslöserwert multipliziert. Das Ergebnis wird aufgerundet.<br/>Eine Kaffeeallergie(x3) die zu schwerer Atemnot(-4) führt hat einen Wert von (-12), eine tödliche Allergie, Allergischer Schock(-9) gegen einen extrem seltenen Auslöser(x½) hat hingegen nur einen Wert von (-5).<br/>Letztes Wort über Art und Auswirkung der Allergie hat der Spielleiter.')
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO trait_vars(trait_id, name, xp_factor, oper, grp, txt) VALUES 
+            (49, 'Keine Hautirritation', 0, 0, 'Hautirritationen', 'keine Reaktion'),
+            (49, 'leichtes Jucken', -1, 0, 'Hautirritationen', 'Der Charakter spürt ein deutliches Jucken.'),
+            (49, 'Rötungen/Pusteln', -2, 0, 'Hautirritationen', 'Die Haut reagiert deutlich gereizt'),
+            (49, 'Nässender Ausschlag', -3, 0, 'Hautirritationen', 'Alle Proben bei denen entsprechende Körperteile beteiligt sind, werden um 1 Punkt erschwert.'),
+            (49, 'Keine Atemreizung', 0, 0, 'Atmung', 'keine Reaktion'),
+            (49, 'Schnupfen', -1, 0, 'Atmung', 'Leichte Atemschwierigkeiten. Erschwernis von 3 Punkten auf Riechen oder Schmecken. Möglicherweise 1 Punkt Aufschlag auf anstrengende körperliche Tätigkeiten.'),
+            (49, 'Niesen', -2, 0, 'Atmung', 'Der Charakter reagiert auf die Allergene durch starkes Niesen. Der Charakter kann versuchen, das Nießen durch eine PHY-Probe zu unterdrücken'),
+            (49, 'Husten', -2, 0, 'Atmung', 'Immer wieder Husten, der den Charakter zeitweilig einschränkt. Für jede Spielrunde wird eine PHY-Probe gewürfelt. Misslingt diese, werden alle Proben für die nächste Spielrunde aufgrund von Hustenanfällen um 1 Punkt erschwert.'),
+            (49, 'Schwerer Husten', -3, 0, 'Atmung', 'Der Charakter wird, während er dem Allergen ausgesetzt ist, ständig von Husten gestört (1 Punkt Erschwernis). Für jede Spielrunde wird eine PHY-Probe gewürfelt, misslingt diese werden die Proben für die nächste Spielrunde um 3 Punkte erschwert.'),
+            (49, 'Atemnot', -3, 0, 'Atmung', 'Der Charakter ist kurzatmig und kann keine anstrengenden Aktionen ausführen. 1 Punkt Erschwernis für anstrengende Aktionen.'),
+            (49, 'schwere Atemnot', -4, 0, 'Atmung', 'Während der Charakter dem Allergen ausgesetzt ist, ist er extrem kurzatmig und eventuell auf Inhalatoren angeweisen. Grundsätzlich sind alle Proben um 1 Punkt erschwert. Anstrengende Aufgaben werden um 3 Punkte erschwert. Jede Minute wird eine PHY-Probe fällig, misslingt die Probe, erleidet der Charakter 1/0 Energieschaden.'),
+            (49, 'Es bringt mich nicht um', 0, 0, 'Sonstiges', 'Die Allergie ist nervig aber nicht wirklich gefährlich.'),
+            (49, 'Schwindelanfälle', -2, 0, 'Sonstiges', 'Alle zehn Minuten eine PHY-Probe, bei Misslingen werden alle Proben um 1 Punkt erschwert. Alle Fertigkeiten die Koordination erfordern (Schießen, Nahkampf, Klettern, Feinmotorische Dinge, etc.) sind um 3 Punkte erschwert.'),
+            (49, 'Allergischer Schock', -9, 0, 'Sonstiges', 'Tritt direkt nach dem Kontakt mit dem Allergen auf und wird jede Minute in der der Charakter nicht behandelt wird wiederholt. Der Charakter ist handlungsunfähig, gelingt die PHY-Probe erleidet er 1/0 Schaden, bei Misslingen der Probe 2/0 Schaden'),
+            (49, 'Allgegenwertiger Auslöser', 3, 1, 'Auslöser', 'für allgegenwärtig vorkommende Chemikalien oder Nahrungsmittel, wie Nanopolymere, Kunststoffe, Erdnüsse, Kaffee oder Soja.'),
+            (49, 'Verbreiteter Auslöser', 2, 1, 'Auslöser', 'für leichte körperliche Anstrengung, sowie häufig vorkommende Chemikalien oder Nahrungsmittel wie Nickel, Onavu oder andere übliche Nahrungsmittel.'),
+            (49, 'Seltener Auslöser', 1, 1, 'Auslöser', 'bei schwerer körperlicher Anstrengung oder seltenen Auslösern, seltenen Chemikalien oder Pollen von Pflanzen die es nur auf wenigen Welten gibt.'),
+            (49, 'Sehr seltener Auslöser', 0.5, 1, 'Auslöser', 'bei extrem selenen Auslösern wie Fell einer Spezies, die es nur auf einer Welt gibt.')
+        """.trimIndent()
+        db.execSQL(sql)
+
+
+        sql = """
+            INSERT INTO traits (id, name, xp_cost, cls, grp, txt) VALUES
+            (50, 'Motorische Störungen', -1, 1, 9, 'Dieser Nachteil umfasst eine Vielzahl von unterschiedlichen Erkrankungen oder Verletzungsfolgen, die zur Folge haben, dass der Charakter nur eingeschränkte Kontrolle über seinen Körper oder Teile davon besitzt. Dazu gehören kleinere Ärgernisse, wie unwillkürliche Muskelzuckungen, bis hin zu schwerwiegenden Einschränkungen, wie einer kompletten Querschnittslähmung vom Hals abwärts. Die Untenstehende Auswahl bildet nur einen kleinen Teil der Möglichkeiten ab. Gerade bei schwerwiegenden Einschränkungen sollte man an die Spielbarkeit des Charakters denken und natürlich Rücksprache mit dem Spielleiter halten. Bei Charakteren die nicht über die übliche Anzahl von Armen und Beinen verfügen, sind die Punktekosten mit dem Spielleiter abzustimmen.')
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO trait_vars(trait_id, name, xp_factor, oper, grp, txt) VALUES 
+            (50, 'Leichtes Zittern', -1, 0, 'Auswirkung:', 'Ein leichtes Zittern, das gegebenfalls die Fingerfertigkeit einschränkt'),
+            (50, 'Zuckungen', -2, 0, 'Auswirkung:', 'Stärkere Muskelkontraktionen, die je nach betroffenem Körperteil -1 Erschwernis auf körperliche Proben nach sich ziehen kann'),
+            (50, 'Krämpfe', -4, 0, 'Auswirkung:', 'Muskelverkrmpfungen, die den Körperteil möglicherweise unbrauchbar machen und bis zu -3 Erschwernis auf körperliche Proben nach sich ziehen kann'),
+            (50, 'Lähmung', -6, 0, 'Auswirkung:', 'Die Muskulatur lässt sich nicht willentlich kontrollieren, der betroffene Körperteil ist unbrauchbar körperliche Tätigkeiten, bei denen es auf die Nutzung der betroffenen Körperteile ankommt sind stark erschwert oder unmöglich.'),
+            (50, 'sekundäre Muskelgruppe', 0.5, 1, 'Betrifft:', 'Die Einschränkung betrifft eine untergeordnete Muskelgruppe und ist eher ärgerlich als hinderlich'),
+            (50, 'Unterarm/Hand', 0.75, 1, 'Betrifft:', 'eine einzelnen Arm unterhalb des Ellbogen.'),
+            (50, 'ganzer Arm', 1, 1, 'Betrifft:', 'eine Arm von der Schulter abwärts.'),
+            (50, 'Arme und Hände', 2, 1, 'Betrifft:', 'Hände und Arme des Charakters'),
+            (50, 'Ein Bein', 0.75, 1, 'Betrifft:', 'eines der Beine des Charakters'),
+            (50, 'Unterkörper', 2, 1, 'Betrifft:', 'die unteren Extremitäten und den Unterkörper'),
+            (50, 'eine Körperseite', 2, 1, 'Betrifft:', 'die rechte oder linke Körperhälfte'),
+            (50, 'den ganzen Körper', 3, 1, 'Betrifft:', 'den ganzen Körper des Charakters'),
+            (50, 'selten', 0.5, 1, 'Häufigkeit:', 'Einmal pro Abenteuer PHY-Probe, ob es zu einem Anfall kommt'),
+            (50, 'gelegentlich', 0.75, 1, 'Häufigkeit:', 'Einmal pro Tag PHY-Probe, ob es zu einem Anfall kommt'),
+            (50, 'häufig/immer', 1, 1, 'Häufigkeit:', 'Wenn es keine dauerhafte Einschränkung ist, dann bis zu einmal pro Stunde eine PHY-Probe.'),
+            (50, 'kurzer Anfall', 0.5, 1, 'Dauer:', 'Die Dauer der Einschränkung beträgt W12 Kampfrunden.'),
+            (50, 'längerer Anfall', 1, 1, 'Dauer:', 'Die Einschränkung hält W12 Minuten an.'),
+            (50, 'permanent', 2, 1, 'Dauer:', 'Der Charakter leidet permanent an der Einschränkung ')
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO traits (id, name, xp_cost, cls, grp, txt) VALUES
+            (51, 'Tot', -100, 1, 9, 'Der Charakter ist gestorben. Dies kann als Abenteueraufhänger für andere Charaktere dienen. Nein, die Punkte sind nicht übertragbar.')
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO traits (id, name, xp_cost, cls, grp, txt, min_rank, max_rank) VALUES
+            (52, 'Aggressiv', -3, 2, 10, 'Der Charakter ist aggressiv und kann seine Gefühlsausbrüche nur schwer kontrollieren.<br/>Um nicht mit Gewalt auf ein Problem zu reagieren, muss dem Charakter eine MEN-Probe gelingen, diese wird pauschal um den Rang des Nachteils erschwert und kann zudem abhängig vom Auslöser (Beleidigung, Tätlichkeit ...) weiter modifiziert werden.', 1, 6),
+            (53, 'Dickköpfig', -3, 2, 10, 'Der Charakter ist nur schwer von einer einmal getroffenen Entscheidung abzubringen. Was er angefangen hat, will er auch zuende bringen, ob er nun jemand verfolgt oder er der meinung ist, dass er den Reaktor selbst reparieren muss.<br/>Sollte die Entscheidung ihn oder die Gruppe in Gefahr bringen oder möchte der Charakter seine Aktion abbrechen, kann er eine MEN-Probe, erschwert um den Rang des Nachteils, ablegen. Modifikatoren nach Spielleiterentscheid sind möglich.<br/>Der Einsatz von Unterrichten, Überreden, Einschüchtern und verwandten Fertigkeiten gegen den Charakter werden um den Rang des Nachteils erschwert.', 1, 6),
+            (54, 'Ehrlich', -3, 2, 10, 'Der Charakter ist kreuzehrlich. Und man sieht es ihm an. Er ist nicht in der Lage zu lügen. Bei jedem Versuch zu lügen oder die Wahrheit zu verschweigen, muss ihm zuvor eine (um den Rang des Nachteils erschwerte) SOZ-Probe gelingen, um nicht sofort als Lügner aufzufallen. Diese kann nach Spielleiterentscheid modifiziert werden, so sind etwa Händler, Polizisten oder Richter besser darin, Lügner zu entlarven. Die normale Fertigkeitsprobe auf Lügen wird anschließend abgehandelt.<br/>Allerdings gilt der Charakter auch als ehrlich und integer – entsprechend positiv reagieren Personen, die ihn kennen. SOZ-Proben können unter umständen erleichtert werden.', 1, 6),
+            (55, 'Geizig', -3, 2, 10, 'Ein Charakter mit diesem Nachteil ist nicht einfach nur sparsam, er versucht jegliche Art von Ausgaben zu vermeiden. Er gibt kein Trinkgeld, er bietet nicht an die Rechnung zu übernehmen und wird dem Bettler an der Straßenecke keinen Cent geben.<br/>Natürlich hat ein solcher Charakter auch Schwierigkeiten damit, die Richtige Menge Schmiergeld zwischen die Dokumente der Zollabfertigung zu legen. Um zu erkennen, dass eine scheinbar sinnlose Geldverschwendung eine notwendige Investition ist, muss dem Charakter eine MEN-Probe gelingen, die um den Rang des Nachteils erschwert ist.', 1, 6),
+            (56, 'Gierig', -3, 2, 10, 'Der Charakter giert nach Reichtum, Geld, Schätzen, Kunstwerken oder auch nach besonders gutem Essen, Machtpositionen, Titeln oder Orden. Die Art der Gier sollte festgelegt werden, der Spielleiter kann durchaus zulassen dass der Spieler mehr als eine <i>Gier</i> besitzt.<br/>Wann immer sich eine Gelegenheit für den Charakter bietet, an ein Objekt seiner Begierde zu gelangen, muss er versuchen, es zu bekommen. Wäre der Versuch illegal oder lebensgefährlich, kann der Spielleiter eine SOZ-Probe erlauben, die wieder um den Rang des Nachteils erschwert ist.<br/>Im übrigen ist Gierig nicht gleich <i>Geizig</i>. Ein passionierter Taschendieb kann durchaus das Geld mit vollen Händen ausgeben - immerhin hat er ja eine relativ sichere Quelle.', 1, 6),
+            (57, 'Impulsiv', -3, 2, 10, 'Der Charakter neigt dazu schnell, konsequent und ... ohne Überlegung zu handeln.<br/>Wichtig bei diesem Nachteil ist, ihn richtig zu spielen. Der Charakter hasst lange Diskussionen. Er trifft seine Entscheidung schnell und handelt danach.<br/>Während der Rest noch redet, ist er schon fertig.<br/>Genauso reagiert der Charakter auch schnell und unüberlegt. Eine Beleidigung? Ohrfeige. Eine schwere Beleidigung? Eine handfeste Prügelei ist im Gange.<br/>Jemand bescheißt ihn beim Kartenspielen... nun ihr wisst, was wir meinen.<br/>Um einen impulsiven Charakter zum planen zu bringen, muss ihm erst eine MEN-Probe (erschwert um den Rang des Nachteils) gelingen. Es soll aber auch helfen, ihn an einen Stuhl zu fesseln.', 1, 6),
+            (58, 'Vorurteile', -3, 2, 10, 'Der Charakter hat ein festgefügtes und engstirniges Weltbild und eine Abneigung gegen alles, was nicht in sein Weltbild passt oder nach seinen Werten lebt. Ein extremes Beispiel für Intoleranz und Vorurteile sind die Jünger des zürnenden Herren. Sie hassen alles und jeden.<br/>Dieser Nachteil kann sich gegen Vertreter einer bestimmten Art, eines Berufsstands, einer Fraktion, einer religiösen oder sexuellen Überzeugung richten - oder aber auch gegen bestimmte Technologien, Staatsformen, etc. Prinzipiell kann dieser Nachteil mehrfach gewählt werden.<br/>Dem Charakter muss eine MEN-Probe gelingen, erschwert um den Rang des Nachteils, um seine Abneigung zu überwinden. Fertigkeitsproben im Umgang mit dem Subjekt oder Objekt der Abneigung, können zudem erschwert werden.', 1, 6),
+            (59, 'Neugier', -3, 2, 10, 'Jeder Charakter sollte eine gewisse Neugierde mitbringen, sonst kann er auch zuhause bleiben und einem ganz normalen Job nachgehen. Neugierig als Nachteil heißt, der Charakter ist <i>zu neugierig</i>.<br/>Du verlangsamst durchaus mal deinen Schritt um ein Gespräch etwas länger zu verfolgen. Du blätterst am Kopierer auch durch die Ausdrucke die nicht dir gehören. Du wirfst einen langen Blick in den geöffneten Tresor.<br/>Der Spielleiter kann dir eine, um den Rang des Nachteils erschwerte, MEN-Probe erlauben, um zu entscheiden, den an Wand befindlichen, unbeschrifteten roten Knopf nicht zu drücken ...', 1, 6),
+            (60, 'Pazifist', -3, 2, 10, 'Der Charakter hat eine Abneigung gegen die Anwendung von Gewalt. Er wird vermeiden jemanden zu verletzen oder gar zu töten. Der Charakter wird von sich aus keinen Kampf beginnen.<br/>Natürlich kann auch hier der Charakter entscheiden, eine (vorzugsweise nichttödliche) Waffe zu verwenden, um sich in einer Gefahrensituation seiner Haut zu erwehren. Ist davon auszugehen, dass das primäre Ziel der Angreifer nicht der Tod des Charakters ist, muss ihm eine MEN-Probe, modifiziert um den Rang des Nachteils, gelingen, um aktiv in den Kampf einzugreifen.', 1, 6)
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO traits (id, name, xp_cost, cls, grp, txt) VALUES
+            (61, 'Phobien', -1, 2, 9, 'Der Charakter hat vor irgendetwas eine objektiv irrationale Angst. Die Liste der möglichen Phobien ist lang und sie hier aufzuführen würde wohl den Rahmen sprengen, üblich sind Raumangst, Höhenangst, Angst von Nagetieren oder Angst vom Menschenmassen.<br/>Der konkrete Wert der jeweiligen Phobie sollte anhand der Symptome und der Häufigkeit des Auslösers ermittelt werden. Der Charakter kann eine MEN-Probe erschwert um den halben Wert der Phobie machen um zu widerstehen.<br/>Der Gesamtwert einer Phobie sollte zwischen (-1) und (-18) liegen, letztendlich liegt es im Ermessen des Spielleiters ob er eine bestimmte Phobie zulässt und welchen Wert sie hat.')
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO trait_vars(trait_id, name, xp_factor, oper, grp, txt) VALUES 
+            (61, 'Leichte Symptome', -1, 0, 'Symptome', 'Allgemeines Unwohlsein, Gänsehaut. Proben die Konzentration erfordern werden um 1 Punkt erschwert.'),
+            (61, 'Mäßige Symptome', -2, 0, 'Symptome', 'Schwindelgefühl, erschreckter Schrei. Proben werden allgemein um 1 Punkt erschwert.'),
+            (61, 'Schwere Symptome', -3, 0, 'Symptome', 'Der Charakter muss eine MEN-Probe ablegen, ansonsten muss er versuchen, sich aus der <i>Gefahrenzone</i> zu entfernen. Alle Proben sind um 2 Punkte erschwert.'),
+            (61, 'Extreme Symptome', -6, 0, 'Symptome', 'Katatonie, Schreikrampf, Panikattacke. Der Charakter ist handlungsunfähig, kann aber eine MEN-Probe ablegen um sich zu lösen. Er muss dann sofort versuchen sich aus der <i>Gefahrenzone</i> zu entfernen..'),
+            (61, 'Allgegenwärtige Auslöser', 3, 1, 'Auslöser', 'Menschenmassen, enge Räume, Höhen, Dunkelheit, große Leere'),
+            (61, 'Häufige Auslöser', 2, 1, 'Auslöser', 'Menschenmassen, enge Räume, Höhen, Dunkelheit, große Leere, Alleinsein'),
+            (61, 'Seltene Auslöser', 1, 1, 'Auslöser', 'Nagetiere, große Insekten, Spinnen, Schlangen, Hunde, etc.'),
+            (61, 'Sehr seltene Auslöser', 0.5, 1, 'Auslöser', 'seltene Tierarten, unübliche Farben'),
+            (61, 'Allgegenwärtige Auslöser', -1, 0, 'Auslöser', 'Kleidung einer bestimmten Kultur, Tierarten die nur auf einer einzigen Welt heimisch sind')
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO traits (id, name, xp_cost, cls, grp, txt) VALUES
+            (62, 'Drogensucht', -1, 2, 9, 'Der Charakter hat eine Abhängigkeit zu einer bestimmten chemischen Substanz entwickelt. Das kann durchaus auch ein körperlicher Nachteil sein, primär ist es aber ein mentaler Nachteil. Er ist gezwungen, die Substanz regelmäßig zu sich zu nehmen, um normal aggieren zu können. Ansonsten drohen Entzugserscheinungen, unkontrollierte Gefühlsausbrüche, Schmerzen oder sogar gesundheitliche Schäden.<br/>Wie stark sich dieser Nachteil auswirkt, hängt von der jeweiligen Droge ab. Der Punktwert bildet sich als Summe verschiedener Faktoren.')
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO trait_vars(trait_id, name, xp_factor, oper, grp, txt) VALUES 
+            (62, 'weitgehend positiv', 0, 0, 'Wirkung und Nebenwirkungen:', 'Grundsätzlich leistungssteigernde Drogen mit eher geringen Nebenwirkungen, wie etwa Koffein.'),
+            (62, 'so lala', -2, 0, 'Wirkung und Nebenwirkungen:', 'Die Hauptwirkung ist durchaus positiv, aber möglicherweise deutliche Nebenwirkungen und Einschränkungen durch die Nutzung.'),
+            (62, 'überwiegend negativ', -4, 0, 'Wirkung und Nebenwirkungen:', 'Drogen mit möglicherweise beeindruckenden Highs, jedoch starken Nebenwirkungen, wie etwa LSD.'),
+            (62, 'weitgehend legal', 0, 0, 'Legalität:', 'Die Substanz ist in weiten Teilen des Hyperion und der Kernwelten legal erhältlich'),
+            (62, 'teilweise legal', -2, 0, 'Legalität:', 'In vielen Regionen legal, mancherorts bei kleineren Geldbußen verboten.'),
+            (62, 'weitgehend illegal', -3, 0, 'Legalität:', 'In vielen Regionen nicht nur bei Geldstrafe verboten, der Besitz und oder Handel kann Haftstrafen nach sich ziehen'),
+            (62, 'geächtet', -4, 0, 'Legalität:', 'Zumeist aus guten Gründen ist diese Droge in vielen Jurisdiktionen strengstens verboten und schon der Besitz kleiner Mengen zieht drastische Strafen nach sich.'),
+            (62, 'günstig', 0, 0, 'Kosten und Verfügbarkeit:', 'Eine Dosis ist für wenige Cent erhältlich bis Rand erhältlich. Die Ware wird in Geschäften legal über den Tresen verkauft.'),
+            (62, 'erschwinglich', -1, 0, 'Kosten und Verfügbarkeit:', 'Der Preis für eine Dosis liegt üblicherweise unter 10 Rand. Möglicherweise muss man in spezielle Läden.'),
+            (62, 'kostspielig', -2, 0, 'Kosten und Verfügbarkeit:', 'Bis zu fünfzig Rand muss man pro Dosis rechnen. Die Drogen bekommt man nur auf der Straße, aber wer weiß wonach er sucht wird meistens fündig'),
+            (62, 'teuer', -4, 0, 'Kosten und Verfügbarkeit:', 'Hundert Rand, wenn man gute Connections hat, kann aber auch deutlich teurer sein. Ohne gute Connections echt schwer zu bekommen.'),
+            (62, 'gering', 0.5, 1, 'Abhängigkeit/Entzug:', 'Geringes Suchtpotential und leichte Entzugserscheinungen'),
+            (62, 'mäßig', 1, 1, 'Abhängigkeit/Entzug:', 'Kann bei vielen Anwendern bereits nach wenigen Anwendungen Suchverhalten auslösen und beim Entzug deutliche Nebenwirkungen verursachen. Ein Charakter mit Entzugserscheinungen ist unkonzentriert und die meisten Proben werden um einen Punkt erschwert.'),
+            (62, 'extrem', 1.5, 1, 'Abhängigkeit/Entzug:', 'Bereits eine Anwendung kann eine Abhängigkeit nach sich ziehen, die Auswirkungen vom Entzug sind extrem und können tatsächlich körperliche Schäden nach sich ziehen. Ein Charakter der unter Entzugserscheinungen leidet muss Proben mit bis zu drei Punkten Erschwernis ablegen.')
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO traits (id, name, xp_cost, cls, grp, txt, min_rank, max_rank) VALUES
+            (63, 'Spielsucht / Wettsucht', -3, 2, 10, 'Deutliches Symptom für Spielsucht ist häufiges, auch episodenhaftes, Glücksspiel. Dabei ist der Betroffene überzeugt, dass er das System besiegt hat und bessere Gewinnchancen besitzt, als der Gelegenheitsspieler und möglicherweise sogar die Bank. Aus zunächst gelegentlichem Spiel werden häufigere Sitzungen am Spieltisch oder Automaten, dabei werden die Einsätze immer höher, in der Hoffnung, aufgelaufene Verluste wieder reinzuholen.<br/>Der Spielsüchtige befasst sich auch außerhalb des Spiels viel mit dem Spiel und versucht sein System weiter zu verfeinern oder zu verbessern. Auf lange Sicht, häufen sich oftmals beachtliche Schuldenberge an. Passende weitere Nachteile für einen Charakter mit Spielsucht sind <i>Schulden</i>, <i>Feind</i> oder <i>Auf der Flucht</i>.<br/>Dem Charakter muss eine MEN-Probe (erschwert um den Rang des Nachteils) gelingen, um dem Drang zu widerstehen an einem Glücksspiel teilzunehmen oder das Spiel abzubrechen.<br/>Dieser Nachteil gilt für eine bestimmte Art von Spiel (Kartenspiele, Automatenspiele, Sportwetten) und kann prinzipiell auch mehrfach gewählt werden.', 1, 6),
+            (64, 'Paranoia', -3, 2, 10, 'Sie verfolgen deinen Charakter und er weiß es. Jeder gehört zu ihnen. Alle sind Spitzel und Häscher, die gekommen sind, um ihn mitzunehmen...<br/>Der Charakter leidet an krankhaftem Verfolgungswahn. In allem und jedem erkennt er die böse Verschwörung oder seine Verfolger. Der Charakter wird nur schwer mit anderen zusammenarbeiten. Vertrauen wird er sowieso niemals jemandem. Fremde reagieren auf den Charakter mit Abneigung, wenn sie seine Störung erkennen. Man wird ihn für einen Spinner halten und entsprechend behandeln.<br/>SOZ-Proben, bei denen das Vertrauen in das Gegenüber eine zentrale Rolle spielt, werden um den Rang der Paranoia erschwert, sofern dem Charakter nicht zuvor eine MEN-Probe, erschwert um den Rang des Nachteils gelungen ist.<br/>Der Spielleiter kann dem Charakter Erleichterungen in Höhe des Nachteilsrangs auf Proben gewähren, die dazu dienen eine tatsächliche Verschwörung oder einen Hinterhalt aufzudecken.<br/>Übrigens: Paranoid zu sein heißt nicht, dass der Charakter nicht verfolgt wird...', 1, 6),
+            (65, 'Zwangsstörung/Manie', -3, 2, 10, 'In der Psychatrie ist der Begriff der Monomanien, zu denen <i>Krankheitsbilder</i> wie Kleptomanie oder Pyromanie zählen, längst überkommen. Das liegt einfach daran, dass sich jedes <i>abnorme Verhalten</i> innerhalb dieses Betrachtungsrahmens als <i>Erkrankungung</i> definieren ließe.<br/>Fakt ist, es gibt durchaus <i>reizvolle</i> Zwangsstörungen, Neurosen und Manien, die einen Charakter einzigartig machen und auch eine rollenspielerische Herausforderung darstellen. Leidet der Charakter vielleicht an Kaufsucht, muss er sein Werkzeug der Größe nach sortieren, muss er sich dreimal überzeugen, dass die Türe wirklich verschlossen ist?<br/>Der Spieler kann eine MEN-Probe, erschwert um den Rang des Nachteils ablegen, wenn der Charakter gegen seine Natur handeln muss.', 1, 6),
+            (66, 'Adelskodex', -3, 3, 10, '<b>Adel verpflichtet!</b> Der Charakter gehört dem Adel der Novaropäischen Allianz an und hat einen Eid geschworen, dem Kaiserreich und dem Kaiser, sowie seinem Lehnsherrn gegenüber treu zu sein.', 1, 6),
+            (67, 'Hippokratischer Eid', -3, 2, 10, 'Der Begriff ist eher historisch, der Eid der Mediziner hat sich über die Jahrtausende in seinem Wortlaut mehrfach verändert. Viele Kernaussagen sind allerdings über die Zeitalter geblieben.', 1, 6),
+            (68, 'Piratenkodex', -3, 3, 10, 'Hierbei handelt es sich um einen Satz ungeschriebener Regeln, an den sich Freibeuter und auch die meisten Piraten halten.<br/><i>Mord ist ein Verbrechen des Feiglings</i> - Töte nur, wenn es sich nicht vermeiden lässt. Niemand mag feige Mörder.<br/><i>Nimm deinem Opfer nicht das letzte Hemd</i> - Jeder muss irgendwie über die Runden kommen. Nimm einem Matrosen nicht das Goldkettchen, das er von seiner Frau geschenkt bekommen hat, halte dich lieber an die Goldbarren im Frachtraum.', 1, 6),
+            (69, 'Logisches Verständnis', 6, 2, 7, 'Der Charakter verfügt über ein ausgeprägtes logisches Verständnis, für Proben bei denen es auf logisches Verständnis ankommt, wird die Probe um einen Punkt erleichtert.', 1, 3),
+            (70, 'Rechenschwäche', -6, 2, 7, 'Der Charakter hat kein gutes Verständnis für logisch-mathematische Zusammenhänge. Pro Rang ist der MEN-Wert für derartige Proben um einen Punkt erschwert', 1, 3),
+            (71, 'Intuitives Gespür', 6, 2, 7, 'Der Charakter hat ein gutes Bauchgefühl, für Proben in denen die richtigen Entscheidungen aus dem Bauch raus getroffen werden, erhält der Charakter eine Erleichterung um einen Punkt', 1, 3),
+            (72, 'Festgefahrenes Denken', 6, 2, 7, 'Dem Charakter fällt es schwer aus dem Bauch heraus zu entscheiden, pro Rang in diesem Nachteil sind Proben bei denen es auf Intuition ankommt um einen Punkt erschwert.', 1, 3)
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO traits (id, name, xp_cost, cls, grp, txt) VALUES
+            (73, 'Unaufmerksam', -9, 2, 4, 'Der Charakter lässt sich leicht ablenken. Er hat eine kurze Aufmerksamkeistsspanne und kann sich auch unter Gefahrensituationen nur schwer konzentrieren.<br/>MEN-Proben, bei denen Konzentration eine Rolle spielt, werden um einen Punkt erschwert.'),
+            (74, 'Kühler Kopf', 9, 2, 10, 'Der Charakter behält auch in stressigsten Situationen die Nerven. Negative Modifikatoren für <i>Unter Beschuss</i> oder andere Stresssituationen werden für den Charakter um die Hälfte reduziert.'),
+            (75, 'Zeitgefühl', 6, 2, 4, 'Der Charakter hat ein instinktives Zeitgefühl. Er kann Zeiträume sehr genau abschätzen und er prägt sich Tagesabläufe auf verschiedenen Planeten sehr schnell ein. Wird er z.B. mit verbundenen Augen einen Weg entlang geführt, kann er aufgrund der Laufdauer die Entfernung abschätzen etc.<br/>Das Zeitgefühl kann nur durch Phasen der Bewusstlosigkeit, Tiefschlafphasen oder extreme Ablenkungen und Psionische Effekte eingeschränkt werden.'),
+            (76, '6. Sinn', 9, 2, 4, 'Der Charakter spürt instinktiv Gefahren oder Merkwürdigkeiten. Er bemerkt Hinterhalte, Fallen oder Geheimtüren leichter als ein normaler Charakter.<br/>Der Charakter darf jeden Wurf zum Erkennen eines Hinterhaltes oder eines verborgenen Gegenstandes wiederholen, als hätte er eine entsprechende Fertigkeit.<br/>Optional würfelt der Erzähler verdeckt für den Spieler und teilt ihm mit, was er sieht oder zu sehen glaubt.'),
+            (77, 'Gesunder Menschenverstand', 6, 2, 4, 'Der Charakter verfügt über ein gutes Maß an Bauernschläue und steht mit beiden Beinen auf dem Boden. Einmal pro Spielsitzung sollte der Spielleiter den Spieler darauf hinweisen, dass sein Charakter – oder die Gruppe – gerade im Begriff ist, eine Dummheit zu begehen. Natürlich nur, wenn die Helden wirklich eine Dummheit begehen würden.'),
+            (78, 'Hervorragender Astrogator', 9, 4, 4, 'Der Charakter ist ein herausragend guter Astrogator. Er kennt Sprungrouten, geheime Wege und einige Gefahrenquellen im Grenzland.<br/>Darüber hinaus hat er etwas, was man auch als <i>sechsten Sinn</i> bezeichnen könnte – ein intuitives Gespür für sichere und unsichere Sprünge.<br/>Astrogations-Proben werden für den Charakter um die Hälfte erleichtert (Minimum 1).'),
+            (79, 'Meister des ...', 9, 2, 11, 'Der Charakter ist in einer bestimmten Fertigkeit besonders gut. Negative Modifikatoren werden beim Einsatz dieser Fähigkeit halbiert.')
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO trait_vars(trait_id, name, xp_factor, oper, grp, txt) VALUES 
+            (79, 'Aktionsfertigkeit', 18, 0, 'Fertigkeitsgruppe', ''),
+            (79, 'Wissensfertigkeit', 9, 0, 'Fertigkeitsgruppe', '')
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO traits (id, name, xp_cost, cls, grp, txt) VALUES
+            (80, 'Meister des Klebebandes', 9, 2, 11, 'Der Charakter hat ein natürliches Gespür für technische Dinge. Auch ohne Studium kann er Dinge basteln und reparieren. Oder zumindest irgendetwas zusammenschustern, was den Zweck erfüllt. Zumindest eine Zeit lang...<br/>Klebeband, Kaugummi, Gummizüge, Reiszwecken und noch mehr Klebeband sind die Mittel der Wahl.<br/>Manche großen Raumschiffe fliegen nur, weil ein solcher Bastler an Bord ist. Beruhigend nicht wahr?<br/>Alle negativen Modifikatoren für <i>Fehlendes Wissen</i>, <i>Fehlendes Werkzeug</i> und <i>fehlende Ersatzteile</i> werden um die Hälfte (höchstens auf ein Minimum von 1) Reduziert.<br/>Und fehlende Ersatzteile können dann natürlich von anderen - weniger wichtigeren - Komponenten des Raumschiffes stammen.'),
+            (81, 'Alpträume', -9, 2, 4, 'Der Charakter leidet unter Alpträumen und Schlaflosigkeit. Die Regeneration von EP und LP wird halbiert.'),
+            (82, 'Blutrausch', -6, 2, 10, 'Wenn der Charakter getroffen wird, muss dem Charakter eine MEN-Probe gelingen. Diese Probe wird jedesmal, wenn der Charakter in der selben Szene/Kampf erneut getroffen wird wiederholt und um 1 Punkt erschwert.<br/>Misslingt die Probe, so verfällt der Charakter in einen Blutrausch. Er greift jedes Ziel in Reichweite an - unabhängig ob es sich dabei um Feinde oder Kameraden handelt.<br/>Während des Blutrausches spürt der Charakter keine Schmerzen. Wunden werden ignoriert. Betäubungsangriffe zählen nur, wenn sie genug Schaden verursachen um den Charakter sofort bewustlos werden zu lassen, ansonsten werden sie gänzlich ignoriert.<br/>Der Blutrausch endet wenn der Charakter kampfunfähig oder bewustlos wird oder wenn für eine Spielrunde keine Ziele in Reichweite sind.<br/>Der Spieler kann versuchen den Charakter unter Kontrolle zu bringen. Dazu steht ihm alle 3 Runden eine MEN-Probe zu. Sie beginnt mit dem selben Aufschlag, mit dem der Blutrausch begonnen hat und wird jedes mal um 1 Punkt erleichtert.'),
+            (83, 'Reflexlähmung', -9, 2, 10, 'In Stressituationen neigt der Charakter dazu, <i>einzufrieren</i>. Er kann nichts tun. Angst und Stress lähmen ihn einfach.<br/>Wenn der Charakter einer ernsthaften, bedrohlichen Stresssituation ausgesetzt wird, muss er eine MEN-Probe ablegen, misslingt diese ist er handlungsunfähig. Alle 3 Kampfrunden kann der Spieler eine weitere MEN-Probe würfeln. Jede Probe nach der ersten wird um je einen Punkt erleichtert.'),
+            (84, 'Schneller Alternd', -1, 1, 9, 'Der Charakter wird deutlicher früher sterben als der durchschnittliche Vertreter seiner Spezies, er wird früher Alt werden und entsprechende Alterserscheinungen wie Attributsverluste, Erschwernisse auf Wissensfertigkeitswürfe oder auch Krankheiten oder Abhängigkeit von Medikamenten werden sich früher einstellen.<br/>Hinweis: Einen nahezu unsterblichen Glasmenschen von Glibor zu spielen, der jetzt nicht mehr nach 9000 Jahren altert sondern schon nach 4500 Jahren... ist kein Nachteil.'),
+            (85, 'Gutes Aussehen', 3, 3, 13, 'Der Charakter sieht (für seine Spezies) besonders gut oder eindrucksvoll aus. Alle Fertigkeitsproben, bei denen Aussehen eine Rolle spielt werden gegenüber Mitgliedern der eigenen Spezies um 1 Punkt erleichtert.'),
+            (86, 'Hervorragendes Aussehen', 9, 3, 13, 'Das Aussehen des Charakters ist von solch blendender Schönheit, dass sogar Wesen von anderen Spezies beeindruckt werden. Alle Fertigkeitsproben bei denen das Aussehen eine Rolle spielt werden für Mitglieder der eigenen Spezies um 3 Punkte erleichtert; für andere Spezies kann der Spielleiter einen Bonus von 1 – 2 Punkten gewähren.'),
+            (87, 'Beeindruckende Narbe', 3, 3, 13, 'Der Charakter hat eine eindrucksvolle Narbe oder ein ähnliches Kampfmal an einer offensichtlichen Stelle. Alle Proben auf Kommandieren, vor allem im militärischen Bereich werden um 1 Punkt erleichtert.<br/>Zudem kann man auf Festen interessante Geschichten vom Krieg zum Besten geben...'),
+            (88, 'Beeindruckende Stimme', 3, 3, 13, 'Der Charakter kann mit einer klangvollen Stimme sprechen oder Singen und weiß sein Gegenüber durch Wortwahl und Stimmmodulation zu überzeugen. Fertigkeitswürfe bei denen die Stimme wichtig ist (Feilschen, Schauspiel, Singen, Überreden...) werden um 1 Punkt erleichtert.'),
+            (89, 'Sprachfehler', -3, 3, 14, 'Der Charakter leidet an einem Sprachfehler. Lispeln, stottern, sich ständig verhaspeln oder irgendwelche Geräusche in einen Satz einflechten etc. gelten als solche.<br/>Auf jedenfall wirkt er auf sein Gegenüber seltsam. SOZ-Proben bei denen Sprache eine Rolle spielt, beispielsweise <i>Verhandlung</i>, können je nach Situation um einen Punkt erschwert werden.<br/>Lispeln ist kein Sprachfehler für Hazaru.'),
+            (90, 'Sprachtalent', 6, 2, 14, 'Einem sprachtalentierten Charakter fällt es leicht, neue Sprachen zu erlernen und er kann sich bald schnell und flüssig verständigen.<br/>Das Erlernen einer neuen Sprache dauert nur die Hälfte der normalen Zeit. Bereits mit einem Fertigkeitswert von 1 stehen dem Charakter zwei Wiederholungswürfe für Proben zur Verfügung.')
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO traits (id, name, xp_cost, cls, grp, txt, min_rank, max_rank) VALUES
+            (91, 'Hohe Schmerztoleranz', 9, 1, 3, 'Der Charakter hat eine überdurchschnittlich hohe Schmerztoleranz. Negative Modifikatoren aufgrund von Verletzungen werden um 1 Punkt je Stufe reduziert.<br/>Bei Widerstand gegen Schmerzen - Folter, PSI-Effekte, etc, kann der Charakter  die Phy-Probe einmal je Stufe wiederholen als hätte er eine entsprechende Fertigkeit.',1 ,3)
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO traits (id, name, xp_cost, cls, grp, txt) VALUES
+            (92, 'Auf der Flucht ', -3, 3, 15, 'Irgend jemand ist hinter dem Charakter her und der Charakter will unter allen Umständen vermeiden, von seinen Verfolgern erwischt zu werden.<br/>Er kann sich nie lange an einem Ort aufhalten und muss verdeckt reisen. Er ist gezwungen aufwändig seine Spuren zu verwischen und hat selten Zeit zum Ausruhen.<br/>Dieser Nachteil kann auch auf die Gruppe übertragen werden!<br/>Mit diesem Nachteil wird er nirgends auf Dauer Frieden finden. Der Verfolger hat genügend Mittel und Motivation um den Charakter über den Rand des bekannten Universums zu verfolgen Um den Status <i>Auf der Flucht</i> los zu werden, muss der Charakter sich seinem Nemesis stellen und diesen auf die ein oder andere Art überwinden.')
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO trait_vars(trait_id, name, xp_factor, oper, grp, txt) VALUES 
+            (92, 'Aus den Augen verloren', -3, 0, 'Abstand:', 'Der Gegner weiß nicht viel über den momentanen Status des Charakters. Jedoch wird sein Spitzelnetz früher oder später Informationen zusammentragen, wenn sich der Charakter in einer zivilisierten Umgebung aufhält.'),
+            (92, 'Auf den Fersen', -9, 0, 'Abstand:', 'Die Verfolger haben eine Spur die sie zumindest in den gleichen Subsektor führt. Es wird nicht lange dauern, bis sie dem Charakter auf den Fersen sind.'), 
+            (92, 'im Nacken', -18, 0, 'Abstand:', 'Die Feinde sind dem Charakter dicht auf den Fersen. Er kann praktisch ihren Atem im Nacken spüren und selbst eine Höhle auf einem Asteroiden in diesem Gebiet ist zur Zeit kein ausreichendes Versteck.')
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO traits (id, name, xp_cost, cls, grp, txt) VALUES
+            (93, 'Barbar', -9, 2, 12, 'Der Charakter stammt von einer Welt, die technisch weit zurückliegt und hat noch nicht lange Kontakt mit raumfahrenden Völkern. Er kann anfangs keine Standardsprache, die Technologien die im Torweltenuniversum eigentlich zum Standard gehören sind für ihn Mysterien.<br/>Als Richtlinie kann man sich eine Kultur zwischen Bronzezeit und Hochmittelalter vorstellen. Bei der Charaktererschaffung können keine Fertigkeiten gewählt werden, die sich auf Technologien beziehen die in der Kultur des Charakters nicht vertreten sind.<br/>Beim Einsatz von Feuerwaffen, Triebwerken, Energiefeldern und anderen lauten unheimlichen Dingen bricht der Charakter anfangs in Panik aus. Selbst wenn er schonend darauf vorbereitet wird, muss ihm eine MEN-Probe gelingen um sich zurückzuhalten.')
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO traits (id, name, xp_cost, cls, grp, txt) VALUES
+            (94, 'Adelig', 1, 3, 15, 'Der Charakter entstammt einem adeligen Haus. Er trägt ein <i>von</i> im Namen oder das entsprechende Äquivalent seiner Kultur. Das sagt zwar nichts über die wahre Macht des Charakters aus oder seinen Reichtum, aber er gibt ihm dennoch Ruf.')
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO trait_vars(trait_id, name, xp_factor, oper, grp, txt) VALUES 
+            (94, 'Adelige Abstammung', 6, 0, 'Bezeichnung:', 'Auch ohne Aussicht auf Erbe kann man auf eine Familie blicken, zu der man Kontakte hat und deren Namen man trägt.'),
+            (94, 'nichterblicher Titularadel', 9, 0, 'Bezeichnung:', 'Dem Charakter wurde ein Titel verliehen, der ihn persönlich in den Adelsstand erhebt, jedoch nicht vererbt werden kann.'), 
+            (94, 'erblicher Titualadel', 12, 0, 'Bezeichnung:', 'Ohne Ländereien oder Untertanen, jedoch ist der Charakter Teil eines Hauses, welches über Generationen bestehen kann und prinzipiell die Chance hat nach oben zu ehelichen.'),
+            (94, 'echte Verantwortung', 15, 0, 'Bezeichnung:', 'Der Charakter ist Lehnsherr einer kleinen Länderei.')
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO traits (id, name, xp_cost, cls, grp, txt) VALUES
+            (95, 'Militärischer Rang', 1, 3, 15, 'Der Charakter ist oder war Mitglied in einer regulären Armee oder einer größeren Söldnergruppierung. Man hat <i>Kontakt</i> zu Mitgliedern der (ehemaligen) Einheit.')
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO trait_vars(trait_id, name, xp_factor, oper, grp, txt) VALUES 
+            (95, 'Soldat', 1, 0, 'Bezeichnung:', 'Ein Mitglied der Mannschaften, ein ordentlicher Soldat ohne besondere Verantwortung'),
+            (95, 'Unteroffizier', 3, 0, 'Bezeichnung:', 'Trupp- oder Gruppenführer mit Verantwortung über einige Untergebene'), 
+            (95, 'Feldwebel', 6, 0, 'Bezeichnung:', 'Zugführer oder technische Spezialisten'),
+            (95, 'Leutnant', 9, 0, 'Bezeichnung:', 'Offizier mit Verantwortung für Zug oder eine Staffel'), 
+            (95, 'Hauptmann', 12, 0, 'Bezeichnung:', 'Kompanieführer oder soldaten mit technisch verantwortlichen Aufgabenbereiche'),
+            (95, 'Oberst', 15, 0, 'Bezeichnung:', 'Kommandant eines größeren Verbands (auch Kapitäne großer Schiffe)'), 
+            (95, 'General', 18, 0, 'Bezeichnung:', 'Kommandanten über Brigaden, Armeen oder Flotten'),
+            (95, 'inaktiv', .5, 1, 'Status:', 'Der Charakter ist ehrenhaft aus dem Dienst ausgeschieden, Reservist oder außer Dienst'),
+            (95, 'aktiv', 1, 1, 'Status:', 'Der Charakter gehört einer militärischen Einheit aktiv an.')
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO traits (id, name, xp_cost, cls, grp, txt) VALUES
+            (96, 'Wissenschaftlicher Rang', 1, 3, 15, 'Der Charakter hat ein Studium absolviert und war wissenschaftlich tätig. Mindestens seine Abschlussarbeit ist in Datalinks-Netzwerk auffindbar.')
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO trait_vars(trait_id, name, xp_factor, oper, grp, txt) VALUES 
+            (96, 'Diplom/Master', 6, 0, 'Bezeichnung:', 'Der Charakter hat ein vollwertiges Studium absolviert und erfolgreich abgeschlossen.'),
+            (96, 'Doktortitel', 9, 0, 'Bezeichnung:', 'Der Charakter war im Wissenschaftsbetrieb einer Universität aktiv und hat promoviert.'), 
+            (96, 'Professur', 12, 0, 'Bezeichnung:', 'Nach mehreren Jahren an einer Universität wurde der Charakter zumindest vorübergehend zum Professor berufen.'),
+            (96, 'Provinzuniversität', .666, 1, 'Ruf:', 'Der Titel wurde an einer einfachen Universität auf irgendeiner Kolonie erlangt. Die tatsächlichen Kenntnisse des Charakters ergeben sich aus seinen Fertigkeiten, hier geht es nur um den Ruf.'),
+            (96, 'Große Universität', 1, 1, 'Ruf:', 'Eine der großen Universitäten in den Kernwelten oder einer Hauptstadt.'),
+            (96, 'Eliteuniversität', 1.5, 1, 'Ruf:', 'Ein klangvoller Name und ein bekanntes Siegel prangen auf der Urkunde und verleihen ihr einen ganz besonderen Wert.')
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO traits (id, name, xp_cost, cls, grp, txt) VALUES
+            (97, 'Sonstige Titel', 1, 3, 15, 'In einigen Berufszweigen kommt man ohne Titel nicht weit. Teilweise darf man überhaupt nicht tätig werden oder man bewegt sich in einer Grauzone. Einige Beispiele:')
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO trait_vars(trait_id, name, xp_factor, oper, grp, txt) VALUES 
+            (97, 'Handwerksgeselle', 3, 0, 'Bezeichnung:', 'Der Charakter hat die Prüfung einer Handwerkskammer absolviert.'),
+            (97, 'Handwerksmeister', 6, 0, 'Bezeichnung:', 'Mit einer Meisterprüfung vor einer Handwerkskammer oder Zunft hat der Charakter sein Können unter Beweis gestellt.'), 
+            (97, 'Arzt (ohne Doktortitel)', 9, 0, 'Bezeichnung:', 'Der Charakter hat ein Medizinstudium an einer ordentlichen Universität absolviert.'), 
+            (97, 'Arzt (mit Doktortitel)', 12, 0, 'Bezeichnung:', 'Nach dem Abschluss seines Medizinstudiums hat der Charakter noch einen Doktortitel erworben.'),
+            (97, 'Ingenieur (ohne Doktortitel)', 9, 0, 'Bezeichnung:', 'Der Charakter hat ein technisches Studium erfolgreich absolviert.'), 
+            (97, 'Ingenieur (mit Doktortitel)', 12, 0, 'Bezeichnung:', 'Neben dem technischen Studium kann der Charakter auch wissenschaftlich etwas vorweisen.')
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO traits (id, name, xp_cost, cls, grp, txt) VALUES
+            (98, 'Berühmt oder Berüchtigt', 1, 3, 15, 'Der Charakter trägt zwar keinen besonderen Titel, doch er ist aus anderen Gründen bekannt. Schauspieler, Schriftsteller, Sportler, bekannte Händler oder legendäre Archäologen. Natürlich ist es nicht immer von Vorteil, wenn man sofort erkannt wird.')
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO trait_vars(trait_id, name, xp_factor, oper, grp, txt) VALUES 
+            (98, 'innerhalb einer Subkultur', 1, 0, 'Ausprägung:', 'Der Charakter ist innerhalb von Vertretern seines Tätigkeitsfeldes bekannt'),
+            (98, 'allgemein bekannt', 3, 0, 'Ausprägung:', 'Der Charakter ist allgemein bekannt.'), 
+            (98, 'lokale Bekanntheit', 1, 1, 'Verbreitung:', 'innerhalb einer größeren Stadt / Raumstation'),
+            (98, 'regionale Bekanntheit', 2, 1, 'Verbreitung:', 'auf einer Welt / in einem Sternensystem'),
+            (98, 'interstellare Bekanntheit', 6, 1, 'Verbreitung:', 'so weit das Datalinks-Netzwerk reicht')
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO traits (id, name, xp_cost, cls, grp, txt) VALUES
+            (99, 'Diplomatische Immunität', 18, 3, 15, 'Der Charakter genießt diplomatische Immunität. Diese schützt ihn vor Strafverfolgung bei den meisten Delikten (Etwa zu schnelles Fahren, falsch parken etc.). Sein Gepäck darf nicht vom Zoll untersucht werden und Mitglieder der eigenen Botschaft müssen ihm Hilfestellung gewähren.<br/>Dieser Vorteil ist mit äußerster Vorsicht zu genießen. Er ist für besondere Kampagnen interessant und sollte dort <i>auf Zeit</i> vergeben werden.<br/>Dieser Vorteil bietet sich eher für spezielle Kampagnen an und sollte im Vorfeld vom Spielleiter abgesegnet werden.<br/>Man muss als Spieler auch bedenken, Diplomatische Immunität macht nicht kugelsicher und die eigene Regierung kann einen immer noch für alle Taten als Botschafter zur Rechenschaft ziehen.<br/>Voraussetzung: Mächtige Freunde, Adelig, oder Verpflichtung gegenüber einem Adligen Haus.')
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO traits (id, name, xp_cost, cls, grp, txt, min_rank, max_rank) VALUES
+            (100, 'Geheimes Wissen', 1, 2, 16, 'Geheimes Wissen umfasst alle abgegrenzten Informationen die als geheim, oder der Öffentlichkeit nicht zugänglich betrachtet werden können.<br/>Dies kann beispielsweise das Wissen um die Koordinaten eines Schmugglerraumhafens bedeuten, oder den geheimen Handschlag der Loge bei der man Mitglied ist.<br/>Im Grunde geht es um sehr spezielle Fakten oder Informationen, die einem Charakter zur Verfügung ohne dass darauf eine Fertigkeitsprobe abgelegt werden müsste.<br/>Den <i>Wert</i> einer bestimmten Information bestimmt letztendlich der Spielleiter.',1, 18),
+            (101, 'Startkapital', 1, 3, 17, 'Dieser Vorteil bestimmt die finanzielle Grundausstattung des Charakters, die im weiteren Verlauf der Charaktererschaffung für Ausrüstung ausgegeben werden kann. Für jeden Rang in diesem Vorteil stehen dem Charakter 1.000 Rand zur Verfügung', 1, 150),
+            (102, 'Schulden', -1, 3, 17, 'Durch diesen Nachteil bekommst du kein Geld, aber du kannst du Kosten deines Startkapitals reduzieren. Natürlich kann man mehr Schulden haben als Startkapital. Für jeden Rang in dieser Eigenschaft schuldet der Charakter jemandem 2.000 Rand.',1, 150),
+            (103, 'Regelmäßiges Einkommen', 1, 3, 17, 'Der Charakter verfügt über eine regelmäßige Geldquelle. Die genaue Natur muss mit dem Spielleiter vereinbart werden. Beispiele wären Aktienanteile, eine feste Arbeit, oder Unterstützung durch Eltern oder einen Gönner.<br/>Pro Charakterpunkt erhältst du 100 Rand / Megasekunde.<br/>Abhängig von der gespielten Kampagne, ist es natürlich durchaus möglich, dass es nicht so ganz einfach ist, an das Geld zu kommen. Das kann etwa der Fall sein, wenn man irgendwo, in einer ganz anderen Ecke der Galaxis unterwegs ist.<br/>Selbstverständlich ist es durchaus möglich, dass diese Geldquelle im Laufe des Spiels versiegt - Firmen können Pleite machen, Anstellungen kann man verlieren, Eltern können sich zerstreiten ...',1 , 20),
+            (104, 'Zugriff auf Ausrüstung', 1, 3, 17, 'Manche Ausrüstung ist selten und steht am Anfang einer Abenteurerkarriere eigentlich nicht zur Verfügung. Dein Charakter besitzt jedoch einen solchen seltenen Gegenstand. Üblicherweise kann man nur Gegenstände erwerben, deren Verfügbarkeit bei +3 oder mehr liegt. Wie viele Vorteilspunkte der Zugriff auf einen Gegenstand kostet hängt natürlich auch von der gespielten Kampagne ab.<br/>Üblicherweise kostet <i>Zugriff auf Ausrüstung</i> einen Rang für jeden Punkt, den die Verfügbarkeit über +3 liegt.<br/>Natürlich muss so ein Besitz auch irgendwie begründet werden.<br/><i>Hab ich auf der Straße gefunden</i> kann vielleicht für ein Päckchen Drogen funktionieren, wird aber spätestens bei einer Servo-Rüstung oder einem Panzerfahrzeug etwas unglaubwürdig. Darüber hinaus muss die Ausrüstung zusätzlich mit Startkapital bezahlt werden.',1, 6),
+            (105, 'Akteur', 1, 3, 17, 'Mit der Wahl dieses Vorteils, übt der Charakter <i>Kontrolle über eine Fraktion</i> aus. Jeder Punkt, der in <i>Akteur</i> investiert wird, zählt als Resourcenpunkt für die Erschaffung einer Fraktion - dabei kann dies als Gruppenvorteil, von mehreren Spielern gemeinsam gewählt werden. <i>Akteur</i> bietet sich an, wenn die Charakter die Geschicke einer Organisation oder Firma aktiv in die Hand nehmen wollen. Für eine stille Teilhaberschaft oder ein Aktienpaket ist der Vorteil <i>Regelmäßiges Einkommen</i> besser geeignet.', 1, 150),
+            (106, 'Gesellschaftlicher Makel', 1, 3, 15, 'Der Charakter ist aus irgend einem Grund in seiner gewöhnlichen Gesellschaft nicht akzeptiert. Das kann verschiedenste Gründe haben. Die Höhe der Punkte für diesen Nachteil hängt davon ab, wie stark der Charakter in der Gesellschaft zurückgesetzt wird.<br/>Der Nachteil kann von <i>vernachlässigbar</i> (ein Mann auf einer matriarchischen Welt) für 1 Punkt bis hin zu <i>lebensbedrohlich</i> (ein Agent hinter feindlichen Linien) für 18 Punkte gehen.', 1, 18)
         """.trimIndent()
         db.execSQL(sql)
 

@@ -269,8 +269,10 @@ class TraitView: LinearLayout {
                 3 -> grp = rg_variant4
             }
 
+
             val tv_variant_title = TextView(context)
             tv_variant_title.text = key
+            tv_variant_title.setTypeface(null, Typeface.BOLD)
             grp.addView(tv_variant_title)
             val trait_vars = data.variants[key] as MutableMap<Int, TraitVariant>
 
@@ -278,7 +280,23 @@ class TraitView: LinearLayout {
                 val variant = trait_vars[key] as TraitVariant
                 val rb = RadioButton(context)
                 rb.id = variant.var_id
-                rb.text = variant.name
+
+                var variant_name = variant.name
+
+                if (variant.oper == 0) {
+                    variant_name += " (" + variant.xp_factor.toInt().toString() + ")"
+                } else {
+                    when (variant.xp_factor) {
+                        0.25f -> variant_name += " (x¼)"
+                        0.333f -> variant_name += " (x⅓)"
+                        0.5f -> variant_name += " (x½)"
+                        0.666f -> variant_name += " (x⅔)"
+                        0.75f -> variant_name += " (x¾)"
+                        else -> variant_name += " (x" + variant.xp_factor.toInt().toString() + ")"
+                    }
+                }
+                rb.text = variant_name
+
                 grp.addView(rb)
                 val txt = TextView(context)
                 txt.text = variant.txt
@@ -317,6 +335,7 @@ class TraitView: LinearLayout {
                 ll_rank.visibility = GONE
             } else {
                 ll_rank.visibility = VISIBLE
+                updateXp()
             }
         }
 
@@ -378,7 +397,11 @@ class TraitView: LinearLayout {
                     }
                 }
             }
-            data.total_xp = kotlin.math.ceil(new_xp).toInt()
+            if (data.total_xp > 0) {
+                data.total_xp = kotlin.math.ceil(new_xp).toInt()
+            } else {
+                data.total_xp = kotlin.math.floor(new_xp).toInt()
+            }
         }
         tv_xp.text = data.total_xp.toString()
     }
