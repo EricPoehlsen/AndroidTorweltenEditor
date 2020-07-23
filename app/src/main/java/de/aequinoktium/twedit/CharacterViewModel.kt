@@ -31,7 +31,7 @@ class CharacterViewModel: ViewModel() {
     var xp_total: Int = 0
 
     var edit_trait = 0
-
+    var char_traits = emptyArray<Int>()
 
     fun setDatabase(db: SQLiteDatabase) {
         this.db = db
@@ -52,7 +52,16 @@ class CharacterViewModel: ViewModel() {
             xp_total = data.getInt(data.getColumnIndex("xp_total"))
             name = data.getString(data.getColumnIndex("name"))
         }
-   }
+        data.close()
+
+        sql = "SELECT trait_id FROM char_traits WHERE char_id = $char_id"
+        data = db.rawQuery(sql, null)
+        while (data.moveToNext()) {
+            char_traits += data.getInt(0)
+        }
+
+        data.close()
+    }
 
 
 

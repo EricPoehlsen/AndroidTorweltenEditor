@@ -2,13 +2,22 @@ package de.aequinoktium.twedit
 
 import android.database.Cursor
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.TextView
+import androidx.core.view.children
 import androidx.core.view.marginBottom
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.findFragment
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -21,6 +30,10 @@ import kotlinx.coroutines.withContext
  */
 class TraitSelectFragment : Fragment() {
     private val c: CharacterViewModel by activityViewModels()
+    private var toggle = 0
+    private lateinit var ll_container: LinearLayout
+    private lateinit var te_search: EditText
+    private lateinit var b_toggle: Button
 
     class TraitData {
         var id = 0
@@ -40,6 +53,8 @@ class TraitSelectFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val act = activity as MainActivity
+        ll_container = act.findViewById<LinearLayout>(R.id.traitselect_container)
 
         c.viewModelScope.launch {
             var traits = findTraits()
@@ -47,11 +62,74 @@ class TraitSelectFragment : Fragment() {
                 displayTraits(traits)
             }
         }
+
+
+        b_toggle = act.findViewById<Button>(R.id.traitselect_toggle)
+        b_toggle.setOnClickListener{v -> toggleTraits(v)}
+
+        te_search = act.findViewById<EditText>(R.id.traitselect_search)
+
+        val watcher = TextChanged(te_search)
+        te_search.addTextChangedListener(watcher)
+    }
+
+    fun toggleTraits(view: View){
+        if (view == b_toggle) {
+            toggle += 1
+            if (toggle > 2) toggle = 0
+        }
+        var search = te_search.text.toString().toLowerCase()
+
+        when (toggle) {
+            0 -> {
+                b_toggle.text = getText(R.string.ts_all)
+                for (v in ll_container.children) {
+                    val trait = v as TraitView
+                    trait.visibility = View.VISIBLE
+
+                    val name = trait.getName().toLowerCase()
+                    if (search.length >= 1 && search !in name) {
+                        trait.visibility = View.GONE
+                    }
+                }
+            }
+            1 -> {
+                b_toggle.text = getText(R.string.ts_advantages)
+                for (v in ll_container.children) {
+                    val trait = v as TraitView
+                    if (trait.getXp() > 0) {
+                        trait.visibility = View.VISIBLE
+                    } else {
+                        trait.visibility = View.GONE
+                    }
+
+                    val name = trait.getName().toLowerCase()
+                    if (search.length >= 1 && search !in name) {
+                        trait.visibility = View.GONE
+                    }
+                }
+            }
+            2 -> {
+                b_toggle.text = getText(R.string.ts_disadvantages)
+                for (v in ll_container.children) {
+                    val trait = v as TraitView
+                    if (trait.getXp() < 0) {
+                        trait.visibility = View.VISIBLE
+                    } else {
+                        trait.visibility = View.GONE
+                    }
+
+                    val name = trait.getName().toLowerCase()
+                    if (search.length >= 1 && search !in name) {
+                        trait.visibility = View.GONE
+                    }
+                }
+            }
+        }
     }
 
     fun displayTraits(traits: Array<TraitData>) {
         val act = activity as MainActivity
-        val container = act.findViewById<LinearLayout>(R.id.traitselect_container)
 
         for (trait in traits) {
             var tv = TraitView(context)
@@ -69,7 +147,7 @@ class TraitSelectFragment : Fragment() {
             tv.setComplex(trait.variants, trait.max_rank)
             tv.setXp(trait.xp)
 
-            container.addView(tv)
+            ll_container.addView(tv)
         }
     }
 
@@ -96,7 +174,7 @@ class TraitSelectFragment : Fragment() {
             FROM 
                 traits
             ORDER BY
-                grp
+                cls, grp
         """.trimIndent()
         data = c.db.rawQuery(sql, null)
         while(data.moveToNext()) {
@@ -112,5 +190,28 @@ class TraitSelectFragment : Fragment() {
         }
         data.close()
         return traits
+    }
+
+    class TextChanged: TextWatcher {
+        constructor(search: EditText) {
+            this.search = search
+            this.frgm = this.search.findFragment()
+        }
+        private var search: EditText
+        private var frgm: TraitSelectFragment
+
+
+
+        override fun afterTextChanged(p0: Editable?) {
+            frgm.toggleTraits(search)
+        }
+
+        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+        }
+
+        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+        }
+
     }
 }

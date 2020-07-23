@@ -111,7 +111,19 @@ class TraitView: LinearLayout {
      */
     fun setName(n: String) {
         data.name = n
-        tv_name.text = n
+        var display_name = n
+        if (data.id in c.char_traits) {
+            display_name += " ✔"
+        }
+        tv_name.text = display_name
+
+    }
+
+    /**
+     * Get the name of this trait
+     */
+    fun getName(): String {
+        return data.name
     }
 
     /**
@@ -135,6 +147,13 @@ class TraitView: LinearLayout {
         } else {
             tv_xp.text = "-?"
         }
+    }
+
+    /**
+     * allows access to the xp value of a trait
+     */
+    fun getXp(): Int {
+        return data.xp
     }
 
     /**
@@ -299,7 +318,10 @@ class TraitView: LinearLayout {
 
                 grp.addView(rb)
                 val txt = TextView(context)
-                txt.text = variant.txt
+                txt.setText(HtmlCompat.fromHtml(
+                    variant.txt,
+                    HtmlCompat.FROM_HTML_MODE_LEGACY)
+                )
                 grp.addView(txt)
             }
 
@@ -491,5 +513,7 @@ class TraitView: LinearLayout {
                 id = ${c.char_id}
         """.trimIndent()
         c.db.execSQL(sql)
+        c.char_traits += data.id
+        setName(data.name)
     }
 }

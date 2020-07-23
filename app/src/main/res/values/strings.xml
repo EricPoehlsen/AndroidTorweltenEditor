@@ -40,6 +40,7 @@
     <string name="ts_title">Eigenschaft wählen</string>
     <string name="ts_advantages">Vorteile</string>
     <string name="ts_disadvantages">Nachteile</string>
+    <string name="ts_all">Alle</string>
     <string name="ts_groups">Gruppen</string>
     <string name="ts_add_trait">Eigenschaft hinzufügen</string>
     <string name="te_name">Eigenschaft</string>

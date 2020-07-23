@@ -8,11 +8,11 @@
     tools:context=".TraitSelectFragment">
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/traitselect_toggle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Button"
-        app:layout_constraintStart_toStartOf="parent"
+        android:text="@string/ts_all"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ScrollView
@@ -21,7 +21,7 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button">
+        app:layout_constraintTop_toBottomOf="@+id/traitselect_toggle">
 
         <LinearLayout
             android:id="@+id/traitselect_container"
@@ -31,4 +31,16 @@
             android:divider="@drawable/divider_4dp"
             android:orientation="vertical" />
     </ScrollView>
+
+    <EditText
+        android:id="@+id/traitselect_search"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:ems="10"
+        android:hint="@string/te_name"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toBottomOf="@+id/traitselect_toggle"
+        app:layout_constraintEnd_toStartOf="@+id/traitselect_toggle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
