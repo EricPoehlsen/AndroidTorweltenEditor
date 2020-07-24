@@ -14,21 +14,21 @@
         android:ems="10"
         android:hint="@string/skillselect_name"
         android:inputType="textPersonName"
-        app:layout_constraintBottom_toBottomOf="@+id/skillselect_search"
-        app:layout_constraintEnd_toStartOf="@+id/skillselect_search"
+        app:layout_constraintBottom_toBottomOf="@+id/skillselect_filter"
+        app:layout_constraintEnd_toStartOf="@+id/skillselect_filter"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/skillselect_search" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/skillselect_search"
+        android:id="@+id/skillselect_filter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/search"
+        android:text="@string/skillselect_filter"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/skillselect_searchfield"
-        app:layout_constraintTop_toBottomOf="@+id/skillselect_title" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ScrollView
         android:id="@+id/skillselect_scrollbox"
@@ -44,15 +44,6 @@
             android:id="@+id/skillselect_container"
             android:orientation="vertical" />
     </ScrollView>
-
-    <TextView
-        android:id="@+id/skillselect_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/skillselect_title"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

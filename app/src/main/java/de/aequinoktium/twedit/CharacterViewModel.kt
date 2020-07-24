@@ -7,6 +7,7 @@ import androidx.annotation.UiThread
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import java.util.*
 
 /**
  * Primary ViewModel for anything related to the character
@@ -14,6 +15,7 @@ import kotlinx.coroutines.launch
  */
 
 class CharacterViewModel: ViewModel() {
+    val LOCALE = Locale.GERMAN
     lateinit var db: SQLiteDatabase
     var char_id: Int = 0
     var name: String = ""

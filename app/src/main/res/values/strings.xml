@@ -25,6 +25,13 @@
     <string name="dialog_edit_skill_lvl2">umfassender Erfahrungensschatz</string>
     <string name="dialog_edit_skill_lvl3">profundes Expertenwissen</string>
     <string name="dialog_edit_skill_del">entfernen …</string>
+    <string name="dialog_skill_filter_title">Fertigkeiten filtern</string>
+    <string name="dialog_skill_filter_base">Grundfertigkeiten</string>
+    <string name="dialog_skill_filter_skill">Fertigkeiten</string>
+    <string name="dialog_skill_filter_spec">Spezialisierungen</string>
+    <string name="dialog_skill_filter_active">Aktive Fertigkeiten</string>
+    <string name="dialog_skill_filter_passive">Passive Fertigkeiten</string>
+
     <string name="dialog_remove_trait_title">Eigenschaft löschen …</string>
     <string name="dialog_remove_trait_msg">Entfernt %1$s und korrigiert die Erfahrungspunkte.</string>
     <string name="dialog_collapse_trait_title">Varianten bearbeiten …</string>
@@ -35,6 +42,7 @@
     <string name="add">+</string>
     <string name="skillselect_name">Fertigkeit</string>
     <string name="skillselect_title">Fertigkeiten aktivieren/entfernen …</string>
+    <string name="skillselect_filter">Filter</string>
     <string name="cv_skills">Fertigkeiten</string>
     <string name="cv_traits">Eigenschaften</string>
     <string name="ts_title">Eigenschaft wählen</string>

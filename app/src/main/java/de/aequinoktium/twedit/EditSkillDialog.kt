@@ -14,10 +14,11 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import java.lang.Math.floor
 
-class EditSkillDialog(char_id: Int, skill_id: Int, cur_value: Int): DialogFragment() {
-    var char_id: Int = char_id
-    var skill_id: Int = skill_id
-    var cur_value: Int = cur_value
+class EditSkillDialog(
+    var char_id: Int,
+    var skill_id: Int,
+    var cur_value: Int
+): DialogFragment() {
     var new_value: Int = cur_value
     var xp_cost: Int = 0
 
@@ -58,8 +59,8 @@ class EditSkillDialog(char_id: Int, skill_id: Int, cur_value: Int): DialogFragme
             val skill_id2 = floor(skill_id.toDouble() / 100).toInt() * 100
 
 
-            var inflater: LayoutInflater = this.layoutInflater
-            var content: View = inflater.inflate(R.layout.dialog_edit_skill, null)
+            val inflater: LayoutInflater = this.layoutInflater
+            val content: View = inflater.inflate(R.layout.dialog_edit_skill, null)
 
             // retrieve the skill and parent skills from database
             val sql = """
@@ -69,13 +70,13 @@ class EditSkillDialog(char_id: Int, skill_id: Int, cur_value: Int): DialogFragme
                       id = $base_id OR
                       id = $skill_id2
             """.trimIndent()
-            var data: Cursor = act.db.rawQuery(sql, null)
+            val data: Cursor = act.db.rawQuery(sql, null)
 
             while (data.moveToNext()) {
                 when {
                     // the selected skill:
                     data.getInt(0) == skill_id -> {
-                        var title_txt = content.findViewById<TextView>(R.id.dia_skill_title)
+                        val title_txt = content.findViewById<TextView>(R.id.dia_skill_title)
                         title_txt.text = data.getString(1)
                         if (base_id == skill_id) { // is base skill
                             title_txt.setTypeface(null, Typeface.BOLD)
@@ -83,7 +84,7 @@ class EditSkillDialog(char_id: Int, skill_id: Int, cur_value: Int): DialogFragme
                             title_txt.setTypeface(null, Typeface.ITALIC)
                         }
 
-                        var active_icon = content.findViewById<ImageView>(R.id.dia_skill_type)
+                        val active_icon = content.findViewById<ImageView>(R.id.dia_skill_type)
                         if (data.getInt(2) == 1) {
                             active_icon.setImageResource(R.drawable.hand)
                         } else {
@@ -122,7 +123,7 @@ class EditSkillDialog(char_id: Int, skill_id: Int, cur_value: Int): DialogFragme
      * @param new_value: the new value
      */
     fun updateXp(textView: TextView, new_value: Int) {
-        var spent_xp = cur_value * (cur_value + 1)
+        val spent_xp = cur_value * (cur_value + 1)
         var new_cost = new_value * (new_value + 1)
         if (new_value < 0) new_cost = 0
         xp_cost = new_cost - spent_xp
