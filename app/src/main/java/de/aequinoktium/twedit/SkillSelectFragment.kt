@@ -37,8 +37,8 @@ class SkillSelectFragment : Fragment(), SkillFilterDialog.SkillFilterDialogListe
     class SkillData {
         var id: Int = 0
         var name: String = ""
-        var base_skill: Boolean = false
-        var specialty: Boolean = false
+        var parent_id: Int = 0
+        var spec: Int = 0
         var activated: Boolean = false
         var has_level: Boolean = false
         var is_active: Int = 0
@@ -92,8 +92,9 @@ class SkillSelectFragment : Fragment(), SkillFilterDialog.SkillFilterDialogListe
      * @return Array of SkillData
      */
     fun loadSkills(): Array<SkillData> {
-        var sql = "SELECT id, name, base_skill, skill, is_active FROM skills"
+        var sql = "SELECT id, name, parent_id, spec, is_active FROM skills"
         val data: Cursor = c.db.rawQuery(sql, null)
+        var skills = emptyArray<SkillData>()
 
         // select all skills the character has activated
         sql = "SELECT skill_id, lvl FROM char_skills WHERE char_id = " + char_id
@@ -108,20 +109,13 @@ class SkillSelectFragment : Fragment(), SkillFilterDialog.SkillFilterDialogListe
             }
         }
 
-        var result = emptyArray<SkillData>()
-
         while (data.moveToNext()) {
             val skill = SkillData()
             skill.id = data.getInt(0)
             skill.name = data.getString(1)
+            skill.parent_id = data.getInt(2)
+            skill.spec = data.getInt(3)
             skill.is_active = data.getInt(4)
-            Log.d("info", "${skill.name} : ${skill.is_active}")
-
-            if (data.getInt(2) == 0) {
-                skill.base_skill = true
-            } else if (data.getInt(0) != data.getInt(3)) {
-                skill.specialty = true
-            }
 
             if (skill.id in activated_skills) {
                 skill.activated = true
@@ -129,13 +123,31 @@ class SkillSelectFragment : Fragment(), SkillFilterDialog.SkillFilterDialogListe
                     skill.has_level = true
                 }
             }
-            result += skill
+            skills += skill
         }
 
         data.close()
         char_data.close()
 
-        return result
+        // sort the tree
+        var sorted = mutableListOf<SkillData>()
+        for (spec in 1..3) {
+            for (skill in skills) {
+                if (spec == 1) {
+                    sorted.add(skill)
+                    continue
+                } else {
+                    for (i in 0..sorted.size) {
+                        if (skill.parent_id == skill.id) {
+                            sorted.add(i+1, skill)
+                            continue
+                        }
+                    }
+                }
+            }
+        }
+
+        return sorted.toTypedArray()
     }
 
     fun displaySkills(skills: Array<SkillData>) {
@@ -147,32 +159,15 @@ class SkillSelectFragment : Fragment(), SkillFilterDialog.SkillFilterDialogListe
             list_entry.text = skill.name
             list_entry.skill_id = skill.id
 
-            if (skill.base_skill) {
-                list_entry.is_base = true
-                list_entry.is_skil = false
-                list_entry.setTypeface(null, Typeface.BOLD)
-            } else if (skill.specialty) {
-                list_entry.is_spec = true
-                list_entry.is_skil = false
-                list_entry.setTypeface(null, Typeface.ITALIC)
-            }
-            if (skill.is_active == 1) {
-                Log.d("info", "Aktiv: ${skill.name}")
-                list_entry.is_act = true
-                list_entry.is_pas = false
-            } else {
-                Log.d("info", "Passiv: ${skill.name}")
-                list_entry.is_act = false
-                list_entry.is_pas = true
-            }
+            list_entry.spec = skill.spec
+            if (skill.spec == 1) list_entry.setTypeface(null, Typeface.BOLD)
+            if (skill.spec == 3) list_entry.setTypeface(null, Typeface.ITALIC)
 
-            if (skill.activated) {
-                list_entry.isChecked = true
-            }
+            list_entry.is_active = (skill.is_active == 1)
 
-            if (skill.has_level) {
-                list_entry.isEnabled = false
-            }
+            list_entry.isChecked = skill.activated
+
+            list_entry.isEnabled = !skill.has_level
 
             list_entry.setOnCheckedChangeListener{ button, b ->
                 setSkill(list_entry)
@@ -209,12 +204,12 @@ class SkillSelectFragment : Fragment(), SkillFilterDialog.SkillFilterDialogListe
             val cb = v as SkillSelectView
             cb.visibility = View.VISIBLE
 
-            if (!show_base && cb.is_base) cb.visibility = View.GONE
-            if (!show_skil && cb.is_skil) cb.visibility = View.GONE
-            if (!show_spec && cb.is_spec) cb.visibility = View.GONE
+            if (!show_base && cb.spec == 1) cb.visibility = View.GONE
+            if (!show_skil && cb.spec == 2) cb.visibility = View.GONE
+            if (!show_spec && cb.spec == 3) cb.visibility = View.GONE
 
-            if (!show_act && cb.is_act) cb.visibility = View.GONE
-            if (!show_pas && cb.is_pas) cb.visibility = View.GONE
+            if (!show_act && cb.is_active) cb.visibility = View.GONE
+            if (!show_pas && !cb.is_active) cb.visibility = View.GONE
 
             val name = cb.text.toString().toLowerCase(c.LOCALE)
             if (search.length >= 1 && search !in name) cb.visibility = View.GONE

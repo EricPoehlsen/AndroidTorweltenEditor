@@ -30,8 +30,8 @@ class CharSkillFragment : Fragment(), EditSkillDialog.EditSkillDialogListener {
         var id: Int = 0
         var name: String = ""
         var lvl: Int = 0
-        var base_id: Int = 0
-        var id2: Int = 0
+        var parent_id: Int = 0
+        var spec: Int = 0
         var is_active: Boolean = false
     }
 
@@ -76,8 +76,8 @@ class CharSkillFragment : Fragment(), EditSkillDialog.EditSkillDialogListener {
             SELECT char_skills.skill_id as id, 
                    char_skills.lvl as lvl,
                    skills.name as name, 
-                   skills.base_skill as base_skill,
-                   skills.skill as skill, 
+                   skills.parent_id as parent_id,
+                   skills.spec as spec, 
                    skills.is_active as active 
                    FROM char_skills
                    JOIN skills 
@@ -91,8 +91,8 @@ class CharSkillFragment : Fragment(), EditSkillDialog.EditSkillDialogListener {
             skill.id = skills.getInt(0)
             skill.name = skills.getString(2)
             skill.lvl = skills.getInt(1)
-            skill.base_id = skills.getInt(3)
-            skill.id2 = skills.getInt(4)
+            skill.parent_id = skills.getInt(3)
+            skill.spec = skills.getInt(4)
             skill.is_active = (skills.getInt(5) == 1)
         result += skill
         }
@@ -143,11 +143,9 @@ class CharSkillFragment : Fragment(), EditSkillDialog.EditSkillDialogListener {
             // set the skill name tag
             val sk_text = TextView(context)
             sk_text.text = skill.name
-            if (skill.base_id == 0) { // is base skill
-                sk_text.setTypeface(null, Typeface.BOLD)
-            } else if (skill.id != skill.id2) { // is specialty
-                sk_text.setTypeface(null, Typeface.ITALIC)
-            }
+            if (skill.spec == 1) sk_text.setTypeface(null, Typeface.BOLD)
+            if (skill.spec == 3) sk_text.setTypeface(null, Typeface.ITALIC)
+
             val pdd = act.calc_dp(6)
             sk_text.setPadding(0,pdd,0,pdd)
             sk_text.tag = skill.id.toString() + "_text"
