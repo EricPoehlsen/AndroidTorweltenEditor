@@ -15,9 +15,11 @@ import android.widget.*
 import androidx.core.view.children
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.findFragment
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.Observer
 import kotlinx.coroutines.*
-import java.util.*
+
 
 /**
  * The SkillSelectFragment helps players to select new skills
@@ -26,6 +28,7 @@ class SkillSelectFragment : Fragment(), SkillFilterDialog.SkillFilterDialogListe
     private val c: CharacterViewModel by activityViewModels()
     private var char_id: Int = 0
 
+    private val sorted_skills: MutableLiveData<Array<SkillData>> = MutableLiveData()
     private var show_base = true
     private var show_skil = true
     private var show_spec = true
@@ -33,6 +36,7 @@ class SkillSelectFragment : Fragment(), SkillFilterDialog.SkillFilterDialogListe
     private var show_pas = true
     private lateinit var te_search: EditText
     private lateinit var ll_container: LinearLayout
+    private lateinit var sv_scroll: ScrollView
 
     class SkillData {
         var id: Int = 0
@@ -46,6 +50,11 @@ class SkillSelectFragment : Fragment(), SkillFilterDialog.SkillFilterDialogListe
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        sorted_skills.value = emptyArray()
+        val changed = Observer<Array<SkillData>> {
+            skill_data -> displaySkills(skill_data)
+        }
+        sorted_skills.observe(this, changed)
     }
 
     override fun onCreateView(
@@ -61,29 +70,24 @@ class SkillSelectFragment : Fragment(), SkillFilterDialog.SkillFilterDialogListe
         char_id = c.char_id
         val act = activity as MainActivity
 
-
-        c.viewModelScope.launch {
-            val skills = loadSkills()
-            withContext(Dispatchers.Main) {
-                displaySkills(skills)
-            }
-        }
-
         ll_container = act.findViewById(R.id.skillselect_container)
         te_search = act.findViewById(R.id.skillselect_searchfield)
+        sv_scroll = act.findViewById(R.id.skillselect_scrollbox)
         te_search.addTextChangedListener(TextChanged(te_search))
         val filter_button = act.findViewById<Button>(R.id.skillselect_filter)
         filter_button.setOnClickListener {
             filter()
         }
+
+
+        searchSkills()
+
     }
 
-    fun searchSkills(input: String) {
-        c.viewModelScope.launch {
-            val skills = loadSkills()
-            withContext(Dispatchers.Main) {
-                displaySkills(skills)
-            }
+    fun searchSkills() {
+        c.viewModelScope.launch(Dispatchers.IO) {
+            sorted_skills.postValue(loadSkills())
+            Log.d("info", "Done loading ...")
         }
     }
 
@@ -91,7 +95,7 @@ class SkillSelectFragment : Fragment(), SkillFilterDialog.SkillFilterDialogListe
      * Load all available skills from the SQLite database
      * @return Array of SkillData
      */
-    fun loadSkills(): Array<SkillData> {
+    suspend fun loadSkills(): Array<SkillData> {
         var sql = "SELECT id, name, parent_id, spec, is_active FROM skills"
         val data: Cursor = c.db.rawQuery(sql, null)
         var skills = emptyArray<SkillData>()
@@ -137,16 +141,15 @@ class SkillSelectFragment : Fragment(), SkillFilterDialog.SkillFilterDialogListe
                     sorted.add(skill)
                     continue
                 } else {
-                    for (i in 0..sorted.size) {
-                        if (skill.parent_id == skill.id) {
-                            sorted.add(i+1, skill)
+                    for (i in 0..sorted.size - 1) {
+                        if (skill.parent_id == sorted[i].id) {
+                            sorted.add(i + 1, skill)
                             continue
                         }
                     }
                 }
             }
         }
-
         return sorted.toTypedArray()
     }
 
@@ -169,7 +172,7 @@ class SkillSelectFragment : Fragment(), SkillFilterDialog.SkillFilterDialogListe
 
             list_entry.isEnabled = !skill.has_level
 
-            list_entry.setOnCheckedChangeListener{ button, b ->
+            list_entry.setOnCheckedChangeListener { button, b ->
                 setSkill(list_entry)
             }
 
@@ -198,7 +201,6 @@ class SkillSelectFragment : Fragment(), SkillFilterDialog.SkillFilterDialogListe
     }
 
     fun toggleSkills() {
-        Log.d("info", "TOGGLE")
         var search = te_search.text.toString().toLowerCase(c.LOCALE)
         for (v in ll_container.children) {
             val cb = v as SkillSelectView
@@ -214,6 +216,7 @@ class SkillSelectFragment : Fragment(), SkillFilterDialog.SkillFilterDialogListe
             val name = cb.text.toString().toLowerCase(c.LOCALE)
             if (search.length >= 1 && search !in name) cb.visibility = View.GONE
         }
+        sv_scroll.invalidate()
     }
 
     /**
@@ -255,3 +258,4 @@ class SkillSelectFragment : Fragment(), SkillFilterDialog.SkillFilterDialogListe
         override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
     }
 }
+

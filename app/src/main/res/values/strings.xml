@@ -25,6 +25,11 @@
     <string name="dialog_edit_skill_lvl2">umfassender Erfahrungensschatz</string>
     <string name="dialog_edit_skill_lvl3">profundes Expertenwissen</string>
     <string name="dialog_edit_skill_del">entfernen …</string>
+    <string name="dialog_new_skill_title">Neue Fertigkeit:</string>
+    <string name="dialog_new_skill_base">Grundfertigkeit</string>
+    <string name="dialog_new_skill_skill">Fertigkeit in %1$s</string>
+    <string name="dialog_new_skill_spec">Spezialisierung von %1$s</string>
+    <string name="dialog_new_skill_sel">&lt;&lt;%1$s;&gt;&gt;</string>
     <string name="dialog_skill_filter_title">Fertigkeiten filtern</string>
     <string name="dialog_skill_filter_base">Grundfertigkeiten</string>
     <string name="dialog_skill_filter_skill">Fertigkeiten</string>

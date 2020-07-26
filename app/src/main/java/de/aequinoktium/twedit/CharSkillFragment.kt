@@ -21,7 +21,9 @@ import kotlinx.coroutines.withContext
 /**
  * The SkillSelectFragment helps players to select new skills
  */
-class CharSkillFragment : Fragment(), EditSkillDialog.EditSkillDialogListener {
+class CharSkillFragment : Fragment(),
+                          EditSkillDialog.EditSkillDialogListener,
+                          NewSkillDialog.NewSkillDialogListener {
     private val c: CharacterViewModel by activityViewModels()
     private var char_id: Int = 0
 
@@ -157,11 +159,17 @@ class CharSkillFragment : Fragment(), EditSkillDialog.EditSkillDialogListener {
             sk_line.setOnClickListener {
                 editSkill(skill.id, skill.lvl)
             }
+            sk_line.setOnLongClickListener {
+                newSkill(skill.id)
+            }
 
             skill_container.addView(sk_line)
         }
     }
 
+    /**
+     * Trigger the EditSkillDialog on a click
+     */
     fun editSkill(char_skill: Int, cur_value: Int) {
         val act = activity as MainActivity
         val fm = this.parentFragmentManager
@@ -169,6 +177,104 @@ class CharSkillFragment : Fragment(), EditSkillDialog.EditSkillDialogListener {
         dialog.setTargetFragment(this, 301)
         dialog.show(fm, null)
     }
+
+    /**
+     * Trigger the NewSkillDialog on a long click
+     */
+    fun newSkill(skill_id: Int): Boolean {
+        val act = activity as MainActivity
+        val fm = this.parentFragmentManager
+        val dialog = NewSkillDialog(skill_id, c)
+        dialog.setTargetFragment(this, 301)
+        dialog.show(fm, null)
+        return true
+    }
+
+    /**
+     * Create and activate a new skill
+     */
+    override fun onNewSkillDialogPositiveClick(dialog: NewSkillDialog) {
+        c.viewModelScope.launch {
+            createNewSkill(dialog.skill)
+            val skills = loadSkills()
+            withContext(Dispatchers.Main) {
+                displaySkills(skills)
+            }
+        }
+    }
+
+    fun createNewSkill(skill: NewSkillDialog.SkillData) {
+        var skill_id = 0
+        skill.name = skill.name.replace("'", "\u2019")
+
+        // check if skill exists
+        var sql = """
+            SELECT
+                id 
+            FROM 
+                skills 
+            WHERE 
+                parent_id = ${skill.parent} AND name = '${skill.name}'
+                """.trimIndent()
+        var data = c.db.rawQuery(sql, null)
+        if (data.moveToFirst()) {
+            skill_id = data.getInt(0)
+        }
+        data.close()
+
+        // add new skill to database and retrieve the id
+        if (skill_id == 0) {
+            sql = """
+                INSERT INTO
+                    skills
+                    (name, parent_id, spec, is_active)
+                VALUES
+                    ('${skill.name}', ${skill.parent}, ${skill.spec}, ${skill.is_active})
+            """.trimIndent()
+
+            c.db.execSQL(sql)
+
+            sql = """
+                SELECT
+                    id 
+                FROM 
+                    skills 
+                WHERE 
+                    parent_id = ${skill.parent} AND name = '${skill.name}'
+                    """.trimIndent()
+            data = c.db.rawQuery(sql, null)
+            if (data.moveToFirst()) {
+                skill_id = data.getInt(0)
+            }
+            data.close()
+        }
+
+        if (skill_id > 0) {
+            // check if the skill is already selected:
+            sql = """
+                SELECT 
+                    id 
+                FROM 
+                    char_skills 
+                WHERE 
+                    char_id = ${c.char_id} AND skill_id = $skill_id
+            """.trimIndent()
+            data = c.db.rawQuery(sql, null)
+            if (data.count == 0) {
+                sql = """
+                    INSERT INTO 
+                        char_skills
+                        (char_id, skill_id)
+                    VALUES
+                        (${c.char_id}, $skill_id)
+                """.trimIndent()
+                c.db.execSQL(sql)
+            }
+            data.close()
+        }
+    }
+
+
 
     // update skill when user confirms dialog
     override fun onEditSkillDialogPositiveClick(dialog: EditSkillDialog) {
@@ -192,7 +298,6 @@ class CharSkillFragment : Fragment(), EditSkillDialog.EditSkillDialogListener {
                 """.trimIndent()
             }
             c.db.execSQL(sql)
-            Log.d("info", sql)
 
             // update xp ...
             sql = """
@@ -200,7 +305,6 @@ class CharSkillFragment : Fragment(), EditSkillDialog.EditSkillDialogListener {
                 SET xp_used = xp_used + $xp_cost
                 WHERE id = $char_id
             """.trimIndent()
-            Log.d("info", sql)
             c.db.execSQL(sql)
 
             val skills = loadSkills()
