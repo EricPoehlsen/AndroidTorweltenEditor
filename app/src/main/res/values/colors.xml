@@ -5,4 +5,5 @@
     <color name="colorAccent">#aaa</color>
     <color name="colorLite">#ccc</color>
     <color name="colorBlue">#0cf</color>
+    <color name="colorDarkBlue">#06a</color>
 </resources>
