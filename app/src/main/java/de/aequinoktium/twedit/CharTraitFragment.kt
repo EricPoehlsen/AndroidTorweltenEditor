@@ -70,15 +70,11 @@ class CharTraitFragment : Fragment() {
             trait.id = trait_data.getInt(trait_data.getColumnIndex("id"))
             trait.trait_id = trait_data.getInt(trait_data.getColumnIndex("trait_id"))
             trait.rank = trait_data.getInt(trait_data.getColumnIndex("rank"))
-            trait.var1_id = trait_data.getInt(trait_data.getColumnIndex("var1_id"))
-            trait.var2_id = trait_data.getInt(trait_data.getColumnIndex("var2_id"))
-            trait.var3_id = trait_data.getInt(trait_data.getColumnIndex("var3_id"))
-            trait.var4_id = trait_data.getInt(trait_data.getColumnIndex("var4_id"))
+            trait.variants = trait_data.getString(trait_data.getColumnIndex("variants"))
             trait.xp_cost = trait_data.getInt(trait_data.getColumnIndex("xp_cost"))
             trait.name = trait_data.getString(trait_data.getColumnIndex("name"))
             trait.txt = trait_data.getString(trait_data.getColumnIndex("txt"))
             trait.reduced = trait_data.getInt(trait_data.getColumnIndex("is_reduced"))
-            Log.d("info", "Trait is reduced? ${trait.reduced}")
             result += trait
         }
         trait_data.close()
@@ -95,6 +91,7 @@ class CharTraitFragment : Fragment() {
             tv.setName(trait.name)
             tv.setXp(trait.xp_cost)
             tv.setTraitId(trait.trait_id)
+            tv.setVariants(trait.variants)
             tv.setRank(trait.rank)
             tv.setOnLongClickListener { view -> editTrait(view)}
             layout.addView(tv)

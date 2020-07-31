@@ -39,10 +39,7 @@ class CharTrait {
     var id = 0
     var trait_id = 0
     var rank = 0
-    var var1_id = 0
-    var var2_id = 0
-    var var3_id = 0
-    var var4_id = 0
+    var variants = ""
     var xp_cost = 0
     var xp_old = 0
     var name = ""

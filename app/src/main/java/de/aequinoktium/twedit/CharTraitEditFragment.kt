@@ -119,10 +119,7 @@ class CharTraitEditFragment : Fragment(),
                 txt,
                 xp_cost, 
                 rank,
-                var1_id,
-                var2_id,
-                var3_id,
-                var4_id,
+                variants,
                 is_reduced
             FROM 
                 char_traits
@@ -138,11 +135,8 @@ class CharTraitEditFragment : Fragment(),
             trait_data.xp_cost = data.getInt(3)
             trait_data.xp_old = data.getInt(3)
             trait_data.rank = data.getInt(4)
-            trait_data.var1_id = data.getInt(5)
-            trait_data.var2_id = data.getInt(6)
-            trait_data.var3_id = data.getInt(7)
-            trait_data.var4_id = data.getInt(8)
-            trait_data.reduced = data.getInt(9)
+            trait_data.variants = data.getString(5).replace(" ", ",")
+            trait_data.reduced = data.getInt(6)
         }
         data.close()
         sql = """
@@ -170,12 +164,8 @@ class CharTraitEditFragment : Fragment(),
                 trait_vars
             WHERE
                 id 
-            IN (
-                ${trait_data.var1_id}, 
-                ${trait_data.var2_id}, 
-                ${trait_data.var3_id}, 
-                ${trait_data.var4_id}
-            )
+            IN 
+                (${trait_data.variants}) 
         """.trimIndent()
         data = c.db.rawQuery(sql, null)
         while (data.moveToNext()) {

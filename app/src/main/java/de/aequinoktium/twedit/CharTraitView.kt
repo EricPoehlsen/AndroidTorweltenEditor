@@ -6,7 +6,6 @@ import android.graphics.Typeface
 import android.util.AttributeSet
 import android.util.Log
 import android.view.Gravity
-import android.view.View
 import android.widget.*
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.text.HtmlCompat
@@ -29,6 +28,7 @@ class CharTraitView: LinearLayout {
     private var data = TraitData()
     var trait_vars = mutableMapOf<Int, TraitVariant>()
     var char_trait = CharTrait()
+    private var variants = ""
 
 
     // the main views of the layout
@@ -104,6 +104,10 @@ class CharTraitView: LinearLayout {
     fun setName(n: String) {
         data.name = n
         tv_name.text = n
+    }
+
+    fun setVariants(v: String) {
+        variants = v.replace(" ", ",")
     }
 
     fun setRank(rank: Int) {
@@ -191,8 +195,12 @@ class CharTraitView: LinearLayout {
             FROM
                 trait_vars
             WHERE
-                trait_id = ${data.id}
+                id 
+            IN
+                ($variants)
         """.trimIndent()
+
+        Log.d("info", sql)
         var trait_var = c.db.rawQuery(sql, null)
         while (trait_var.moveToNext()) {
             var variant = TraitVariant()
@@ -223,27 +231,18 @@ class CharTraitView: LinearLayout {
 
         // create views for variants ...
         if (char_trait.reduced == 0) {
-            var variants = arrayOf(
-                char_trait.var1_id,
-                char_trait.var2_id,
-                char_trait.var3_id,
-                char_trait.var4_id
-            )
+            for (v in trait_vars.values) {
+                val tv_variant_title = TextView(context)
+                tv_variant_title.text = v.grp
+                ll_more_info.addView(tv_variant_title)
 
-            for (var_id in variants) {
-                if (var_id > 0) {
-                    val tv_variant_title = TextView(context)
-                    tv_variant_title.text = trait_vars[var_id]?.grp
-                    ll_more_info.addView(tv_variant_title)
+                val tv_variant_name = TextView(context)
+                tv_variant_name.text = v.name
+                ll_more_info.addView(tv_variant_name)
 
-                    val tv_variant_name = TextView(context)
-                    tv_variant_name.text = trait_vars[var_id]?.name
-                    ll_more_info.addView(tv_variant_name)
-
-                    val tv_variant_text = TextView(context)
-                    tv_variant_text.text = trait_vars[var_id]?.txt
-                    ll_more_info.addView(tv_variant_text)
-                }
+                val tv_variant_text = TextView(context)
+                tv_variant_text.text = v.txt
+                ll_more_info.addView(tv_variant_text)
             }
         }
     }

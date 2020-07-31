@@ -19,6 +19,8 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.findFragment
 import androidx.lifecycle.viewModelScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -31,17 +33,15 @@ import kotlinx.coroutines.withContext
 class TraitSelectFragment : Fragment() {
     private val c: CharacterViewModel by activityViewModels()
     private var toggle = 0
-    private lateinit var ll_container: LinearLayout
+    private lateinit var rv_container: RecyclerView
+    private lateinit var rv_manager: LinearLayoutManager
+    private lateinit var rv_adapter: TraitSelectAdapter
+
+
+
     private lateinit var te_search: EditText
     private lateinit var b_toggle: Button
-
-    class TraitData {
-        var id = 0
-        var name = ""
-        var xp = 0
-        var max_rank = 0
-        var variants = false
-    }
+    private var traits = arrayOf<TraitData>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,13 +53,21 @@ class TraitSelectFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val act = activity as MainActivity
-        ll_container = act.findViewById<LinearLayout>(R.id.traitselect_container)
 
-        c.viewModelScope.launch {
-            var traits = findTraits()
+        val act = activity as MainActivity
+        rv_container = act.findViewById(R.id.traitselect_recycler)
+        rv_manager = LinearLayoutManager(act)
+        rv_adapter = TraitSelectAdapter(traits, c)
+        rv_container.apply {
+            setHasFixedSize(true)
+            layoutManager = rv_manager
+            adapter = rv_adapter
+        }
+
+        c.viewModelScope.launch(Dispatchers.IO) {
+            traits = loadTraits()
             withContext(Dispatchers.Main) {
-                displayTraits(traits)
+                rv_adapter.updateData(traits)
             }
         }
 
@@ -74,6 +82,7 @@ class TraitSelectFragment : Fragment() {
     }
 
     fun toggleTraits(view: View){
+        /*
         if (view == b_toggle) {
             toggle += 1
             if (toggle > 2) toggle = 0
@@ -126,66 +135,68 @@ class TraitSelectFragment : Fragment() {
                 }
             }
         }
+        */
     }
 
-    fun displayTraits(traits: Array<TraitData>) {
-        val act = activity as MainActivity
-
-        for (trait in traits) {
-            var tv = TraitView(context)
-            tv.c = c
-
-            var lp = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-            )
-            lp.setMargins(0, 0, act.calc_dp(4), 0)
-
-            tv.layoutParams = lp
-            tv.setTraitId(trait.id)
-            tv.setName(trait.name)
-            tv.setComplex(trait.variants, trait.max_rank)
-            tv.setXp(trait.xp)
-
-            ll_container.addView(tv)
-        }
-    }
-
-    fun findTraits(): Array<TraitData> {
+    fun loadTraits(): Array<TraitData> {
         var traits = arrayOf<TraitData>()
         var sql = """
-            SELECT trait_id FROM trait_vars    
-        """.trimIndent()
-        var data = c.db.rawQuery(sql, null)
-        var variant_traits = arrayOf<Int>()
-        while (data.moveToNext()) {
-            if (data.getInt(0) !in variant_traits) {
-                variant_traits += data.getInt(0)
-            }
-        }
-        data.close()
-
-        sql = """
             SELECT
-                id, 
-                name,
-                xp_cost, 
-                max_rank
+                id,
+                name, 
+                cls, 
+                grp,
+                txt,
+                min_rank, 
+                max_rank,
+                xp_cost
             FROM 
                 traits
             ORDER BY
-                cls, grp
+            cls, grp
         """.trimIndent()
-        data = c.db.rawQuery(sql, null)
-        while(data.moveToNext()) {
+        var data = c.db.rawQuery(sql, null)
+        while (data.moveToNext()) {
             var trait = TraitData()
             trait.id = data.getInt(0)
             trait.name = data.getString(1)
-            trait.xp = data.getInt(2)
-            trait.max_rank = data.getInt(3)
-            if (trait.id in variant_traits) {
-                trait.variants = true
+            trait.cls = data.getInt(2)
+            trait.grp = data.getInt(3)
+            trait.txt = data.getString(4)
+            trait.min_rank = data.getInt(5)
+            trait.max_rank = data.getInt(6)
+            trait.xp = data.getInt(7)
+
+            sql = """
+                SELECT 
+                    id,
+                    name,
+                    xp_factor,
+                    oper, 
+                    grp,
+                    txt
+                FROM 
+                    trait_vars
+                WHERE trait_id = ${trait.id}
+            """.trimIndent()
+            val variants: MutableMap<String, MutableMap<Int, TraitVariant>> = mutableMapOf()
+            val trait_vars = c.db.rawQuery(sql, null)
+            while (trait_vars.moveToNext()) {
+                val variant = TraitVariant()
+                variant.var_id = trait_vars.getInt(0)
+                variant.name = trait_vars.getString(1)
+                variant.xp_factor = trait_vars.getFloat(2)
+                variant.oper = trait_vars.getInt(3)
+                variant.grp = trait_vars.getString(4)
+                variant.txt = trait_vars.getString(5)
+                if (variants[variant.grp] == null) {
+                    variants[variant.grp] = mutableMapOf(Pair(variant.var_id, variant))
+                } else {
+                    variants[variant.grp]?.set(variant.var_id, variant)
+                }
             }
+            trait_vars.close()
+            trait.variants = variants
             traits += trait
         }
         data.close()
