@@ -49,6 +49,7 @@
     <string name="skillselect_title">Fertigkeiten aktivieren/entfernen …</string>
     <string name="skillselect_filter">Filter</string>
     <string name="cv_skills">Fertigkeiten</string>
+    <string name="cv_Info">Hintergrund</string>
     <string name="cv_traits">Eigenschaften</string>
     <string name="ts_title">Eigenschaft wählen</string>
     <string name="ts_advantages">Vorteile</string>

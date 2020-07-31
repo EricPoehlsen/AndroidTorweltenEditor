@@ -82,14 +82,9 @@ class CharSelectFragment : Fragment() {
                 char_core.id as id, 
                 char_core.name as name, 
                 char_core.xp_used as xp_used, 
-                char_core.xp_total as xp_total, 
-                char_info.concept as concept 
+                char_core.xp_total as xp_total
             FROM 
                 char_core 
-            LEFT JOIN 
-                char_info 
-            ON 
-                char_core.id = char_info.char_id 
         """.trimIndent()
 
         if (name.length > 0) {
@@ -107,9 +102,25 @@ class CharSelectFragment : Fragment() {
             char_info.name = data.getString(1)
             char_info.xp_free = data.getInt(3) - data.getInt(2)
             char_info.xp_total = data.getInt(3)
-            char_info.concept = data.getStringOrNull(4).toString()
+            sql = """
+                SELECT 
+                    txt 
+                FROM 
+                    char_info
+                WHERE
+                    char_id = ${char_info.id}
+                    AND
+                    name = 'concept'
+            """.trimIndent()
+            var concept = c.db.rawQuery(sql, null)
+            if (concept.moveToFirst()) {
+                char_info.concept = concept.getString(0).toString()
+            }
+            concept.close()
             result += char_info
         }
+
+        data.close()
         return result
     }
 

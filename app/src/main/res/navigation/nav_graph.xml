@@ -39,6 +39,9 @@
         <action
             android:id="@+id/action_cv_to_ct"
             app:destination="@id/charTraitFragment" />
+        <action
+            android:id="@+id/action_cv_to_ci"
+            app:destination="@id/charInfoHostFragment" />
     </fragment>
     <fragment
         android:id="@+id/testFragment"
@@ -81,4 +84,9 @@
         android:name="de.aequinoktium.twedit.CharTraitEditFragment"
         android:label="fragment_char_trait_edit"
         tools:layout="@layout/fragment_char_trait_edit" />
+    <fragment
+        android:id="@+id/charInfoHostFragment"
+        android:name="de.aequinoktium.twedit.CharInfoHostFragment"
+        android:label="fragment_char_info_host"
+        tools:layout="@layout/fragment_char_info_host" />
 </navigation>

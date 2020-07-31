@@ -58,16 +58,23 @@ class CharacterFragment: Fragment(), EditAttribDialog.EditAttribDialogListener {
         }
 
         // button: switch to skills
-        var b_skills = act.findViewById<Button>(R.id.cv_skills)
+        val b_skills = act.findViewById<Button>(R.id.cv_skills)
         b_skills.setOnClickListener {
             this.findNavController().navigate(R.id.action_cv_to_cs)
         }
 
         // button: switch to traits
-        var b_traits = act.findViewById<Button>(R.id.cv_traits)
+        val b_traits = act.findViewById<Button>(R.id.cv_traits)
         b_traits.setOnClickListener {
             this.findNavController().navigate(R.id.action_cv_to_ct)
         }
+
+        // button: switch to info
+        val b_info = act.findViewById<Button>(R.id.cv_info)
+        b_info.setOnClickListener {
+            this.findNavController().navigate(R.id.action_cv_to_ci)
+        }
+
     }
 
     fun editAttribs(char_attrib: String, cur_value: Int) {

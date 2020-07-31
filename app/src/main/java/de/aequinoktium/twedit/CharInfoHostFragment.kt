@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.activityViewModels
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
@@ -17,6 +18,8 @@ import com.google.android.material.tabs.TabLayoutMediator
  * create an instance of this fragment.
  */
 class CharInfoHostFragment : Fragment() {
+    private val c: CharacterViewModel by activityViewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -32,7 +35,11 @@ class CharInfoHostFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val act = activity as MainActivity
+
         val viewPager = view.findViewById<ViewPager2>(R.id.charinfo_viewpager)
+
+        viewPager.adapter = CharInfoFragmentAdapter(act)
         val tabLayout = view.findViewById<TabLayout>(R.id.charinfo_tab)
         TabLayoutMediator(tabLayout, viewPager) {tab, pos ->
             
@@ -44,8 +51,11 @@ class CharInfoHostFragment : Fragment() {
 
     class CharInfoFragmentAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
         val fragments: Array<Fragment> = arrayOf(
-
+            CharInfoFragment(),
+            CharInfoFragment(),
+            CharInfoFragment()
         )
+
 
         override fun getItemCount(): Int = fragments.size
 
