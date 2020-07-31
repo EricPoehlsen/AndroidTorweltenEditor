@@ -92,8 +92,7 @@ class SkillSelectAdapter(
         val sv = v as SkillSelectView
         if (sv.is_activated) {
             if (!sv.has_lvl) {
-                sv.setTextColor(col_standard)
-                sv.is_activated = false
+                toggleSkill(sv.skill_id)
                 c.viewModelScope.launch(Dispatchers.IO) {
                     val sql = """
                         DELETE FROM 
@@ -107,8 +106,7 @@ class SkillSelectAdapter(
                 }
             }
         } else {
-            sv.setTextColor(col_select)
-            sv.is_activated = true
+            toggleSkill(sv.skill_id)
             c.viewModelScope.launch(Dispatchers.IO) {
                 val sql = """
                         INSERT INTO 
@@ -120,6 +118,21 @@ class SkillSelectAdapter(
                 c.db.execSQL(sql)
             }
         }
+    }
+
+    /**
+     * toggle skill activation and notify the adapter about the change
+     */
+    fun toggleSkill(id: Int) {
+        var i = 0
+        for (skill in data) {
+            if (skill.id == id) {
+                skill.activated = !skill.activated
+                break
+            }
+            i++
+        }
+        this.notifyItemChanged(i)
     }
 
     /**
