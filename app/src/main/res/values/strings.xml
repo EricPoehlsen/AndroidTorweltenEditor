@@ -36,7 +36,7 @@
     <string name="dialog_skill_filter_spec">Spezialisierungen</string>
     <string name="dialog_skill_filter_active">Aktive Fertigkeiten</string>
     <string name="dialog_skill_filter_passive">Passive Fertigkeiten</string>
-
+    <string name="dialog_edit_info_title">%1$s bearbeiten…</string>
     <string name="dialog_remove_trait_title">Eigenschaft löschen …</string>
     <string name="dialog_remove_trait_msg">Entfernt %1$s und korrigiert die Erfahrungspunkte.</string>
     <string name="dialog_collapse_trait_title">Varianten bearbeiten …</string>
@@ -60,6 +60,19 @@
     <string name="te_name">Eigenschaft</string>
     <string name="te_rank">Rang</string>
     <string name="te_xp">XP</string>
-    <string name="te_del">Löschen</string>
-
+    <string name="ci_name">Name</string>
+    <string name="ci_concept">Konzept</string>
+    <string name="ci_homeworld">Heimatwelt</string>
+    <string name="ci_culture">Kultur</string>
+    <string name="ci_species">Spezies</string>
+    <string name="ci_notes">Notizen</string>
+    <string name="ci_age">Alter</string>
+    <string name="ci_sex">Geschlecht</string>
+    <string name="ci_size">Größe</string>
+    <string name="ci_weight">Gewicht</string>
+    <string name="ci_build">Körperbau</string>
+    <string name="ci_eye_color">Augenfarbe</string>
+    <string name="ci_color1">Haut/Schuppen/Pelz</string>
+    <string name="ci_color2">Frisur/Muster/Kamm</string>
+    <string name="ci_desc">Beschreibung</string>
 </resources>

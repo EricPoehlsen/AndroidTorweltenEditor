@@ -5,67 +5,155 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/ci_size"
+    <TextView
+        android:id="@+id/ci_name_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/ci_name"
+        android:textSize="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/ci_name"
+        app:layout_constraintStart_toStartOf="@+id/ci_name" />
+
+    <TextView
+        android:id="@+id/ci_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="2dp"
-        android:background="@drawable/bg"
-        app:layout_constraintEnd_toStartOf="@+id/ci_weight"
-        app:layout_constraintStart_toEndOf="@+id/ci_age"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Größe" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/ci_sex"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="2dp"
-        android:background="@drawable/bg"
-        app:layout_constraintEnd_toStartOf="@+id/ci_age"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Geschlecht" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/ci_weight"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="2dp"
-        android:background="@drawable/bg"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="6dp"
+        android:background="@color/colorPrimaryDark"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
+        android:text="TextView"
+        app:layout_constraintBottom_toTopOf="@+id/ci_species"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/ci_size"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Gewicht" />
-    </com.google.android.material.textfield.TextInputLayout>
+    <TextView
+        android:id="@+id/ci_species_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/ci_species"
+        android:textSize="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/ci_species"
+        app:layout_constraintStart_toStartOf="@+id/ci_species" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/ci_age"
+    <TextView
+        android:id="@+id/ci_species"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="2dp"
-        android:background="@drawable/bg"
-        app:layout_constraintEnd_toStartOf="@+id/ci_size"
-        app:layout_constraintStart_toEndOf="@+id/ci_sex"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="6dp"
+        android:background="@color/colorPrimaryDark"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
+        android:text="TextView"
+        app:layout_constraintBottom_toTopOf="@+id/ci_concept"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ci_name" />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Alter" />
-    </com.google.android.material.textfield.TextInputLayout>
+    <TextView
+        android:id="@+id/ci_concept_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/ci_concept"
+        android:textSize="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/ci_concept"
+        app:layout_constraintStart_toStartOf="@+id/ci_concept" />
+
+    <TextView
+        android:id="@+id/ci_concept"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="6dp"
+        android:background="@color/colorPrimaryDark"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
+        android:text="TextView"
+        app:layout_constraintBottom_toTopOf="@+id/ci_homeworld"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ci_species" />
+
+    <TextView
+        android:id="@+id/ci_homeworld_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/ci_homeworld"
+        android:textSize="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/ci_homeworld"
+        app:layout_constraintStart_toStartOf="@+id/ci_homeworld" />
+
+    <TextView
+        android:id="@+id/ci_homeworld"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="6dp"
+        android:background="@color/colorPrimaryDark"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
+        android:text="TextView"
+        app:layout_constraintBottom_toTopOf="@+id/ci_culture"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ci_concept" />
+
+    <TextView
+        android:id="@+id/ci_culture_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/ci_culture"
+        android:textSize="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/ci_culture"
+        app:layout_constraintStart_toStartOf="@+id/ci_culture" />
+
+    <TextView
+        android:id="@+id/ci_culture"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="6dp"
+        android:background="@color/colorPrimaryDark"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
+        android:text="TextView"
+        app:layout_constraintBottom_toTopOf="@+id/ci_notes"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ci_homeworld" />
+
+    <TextView
+        android:id="@+id/ci_notes_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/ci_notes"
+        android:textSize="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/ci_notes"
+        app:layout_constraintStart_toStartOf="@+id/ci_notes" />
+
+    <TextView
+        android:id="@+id/ci_notes"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="6dp"
+        android:layout_marginBottom="6dp"
+        android:background="@color/colorPrimaryDark"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
+        android:text="TextView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ci_culture" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -149,7 +149,7 @@ class CharSelectFragment : Fragment() {
         // get the name as search string
         var name: String = act.findViewById<EditText>(R.id.charselect_name).text.toString()
 
-        c.viewModelScope.launch {
+        c.viewModelScope.launch(Dispatchers.IO) {
             var characters = findCharacters(name)
             withContext(Dispatchers.Main) {
                 displayCharacters(characters)
@@ -179,7 +179,7 @@ class CharSelectFragment : Fragment() {
 
     fun openChar(char_id: Int) {
         var fragment = this
-        c.viewModelScope.launch {
+        c.viewModelScope.launch(Dispatchers.IO) {
             c.loadCharData(char_id)
             withContext(Dispatchers.Main) {
                 fragment.findNavController().navigate(R.id.action_cs_to_ce)

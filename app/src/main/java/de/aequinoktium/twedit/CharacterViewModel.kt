@@ -29,6 +29,12 @@ class CharacterViewModel: ViewModel() {
         "ep" to 0,
         "mp" to 0
     )
+    var info = mutableMapOf(
+        "core" to mutableListOf<Info>(),
+        "desc" to mutableListOf<Info>()
+    )
+
+
     var xp_used: Int = 0
     var xp_total: Int = 0
 
@@ -39,7 +45,7 @@ class CharacterViewModel: ViewModel() {
         this.db = db
     }
 
-    fun loadCharData(char_id: Int) {
+    suspend fun loadCharData(char_id: Int) {
         this.char_id = char_id
         var sql: String = ""
         sql = "SELECT * FROM char_core WHERE id = $char_id"
@@ -63,6 +69,83 @@ class CharacterViewModel: ViewModel() {
         }
 
         data.close()
+
+        loadInfo()
+    }
+
+    /**
+     * Load character info from the database
+     * Initialize the core fields on first load
+     */
+    suspend fun loadInfo() {
+        var reload = false
+        var sql = """
+            SELECT
+                id,
+                name, 
+                txt, 
+                dataset
+            FROM
+                char_info
+            WHERE
+                char_id = $char_id 
+        """.trimIndent()
+        var data = db.rawQuery(sql, null)
+        while (data.moveToNext()) {
+            val dataset = data.getString(3)
+            var i = Info()
+            i.info_id = data.getInt(0)
+            i.name = data.getString(1)
+            i.txt = data.getString(2)
+            if (info[dataset] != null) {
+                info[dataset]?.add(i)
+            } else {
+                info[dataset] = mutableListOf(i)
+            }
+        }
+        data.close()
+
+        if (info["core"]?.size == 0) {
+            sql = """
+                INSERT INTO
+                    char_info
+                    (char_id, name, dataset)
+                VALUES
+                    ($char_id, 'species', 'core'),
+                    ($char_id, 'concept', 'core'),
+                    ($char_id, 'homeworld', 'core'),
+                    ($char_id, 'culture', 'core'),
+                    ($char_id, 'notes', 'core')
+            """.trimIndent()
+            db.execSQL(sql)
+            reload = true
+        }
+
+        if (info["desc"]?.size == 0) {
+            sql = """
+                INSERT INTO
+                    char_info
+                    (char_id, name, dataset)
+                VALUES
+                    ($char_id, 'age', 'desc'),
+                    ($char_id, 'size', 'desc'),
+                    ($char_id, 'weight', 'desc'),
+                    ($char_id, 'sex', 'desc'),
+                    ($char_id, 'build', 'desc'),
+                    ($char_id, 'eyecolor', 'desc'),
+                    ($char_id, 'color1', 'desc'),
+                    ($char_id, 'color2', 'desc'),
+                    ($char_id, 'desc', 'desc')
+            """.trimIndent()
+            db.execSQL(sql)
+            reload = true
+        }
+
+        if (reload) {
+            loadInfo()
+        }
+
+
     }
 
 
@@ -73,5 +156,11 @@ class CharacterViewModel: ViewModel() {
     override fun onCleared() {
         db.close()
         super.onCleared()
+    }
+
+    class Info() {
+        var info_id = 0
+        var name = ""
+        var txt = ""
     }
 }

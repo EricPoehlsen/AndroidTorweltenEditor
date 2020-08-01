@@ -171,7 +171,6 @@ class CharSkillFragment : Fragment(),
      * Trigger the EditSkillDialog on a click
      */
     fun editSkill(char_skill: Int, cur_value: Int) {
-        val act = activity as MainActivity
         val fm = this.parentFragmentManager
         val dialog = EditSkillDialog(char_id, char_skill, cur_value)
         dialog.setTargetFragment(this, 301)

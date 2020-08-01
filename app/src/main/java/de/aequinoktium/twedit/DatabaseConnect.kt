@@ -55,6 +55,7 @@ class DatabaseConnect(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 char_id INT,
                 name VARCHAR(255) DEFAULT "",
+                dataset VARCHAR(255) DEFAULT "",
                 txt TEXT DEFAULT "",
                 FOREIGN KEY (char_id) REFERENCES char_core(id)
             );

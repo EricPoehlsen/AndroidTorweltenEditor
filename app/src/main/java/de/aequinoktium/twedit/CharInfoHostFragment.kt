@@ -38,8 +38,10 @@ class CharInfoHostFragment : Fragment() {
         val act = activity as MainActivity
 
         val viewPager = view.findViewById<ViewPager2>(R.id.charinfo_viewpager)
-
         viewPager.adapter = CharInfoFragmentAdapter(act)
+
+
+
         val tabLayout = view.findViewById<TabLayout>(R.id.charinfo_tab)
         TabLayoutMediator(tabLayout, viewPager) {tab, pos ->
             
@@ -51,14 +53,15 @@ class CharInfoHostFragment : Fragment() {
 
     class CharInfoFragmentAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
         val fragments: Array<Fragment> = arrayOf(
-            CharInfoFragment(),
-            CharInfoFragment(),
-            CharInfoFragment()
+            CharInfoFragment(R.layout.fragment_char_info_core, "core"),
+            CharInfoFragment(R.layout.fragment_char_info_desc,"desc"),
+            CharInfoFragment(R.layout.fragment_char_info_1_1,"notes")
         )
-
 
         override fun getItemCount(): Int = fragments.size
 
         override fun createFragment(position: Int): Fragment = fragments[position]
+
+
     }
 }
