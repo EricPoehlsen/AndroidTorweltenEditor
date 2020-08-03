@@ -75,4 +75,27 @@
     <string name="ci_color1">Haut/Schuppen/Pelz</string>
     <string name="ci_color2">Frisur/Muster/Kamm</string>
     <string name="ci_desc">Beschreibung</string>
+    <string name="ci_new_title">Seite erstellen oder löschen…</string>
+    <string name="ci_new_info">Hier kannst du weitere Informationsseiten für deinen Charakter
+        anlegen. Erstelle die gewünschte Anzahl an Feldern, gib der Gruppe und den Feldern die
+        passenden Namen und wähle \'Erstellen\'.\nUm eine bestehende Gruppe zu Löschen, gib den
+        Namen ein und wähle dann \'Löschen\'. Die beiden Seiten mit den Basisinformationen können
+        nicht gelöscht werden.
+    </string>
+    <string name="ci_new_name">Name der Gruppe</string>
+    <string name="ci_new_field">Feldname</string>
+    <string name="ci_new_add_field">Neues Feld</string>
+    <string name="ci_new_save">Speichern</string>
+    <string name="ci_new_delete">Löschen</string>
+    <string name="ci_new_success_create">%1$s erfolgreich angelegt.</string>
+    <string name="ci_new_success_delete">%1$s wurde gelöscht.</string>
+    <string name="ci_new_error_noname">Fehler: Ein Gruppenname muss angegeben werden.</string>
+    <string name="ci_new_error_nofields">Fehler: Eine Gruppe ohne Felder kann nicht erstellt werden.</string>
+    <string name="ci_new_error_exists">Fehler: Gruppe existiert bereits.</string>
+    <string name="ci_new_error_core">Fehler: Diese Gruppe kann nicht gelöscht werden.</string>
+
+
+
+
+
 </resources>

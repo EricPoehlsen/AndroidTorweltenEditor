@@ -5,6 +5,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -19,6 +22,7 @@ import com.google.android.material.tabs.TabLayoutMediator
  */
 class CharInfoHostFragment : Fragment() {
     private val c: CharacterViewModel by activityViewModels()
+    private lateinit var adapter: CharInfoFragmentAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,27 +40,51 @@ class CharInfoHostFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val act = activity as MainActivity
+        adapter = CharInfoFragmentAdapter(act, c)
 
         val viewPager = view.findViewById<ViewPager2>(R.id.charinfo_viewpager)
-        viewPager.adapter = CharInfoFragmentAdapter(act)
-
-
+        viewPager.adapter = adapter
 
         val tabLayout = view.findViewById<TabLayout>(R.id.charinfo_tab)
+
         TabLayoutMediator(tabLayout, viewPager) {tab, pos ->
-            
-        }
+            tab.text = "Tab ${pos}"
+
+
+        }.attach()
 
     }
 
+    class CharInfoFragmentAdapter(
+        fa: FragmentActivity,
+        var c: CharacterViewModel
+    ) : FragmentStateAdapter(fa) {
+        var fragments: MutableList<Fragment> = initialFragments()
 
+        fun initialFragments(): MutableList<Fragment> {
+            var result = mutableListOf<Fragment>()
+            var datasets = arrayOf<String>()
+            for (key in c.info.keys) {
+                if (key !in arrayOf("core", "desc")) datasets += key
+            }
 
-    class CharInfoFragmentAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
-        val fragments: Array<Fragment> = arrayOf(
-            CharInfoFragment(R.layout.fragment_char_info_core, "core"),
-            CharInfoFragment(R.layout.fragment_char_info_desc,"desc"),
-            CharInfoFragment(R.layout.fragment_char_info_1_1,"notes")
-        )
+            result.add(CharInfoFragment("core"))
+            result.add(CharInfoFragment("desc"))
+
+            for (name in datasets) {
+                result.add(CharInfoFragment(name))
+            }
+
+            result.add(CharInfoNewFragment(this))
+
+            return result
+        }
+
+        fun addFragment(f: Fragment) {
+            val pos = fragments.size-1
+            fragments.add(pos, f)
+            notifyItemInserted(pos)
+        }
 
         override fun getItemCount(): Int = fragments.size
 

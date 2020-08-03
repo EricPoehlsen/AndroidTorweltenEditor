@@ -1,12 +1,18 @@
 package de.aequinoktium.twedit
 
+import android.content.res.Resources
+import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.viewModelScope
@@ -15,7 +21,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 
-class CharInfoFragment(private var layout: Int, private var dataset: String) : Fragment(),
+class CharInfoFragment(private var dataset: String) : Fragment(),
                          EditInfoDialog.EditInfoDialogListener{
     private val c: CharacterViewModel by activityViewModels()
 
@@ -48,19 +54,76 @@ class CharInfoFragment(private var layout: Int, private var dataset: String) : F
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        val root: View = inflater.inflate(
-            layout,
-            container,
-            false
-        )
+        val root: View
 
-
-
-
+        if (dataset == "core") {
+            root = inflater.inflate(
+                R.layout.fragment_char_info_core,
+                container,
+                false
+            )
+        } else if (dataset == "desc") {
+            root = inflater.inflate(
+                R.layout.fragment_char_info_desc,
+                container,
+                false
+            )
+        } else {
+            Log.d("info","dataset: $dataset")
+            root = createLayout(c.info[dataset]!!.size)
+        }
 
         return root
     }
+
+    fun createLayout(size: Int): LinearLayout {
+        val act = context as MainActivity
+
+        var layout = LinearLayout(context)
+        layout.orientation = LinearLayout.VERTICAL
+        val lp_ll = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.MATCH_PARENT
+        ).apply {
+            setMargins(act.calc_dp(6),0,act.calc_dp(6), act.calc_dp(6))
+        }
+        layout.layoutParams = lp_ll
+
+
+
+        val lp_label = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        ).apply {
+            setMargins(0,act.calc_dp(6),0,0)
+        }
+
+        val lp_data = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            0
+        ).apply {
+            weight = 1f
+        }
+
+
+        for (i in 1..size) {
+            val tv_label = TextView(context)
+            tv_label.textSize = 10f
+            tv_label.layoutParams = lp_label
+            tv_label.id = i * 1000
+
+            val tv_data = TextView(context)
+            tv_data.setBackgroundResource(R.color.colorPrimaryDark)
+            tv_data.layoutParams = lp_data
+            tv_data.setPadding(0,act.calc_dp(6),0,act.calc_dp(6))
+            tv_data.id = i * 100
+
+            layout.addView(tv_label)
+            layout.addView(tv_data)
+        }
+        return layout
+    }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -80,8 +143,18 @@ class CharInfoFragment(private var layout: Int, private var dataset: String) : F
                 tv.setText(HtmlCompat.fromHtml(info.txt, HtmlCompat.FROM_HTML_MODE_COMPACT))
                 tv.setOnClickListener{v -> editInfo(v, info.info_id)}
             }
-        }
+        } else {
+            var i = 1
+            for (info in c.info[dataset]!!) {
+                val tv_label = view.findViewById<TextView>(i * 1000)
+                val tv_data = view.findViewById<TextView>(i * 100)
+                tv_data.setOnClickListener {v -> editInfo(v, info.info_id)}
 
+                tv_label.text = info.name
+                tv_data.setText(HtmlCompat.fromHtml(info.txt, HtmlCompat.FROM_HTML_MODE_COMPACT))
+                i++
+            }
+        }
     }
 
 

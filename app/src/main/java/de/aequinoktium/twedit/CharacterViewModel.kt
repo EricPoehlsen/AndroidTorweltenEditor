@@ -11,7 +11,7 @@ import java.util.*
 
 /**
  * Primary ViewModel for anything related to the character
- * handles all database and network IO.
+ * handles some database and network IO.
  */
 
 class CharacterViewModel: ViewModel() {
