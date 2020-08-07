@@ -10,11 +10,11 @@
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/charinfo_tab"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:tabMode="scrollable"
+        android:layout_height="48dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:tabMode="scrollable" />
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/charinfo_viewpager"

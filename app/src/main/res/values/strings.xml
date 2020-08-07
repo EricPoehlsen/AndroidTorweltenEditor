@@ -49,8 +49,9 @@
     <string name="skillselect_title">Fertigkeiten aktivieren/entfernen …</string>
     <string name="skillselect_filter">Filter</string>
     <string name="cv_skills">Fertigkeiten</string>
-    <string name="cv_Info">Hintergrund</string>
+    <string name="cv_info">Hintergrund</string>
     <string name="cv_traits">Eigenschaften</string>
+    <string name="cv_inv">Inventar</string>
     <string name="ts_title">Eigenschaft wählen</string>
     <string name="ts_advantages">Vorteile</string>
     <string name="ts_disadvantages">Nachteile</string>
@@ -60,6 +61,8 @@
     <string name="te_name">Eigenschaft</string>
     <string name="te_rank">Rang</string>
     <string name="te_xp">XP</string>
+    <string name="ci_core_title">Kerninfos</string>
+    <string name="ci_desc_title">Aussehen</string>
     <string name="ci_name">Name</string>
     <string name="ci_concept">Konzept</string>
     <string name="ci_homeworld">Heimatwelt</string>
@@ -75,6 +78,7 @@
     <string name="ci_color1">Haut/Schuppen/Pelz</string>
     <string name="ci_color2">Frisur/Muster/Kamm</string>
     <string name="ci_desc">Beschreibung</string>
+    <string name="ci_new">Neu</string>
     <string name="ci_new_title">Seite erstellen oder löschen…</string>
     <string name="ci_new_info">Hier kannst du weitere Informationsseiten für deinen Charakter
         anlegen. Erstelle die gewünschte Anzahl an Feldern, gib der Gruppe und den Feldern die

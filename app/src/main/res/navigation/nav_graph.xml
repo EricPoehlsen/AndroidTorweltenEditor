@@ -42,6 +42,9 @@
         <action
             android:id="@+id/action_cv_to_ci"
             app:destination="@id/charInfoHostFragment" />
+        <action
+            android:id="@+id/action_cv_to_cinv"
+            app:destination="@id/charInventoryHostFragment" />
     </fragment>
     <fragment
         android:id="@+id/testFragment"
@@ -89,4 +92,8 @@
         android:name="de.aequinoktium.twedit.CharInfoHostFragment"
         android:label="fragment_char_info_host"
         tools:layout="@layout/fragment_char_info_host" />
+    <fragment
+        android:id="@+id/charInventoryHostFragment"
+        android:name="de.aequinoktium.twedit.CharInventoryHostFragment"
+        android:label="CharInventoryHostFragment" />
 </navigation>

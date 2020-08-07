@@ -48,7 +48,29 @@ class CharInfoHostFragment : Fragment() {
         val tabLayout = view.findViewById<TabLayout>(R.id.charinfo_tab)
 
         TabLayoutMediator(tabLayout, viewPager) {tab, pos ->
-            tab.text = "Tab ${pos}"
+            var names = mutableListOf<String>(
+                getString(R.string.ci_core_title),
+                getString(R.string.ci_desc_title)
+            )
+
+            var icons = mutableListOf<Int>(
+                R.drawable.pips_3_0,
+                R.drawable.pips_3_0
+            )
+            for (n in c.info.keys) {
+                if (n !in arrayOf("core", "desc")) {
+                    names.add(n)
+                    icons.add(R.drawable.pips_3_0)
+                }
+            }
+
+            names.add(getString(R.string.ci_new))
+            icons.add(R.drawable.plus)
+
+            tab.setCustomView(R.layout.tab_info)
+            tab.text = names[pos]
+            tab.setIcon(icons[pos])
+
 
 
         }.attach()

@@ -87,7 +87,7 @@ class CharInfoNewFragment(var adapter: CharInfoHostFragment.CharInfoFragmentAdap
         val act = activity as MainActivity
         val lp = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
-            act.calc_dp(24)
+            act.calc_dp(48)
         )
 
         val et = EditText(context)
