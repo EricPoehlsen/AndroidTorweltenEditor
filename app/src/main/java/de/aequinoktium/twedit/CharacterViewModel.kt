@@ -34,6 +34,8 @@ class CharacterViewModel: ViewModel() {
         "desc" to mutableListOf<Info>()
     )
 
+    var inv = mutableListOf<Item>()
+
 
     var xp_used: Int = 0
     var xp_total: Int = 0

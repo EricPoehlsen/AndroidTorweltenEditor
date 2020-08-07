@@ -150,8 +150,17 @@
         android:id="@+id/cv_info"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/cv_Info"
+        android:text="@string/cv_info"
         app:layout_constraintBottom_toTopOf="@+id/cv_skills"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/cv_inv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/cv_inv"
+        app:layout_constraintBottom_toTopOf="@+id/cv_info"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 

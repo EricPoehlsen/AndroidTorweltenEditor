@@ -75,6 +75,12 @@ class CharacterFragment: Fragment(), EditAttribDialog.EditAttribDialogListener {
             this.findNavController().navigate(R.id.action_cv_to_ci)
         }
 
+        // button: switch to inventory
+        val b_inv = act.findViewById<Button>(R.id.cv_inv)
+        b_inv.setOnClickListener {
+            this.findNavController().navigate(R.id.action_cv_to_cinv)
+        }
+
     }
 
     fun editAttribs(char_attrib: String, cur_value: Int) {

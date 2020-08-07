@@ -132,8 +132,8 @@ class DatabaseConnect(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
                 FOREIGN KEY (trait_id) REFERENCES traits(id)
             );
         """.trimIndent()
-
         db.execSQL(sql)
+
         sql = """
             CREATE TABLE char_traits (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -147,6 +147,47 @@ class DatabaseConnect(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
                 is_reduced BOOLEAN DEFAULT FALSE,
                 FOREIGN KEY (char_id) REFERENCES char_core(id),
                 FOREIGN KEY (trait_id) REFERENCES traits(id)
+            );
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            CREATE TABLE items (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name VARCHAR(255),
+                desc TEXT DEFAULT '',
+                cls VARCHAR(255) DEFAULT 'item',
+                grp VARCHAR(255),
+                base_price FLOAT DEFAULT 0,
+                weight INT DEFAULT 0,
+                volume INT DEFAULT 0,
+                capacity INT DEFAULT 0,
+                is_wearable BOOLEAN DEFAULT false,
+                is_packable BOOLEAN true,
+                extra_data TEXT DEFAULT ''
+            );
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            CREATE TABLE char_items (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                char_id INT,
+                name VARCHAR(255),
+                desc TEXT DEFAULT '',
+                cls VARCHAR(255),
+                qty INT DEFAULT 1,
+                weight INT DEFAULT 0,
+                volume INT DEFAULT 0,
+                capacity INT DEFAULT 0,
+                is_wearable BOOLEAN DEFAULT 0,
+                is_packable BOOLEAN DEFAULT false,
+                original_quality INT DEFAULT 7,
+                current_quality INT DEFAULT 7,
+                price FLOAT DEFAULT 0,
+                attached_to INT DEFAULT 0, 
+                packed_into INT DEFAULT 0,
+                extra_data TEXT DEFAULT ''
             );
         """.trimIndent()
         db.execSQL(sql)
@@ -1035,6 +1076,13 @@ class DatabaseConnect(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
             (104, 'Zugriff auf Ausrüstung', 1, 3, 17, 'Manche Ausrüstung ist selten und steht am Anfang einer Abenteurerkarriere eigentlich nicht zur Verfügung. Dein Charakter besitzt jedoch einen solchen seltenen Gegenstand. Üblicherweise kann man nur Gegenstände erwerben, deren Verfügbarkeit bei +3 oder mehr liegt. Wie viele Vorteilspunkte der Zugriff auf einen Gegenstand kostet hängt natürlich auch von der gespielten Kampagne ab.<br/>Üblicherweise kostet <i>Zugriff auf Ausrüstung</i> einen Rang für jeden Punkt, den die Verfügbarkeit über +3 liegt.<br/>Natürlich muss so ein Besitz auch irgendwie begründet werden.<br/><i>Hab ich auf der Straße gefunden</i> kann vielleicht für ein Päckchen Drogen funktionieren, wird aber spätestens bei einer Servo-Rüstung oder einem Panzerfahrzeug etwas unglaubwürdig. Darüber hinaus muss die Ausrüstung zusätzlich mit Startkapital bezahlt werden.',1, 6),
             (105, 'Akteur', 1, 3, 17, 'Mit der Wahl dieses Vorteils, übt der Charakter <i>Kontrolle über eine Fraktion</i> aus. Jeder Punkt, der in <i>Akteur</i> investiert wird, zählt als Resourcenpunkt für die Erschaffung einer Fraktion - dabei kann dies als Gruppenvorteil, von mehreren Spielern gemeinsam gewählt werden. <i>Akteur</i> bietet sich an, wenn die Charakter die Geschicke einer Organisation oder Firma aktiv in die Hand nehmen wollen. Für eine stille Teilhaberschaft oder ein Aktienpaket ist der Vorteil <i>Regelmäßiges Einkommen</i> besser geeignet.', 1, 150),
             (106, 'Gesellschaftlicher Makel', 1, 3, 15, 'Der Charakter ist aus irgend einem Grund in seiner gewöhnlichen Gesellschaft nicht akzeptiert. Das kann verschiedenste Gründe haben. Die Höhe der Punkte für diesen Nachteil hängt davon ab, wie stark der Charakter in der Gesellschaft zurückgesetzt wird.<br/>Der Nachteil kann von <i>vernachlässigbar</i> (ein Mann auf einer matriarchischen Welt) für 1 Punkt bis hin zu <i>lebensbedrohlich</i> (ein Agent hinter feindlichen Linien) für 18 Punkte gehen.', 1, 18)
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            INSERT INTO items (name, cls, grp, base_price, weight, volume, capacity, extra_data, desc) VALUES
+            ('T-Shirt', 'clothing', 'casual', 10, 100, 500, 0, 'color.*', 'Ein einfaches T-Shirt, erhältlich in vielen Farben und Designs.'),
+            ('Hose', 'clothing', 'casual', 25, 200, 1000, 500, 'color.*:container:Hosentaschen', 'Eine schlichte Stoffhose ohne viel Schnickschnack.')
         """.trimIndent()
         db.execSQL(sql)
 
