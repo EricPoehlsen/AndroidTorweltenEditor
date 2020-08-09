@@ -58,6 +58,7 @@ class CharInventoryHostFragment : Fragment() {
 
         fun initialFragments(): MutableList<Fragment> {
             var result = mutableListOf<Fragment>()
+            result.add(CharInventoryFragment("0"))
 
             result.add(CharInventoryNewFragment("a"))
 

@@ -2,31 +2,26 @@ package de.aequinoktium.twedit
 
 import kotlinx.coroutines.channels.consumesAll
 
-interface Wearable {
-    fun dress() { }
-    fun undress() {}
-
-
-}
-
-
 open class Item() {
     var id = 0
     var name = ""
     var desc = ""
+    var qty = 1
     var weight = 0
     var volume = 0
-    var packed = 0
-    var quality = 0
+    var packed_into = 0
+    var attached_to = 0
+    var cur_qual = 7
+    var orig_qual = 7
     var attachable = false
-    var packable = false
-    var inner_capacity = 0
-    var outer_capacity = 0
+    var packable = true
+    var capacity = 0
+    var price = 0f
     var contents = mutableListOf<Item>()
     var attachments = mutableListOf<Item>()
 
     fun pack(item: Item) {
-
+        item.contents.add(this)
     }
 
     fun unpack(item: Item) {
@@ -76,14 +71,24 @@ open class Item() {
 
 }
 
-
-
-class Clothing() : Item(), Wearable {
+class Clothing(): Item() {
 
 }
 
-fun test() {
-    var a = Clothing()
-    a.dress()
+class Tool(): Item() {
 
 }
+
+open class Weapon(): Item() {
+    var damage = 0
+    var penetration = 0
+}
+
+class MeleeWeapon(): Weapon() {
+
+}
+
+class RangedWeapon(): Weapon() {
+
+}
+

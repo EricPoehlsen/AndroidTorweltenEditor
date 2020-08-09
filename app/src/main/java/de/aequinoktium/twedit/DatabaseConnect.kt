@@ -180,7 +180,6 @@ class DatabaseConnect(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
                 weight INT DEFAULT 0,
                 volume INT DEFAULT 0,
                 capacity INT DEFAULT 0,
-                is_wearable BOOLEAN DEFAULT 0,
                 is_packable BOOLEAN DEFAULT false,
                 original_quality INT DEFAULT 7,
                 current_quality INT DEFAULT 7,

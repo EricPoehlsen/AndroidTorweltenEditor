@@ -7,6 +7,7 @@ import androidx.annotation.UiThread
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import java.util.*
 
 /**
@@ -73,6 +74,7 @@ class CharacterViewModel: ViewModel() {
         data.close()
 
         loadInfo()
+        loadInventory()
     }
 
     /**
@@ -146,9 +148,45 @@ class CharacterViewModel: ViewModel() {
         if (reload) {
             loadInfo()
         }
-
-
     }
+
+    suspend fun loadInventory() {
+        var items = mutableListOf<Item>()
+
+        var sql = "SELECT * FROM char_items WHERE char_id = ${char_id}"
+        var data = db.rawQuery(sql, null)
+
+        while (data.moveToNext()) {
+            var item = Item()
+
+            val cls = data.getString(data.getColumnIndex("cls"))
+
+            when (cls) {
+                "clothing" -> item = Clothing()
+                "tool" -> item = Tool()
+            }
+
+            item.name = data.getString(data.getColumnIndex("name"))
+            item.desc = data.getString(data.getColumnIndex("desc"))
+            item.qty = data.getInt(data.getColumnIndex("qty"))
+            item.weight = data.getInt(data.getColumnIndex("weight"))
+            item.volume = data.getInt(data.getColumnIndex("volume"))
+            item.capacity = data.getInt(data.getColumnIndex("capacity"))
+            item.orig_qual = data.getInt(data.getColumnIndex("original_quality"))
+            item.cur_qual = data.getInt(data.getColumnIndex("current_quality"))
+            item.price = data.getFloat(data.getColumnIndex("price"))
+            item.attached_to = data.getInt(data.getColumnIndex("attached_to"))
+            item.packed_into = data.getInt(data.getColumnIndex("packed_into"))
+
+            val extra_data = data.getString(data.getColumnIndex("extra_data"))
+
+
+            items.add(item)
+        }
+
+        this.inv = items
+    }
+
 
 
 
