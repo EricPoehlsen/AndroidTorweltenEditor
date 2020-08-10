@@ -22,6 +22,8 @@ open class Item() {
 
     fun pack(item: Item) {
         item.contents.add(this)
+        this.packed_into = item.id
+
     }
 
     fun unpack(item: Item) {
@@ -91,4 +93,3 @@ class MeleeWeapon(): Weapon() {
 class RangedWeapon(): Weapon() {
 
 }
-

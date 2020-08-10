@@ -1080,8 +1080,8 @@ class DatabaseConnect(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
 
         sql = """
             INSERT INTO items (name, cls, grp, base_price, weight, volume, capacity, extra_data, desc) VALUES
-            ('T-Shirt', 'clothing', 'casual', 10, 100, 500, 0, 'color.*', 'Ein einfaches T-Shirt, erhältlich in vielen Farben und Designs.'),
-            ('Hose', 'clothing', 'casual', 25, 200, 1000, 500, 'color.*:container:Hosentaschen', 'Eine schlichte Stoffhose ohne viel Schnickschnack.')
+            ('T-Shirt', 'clothing', 'casual', 10, 100, 500, 0, '{"color":["*"]}', 'Ein einfaches T-Shirt, erhältlich in vielen Farben und Designs.'),
+            ('Hose', 'clothing', 'casual', 25, 200, 1000, 500, '{"color":["*"], "container":"Hosentaschen"}', 'Eine schlichte Stoffhose ohne viel Schnickschnack.')
         """.trimIndent()
         db.execSQL(sql)
 
