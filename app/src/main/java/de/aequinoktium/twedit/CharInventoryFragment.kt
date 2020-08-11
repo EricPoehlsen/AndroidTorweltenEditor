@@ -48,7 +48,7 @@ class CharInventoryFragment(private var container: String) : Fragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        for (item in c.inv) {
+        for (item in c.getInventory()) {
             var tv = TextView(context)
             tv.text = item.name
             if (view is LinearLayout) {

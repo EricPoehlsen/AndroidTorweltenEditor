@@ -67,25 +67,14 @@ class CharInventoryNewFragment(private var container: String) : Fragment(){
 
 
     fun addItem() {
-        var item = Item()
+        var item = Item(c)
 
         item.name = et_name.text.toString()
         item.desc = et_desc.text.toString()
 
-
-        var cv = ContentValues()
-        cv.put("name", item.name)
-        cv.put("desc", item.desc)
-        cv.put("char_id", c.char_id)
-
-        var row_id = c.db.insert("char_items",null, cv)
-
-        item.id = row_id.toInt()
-        c.inv.add(item)
-
-        Log.d("info", "New Row ID: ${row_id}")
-
-
+        c.viewModelScope.launch(Dispatchers.IO) {
+            c.addToInventory(item)
+        }
     }
 
 }

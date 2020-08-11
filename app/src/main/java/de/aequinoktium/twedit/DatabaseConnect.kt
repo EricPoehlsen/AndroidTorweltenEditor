@@ -160,10 +160,7 @@ class DatabaseConnect(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
                 grp VARCHAR(255),
                 base_price FLOAT DEFAULT 0,
                 weight INT DEFAULT 0,
-                volume INT DEFAULT 0,
-                capacity INT DEFAULT 0,
-                is_wearable BOOLEAN DEFAULT false,
-                is_packable BOOLEAN true,
+                weight_limit INT DEFAULT 0,
                 extra_data TEXT DEFAULT ''
             );
         """.trimIndent()
@@ -178,13 +175,10 @@ class DatabaseConnect(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
                 cls VARCHAR(255),
                 qty INT DEFAULT 1,
                 weight INT DEFAULT 0,
-                volume INT DEFAULT 0,
-                capacity INT DEFAULT 0,
-                is_packable BOOLEAN DEFAULT false,
+                weight_limit INT DEFAULT 0,
                 original_quality INT DEFAULT 7,
                 current_quality INT DEFAULT 7,
                 price FLOAT DEFAULT 0,
-                attached_to INT DEFAULT 0, 
                 packed_into INT DEFAULT 0,
                 extra_data TEXT DEFAULT ''
             );
@@ -1079,9 +1073,9 @@ class DatabaseConnect(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
         db.execSQL(sql)
 
         sql = """
-            INSERT INTO items (name, cls, grp, base_price, weight, volume, capacity, extra_data, desc) VALUES
-            ('T-Shirt', 'clothing', 'casual', 10, 100, 500, 0, '{"color":["*"]}', 'Ein einfaches T-Shirt, erhältlich in vielen Farben und Designs.'),
-            ('Hose', 'clothing', 'casual', 25, 200, 1000, 500, '{"color":["*"], "container":"Hosentaschen"}', 'Eine schlichte Stoffhose ohne viel Schnickschnack.')
+            INSERT INTO items (name, cls, grp, base_price, weight, weight_limit, extra_data, desc) VALUES
+            ('T-Shirt', 'clothing', 'casual', 10, 100, 0, '{"color":["*"]}', 'Ein einfaches T-Shirt, erhältlich in vielen Farben und Designs.'),
+            ('Hose', 'clothing', 'casual', 25, 200, 500, '{"color":["*"], "container":"Hosentaschen"}', 'Eine schlichte Stoffhose ohne viel Schnickschnack.')
         """.trimIndent()
         db.execSQL(sql)
 

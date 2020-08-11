@@ -1,5 +1,6 @@
 package de.aequinoktium.twedit
 
+import android.content.ContentValues
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
@@ -35,8 +36,7 @@ class CharacterViewModel: ViewModel() {
         "desc" to mutableListOf<Info>()
     )
 
-    var inv = mutableListOf<Item>()
-
+    private var inv = mutableListOf<Item>()
 
     var xp_used: Int = 0
     var xp_total: Int = 0
@@ -157,25 +157,23 @@ class CharacterViewModel: ViewModel() {
         var data = db.rawQuery(sql, null)
 
         while (data.moveToNext()) {
-            var item = Item()
+            var item = Item(this)
 
             val cls = data.getString(data.getColumnIndex("cls"))
 
             when (cls) {
-                "clothing" -> item = Clothing()
-                "tool" -> item = Tool()
+                "clothing" -> item = Clothing(this)
+                "tool" -> item = Tool(this)
             }
 
             item.name = data.getString(data.getColumnIndex("name"))
             item.desc = data.getString(data.getColumnIndex("desc"))
             item.qty = data.getInt(data.getColumnIndex("qty"))
             item.weight = data.getInt(data.getColumnIndex("weight"))
-            item.volume = data.getInt(data.getColumnIndex("volume"))
-            item.capacity = data.getInt(data.getColumnIndex("capacity"))
+            item.weight_limit = data.getInt(data.getColumnIndex("weight_limit"))
             item.orig_qual = data.getInt(data.getColumnIndex("original_quality"))
             item.cur_qual = data.getInt(data.getColumnIndex("current_quality"))
             item.price = data.getFloat(data.getColumnIndex("price"))
-            item.attached_to = data.getInt(data.getColumnIndex("attached_to"))
             item.packed_into = data.getInt(data.getColumnIndex("packed_into"))
 
             val extra_data = data.getString(data.getColumnIndex("extra_data"))
@@ -187,8 +185,27 @@ class CharacterViewModel: ViewModel() {
         this.inv = items
     }
 
+    /**
+     * Retrieve the characters current items
+     * return an array of [Item]
+      */
+    fun getInventory(): Array<Item> {
+        return inv.toTypedArray()
+    }
 
+    /**
+     * Adds an item to the character inventory.
+      */
+    suspend fun addToInventory(item: Item) {
+        var cv = ContentValues()
+        cv.put("name", item.name)
+        cv.put("desc", item.desc)
+        cv.put("char_id", char_id)
 
+        var row_id = db.insert("char_items",null, cv)
+        item.id = row_id.toInt()
+        inv.add(item)
+    }
 
     /**
      * View Model is destroyed. Clean up the database connection.
