@@ -18,13 +18,13 @@ import androidx.core.text.HtmlCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
-import kotlinx.android.synthetic.main.fragment_char_inventory.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.w3c.dom.Text
 
 
-class CharInventoryFragment : Fragment(){
+class CharInventoryContainerFragment : Fragment(){
     private val c: CharacterViewModel by activityViewModels()
 
 
@@ -40,7 +40,7 @@ class CharInventoryFragment : Fragment(){
         val root: View
 
         root = inflater.inflate(
-            R.layout.fragment_char_inventory,
+            R.layout.fragment_char_inventory_container,
             container,
             false
         )
@@ -50,25 +50,19 @@ class CharInventoryFragment : Fragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        view as LinearLayout
+        if (c.current_item.id == 0) {
 
-        val b_other = view.findViewById<ItemView>(R.id.cinv_other_items)
-        b_other.item = Item(c)
-        b_other.setOnClickListener { v -> showContainer(v) }
+            for (item in c.getInventory()) {
+                var tv = ItemView(context)
+                tv.text = item.name
+                tv.item = item
+                view.addView(tv)
+            }
 
-
-
-
-        // button: switch to inventory
-        val b_inv = view.findViewById<Button>(R.id.cinv_new_item)
-        b_inv.setOnClickListener {
-            this.findNavController().navigate(R.id.action_cinv_to_cinvnew)
         }
 
-    }
 
-    fun showContainer(view: View) {
-        view as ItemView
-        c.current_item = view.item
-        this.findNavController().navigate(R.id.action_cinv_to_cinvcont)
+
     }
 }

@@ -179,6 +179,7 @@ class DatabaseConnect(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
                 original_quality INT DEFAULT 7,
                 current_quality INT DEFAULT 7,
                 price FLOAT DEFAULT 0,
+                equipped BOOLEAN DEFAULT false,
                 packed_into INT DEFAULT 0,
                 extra_data TEXT DEFAULT ''
             );

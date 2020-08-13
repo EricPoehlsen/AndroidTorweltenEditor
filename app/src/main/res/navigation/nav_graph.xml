@@ -44,7 +44,7 @@
             app:destination="@id/charInfoHostFragment" />
         <action
             android:id="@+id/action_cv_to_cinv"
-            app:destination="@id/charInventoryHostFragment" />
+            app:destination="@id/charInventoryFragment" />
     </fragment>
     <fragment
         android:id="@+id/testFragment"
@@ -93,7 +93,30 @@
         android:label="fragment_char_info_host"
         tools:layout="@layout/fragment_char_info_host" />
     <fragment
-        android:id="@+id/charInventoryHostFragment"
-        android:name="de.aequinoktium.twedit.CharInventoryHostFragment"
-        android:label="CharInventoryHostFragment" />
+        android:id="@+id/charInventoryFragment"
+        android:name="de.aequinoktium.twedit.CharInventoryFragment"
+        android:label="CharInventoryFragment" >
+        <action
+            android:id="@+id/action_cinv_to_cinvnew"
+            app:destination="@id/charInventoryNewFragment" />
+        <action
+            android:id="@+id/action_cinv_to_cinvcont"
+            app:destination="@id/charInventoryContainerFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/charInventoryNewFragment"
+        android:name="de.aequinoktium.twedit.CharInventoryNewFragment"
+        android:label="CharInventoryNewFragment" />
+    <fragment
+        android:id="@+id/charInventoryContainerFragment"
+        android:name="de.aequinoktium.twedit.CharInventoryContainerFragment"
+        android:label="CharInventoryContainerFragment" >
+        <action
+            android:id="@+id/action_charInventoryContainerFragment_to_charItemFragment"
+            app:destination="@id/charItemFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/charItemFragment"
+        android:name="de.aequinoktium.twedit.CharItemFragment"
+        android:label="CharItemFragment" />
 </navigation>

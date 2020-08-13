@@ -12,16 +12,22 @@ open class Item(private var c: CharacterViewModel) {
     var cur_qual = 7
     var orig_qual = 7
     var weight_limit = 0
+    var equipped = 0
     var price = 0f
 
     fun pack(item: Item) {
+        this.equipped = 0
         this.packed_into = item.id
     }
 
-    fun unpack(item: Item) {
+    fun unpack() {
 
     }
 
+    fun equip() {
+        unpack()
+        this.equipped = 1
+    }
 
     fun getTotalWeight(): Int {
         var weight = this.weight

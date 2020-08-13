@@ -17,9 +17,9 @@ import java.util.*
  */
 
 class CharacterViewModel: ViewModel() {
+    var char_id: Int = 0
     val LOCALE = Locale.GERMAN
     lateinit var db: SQLiteDatabase
-    var char_id: Int = 0
     var name: String = ""
     var attribs = mutableMapOf(
         "phy" to 0,
@@ -37,12 +37,14 @@ class CharacterViewModel: ViewModel() {
     )
 
     private var inv = mutableListOf<Item>()
-
     var xp_used: Int = 0
     var xp_total: Int = 0
 
     var edit_trait = 0
     var char_traits = emptyArray<Int>()
+
+    lateinit var current_item: Item
+
 
     fun setDatabase(db: SQLiteDatabase) {
         this.db = db
@@ -170,6 +172,7 @@ class CharacterViewModel: ViewModel() {
             item.desc = data.getString(data.getColumnIndex("desc"))
             item.qty = data.getInt(data.getColumnIndex("qty"))
             item.weight = data.getInt(data.getColumnIndex("weight"))
+            item.equipped = data.getInt(data.getColumnIndex("equipped"))
             item.weight_limit = data.getInt(data.getColumnIndex("weight_limit"))
             item.orig_qual = data.getInt(data.getColumnIndex("original_quality"))
             item.cur_qual = data.getInt(data.getColumnIndex("current_quality"))

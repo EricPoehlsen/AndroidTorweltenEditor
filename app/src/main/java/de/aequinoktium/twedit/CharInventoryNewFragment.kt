@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 
-class CharInventoryNewFragment(private var container: String) : Fragment(){
+class CharInventoryNewFragment : Fragment(){
     private val c: CharacterViewModel by activityViewModels()
 
     private lateinit var et_name: EditText
