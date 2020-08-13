@@ -15,11 +15,18 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <de.aequinoktium.twedit.ItemView
-        android:id="@+id/cinv_other_items"
+    <LinearLayout
+        android:id="@+id/cinv_containers"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Alles andere ..."
+        android:orientation="vertical"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <de.aequinoktium.twedit.ItemView
+            android:id="@+id/cinv_other_items"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Alles andere ..." />
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

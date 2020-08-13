@@ -4,6 +4,8 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 
 /**
@@ -13,6 +15,7 @@ import android.util.Log
 class DatabaseConnect(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, VERSION) {
 
     override fun onCreate(db: SQLiteDatabase) {
+
         Log.d("Info", "Create DB")
         first_run(db)
     }

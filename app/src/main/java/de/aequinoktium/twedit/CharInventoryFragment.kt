@@ -26,6 +26,7 @@ import kotlinx.coroutines.withContext
 
 class CharInventoryFragment : Fragment(){
     private val c: CharacterViewModel by activityViewModels()
+    private lateinit var ll_containers: LinearLayout
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,9 +52,13 @@ class CharInventoryFragment : Fragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        ll_containers = view.findViewById(R.id.cinv_containers)
+
         val b_other = view.findViewById<ItemView>(R.id.cinv_other_items)
         b_other.item = Item(c)
         b_other.setOnClickListener { v -> showContainer(v) }
+
+        displayEquippedContainers()
 
 
 
@@ -64,6 +69,14 @@ class CharInventoryFragment : Fragment(){
             this.findNavController().navigate(R.id.action_cinv_to_cinvnew)
         }
 
+    }
+
+    fun displayEquippedContainers() {
+        for (item in c.getInventory()) {
+            if (item.equipped == 1 && item.weight_limit > 0) {
+
+            }
+        }
     }
 
     fun showContainer(view: View) {

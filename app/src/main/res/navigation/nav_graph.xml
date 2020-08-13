@@ -112,7 +112,7 @@
         android:name="de.aequinoktium.twedit.CharInventoryContainerFragment"
         android:label="CharInventoryContainerFragment" >
         <action
-            android:id="@+id/action_charInventoryContainerFragment_to_charItemFragment"
+            android:id="@+id/action_cinvcont_to_citem"
             app:destination="@id/charItemFragment" />
     </fragment>
     <fragment
