@@ -21,10 +21,13 @@ import androidx.navigation.fragment.findNavController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.w3c.dom.Text
 
 
 class CharItemFragment : Fragment(){
     private val c: CharacterViewModel by activityViewModels()
+    lateinit var item: Item
+    lateinit var tv_title: TextView
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,11 +47,16 @@ class CharItemFragment : Fragment(){
             false
         )
 
+        item = c.current_item
+
         return root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        tv_title = view.findViewById(R.id.char_item_name)
+        tv_title.text = item.name
 
     }
 }
