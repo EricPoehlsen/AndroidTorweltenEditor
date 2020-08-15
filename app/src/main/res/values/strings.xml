@@ -104,5 +104,8 @@
     <string name="cinv_unpack">auspacken</string>
     <string name="cinv_drop">ablegen</string>
     <string name="cinv_expend">verbrauchen</string>
+    <string name="cinv_quality">Qualität</string>
+    <string name="cinv_price">Preis</string>
+    <string name="cinv_weight">Gewicht</string>
 
 </resources>

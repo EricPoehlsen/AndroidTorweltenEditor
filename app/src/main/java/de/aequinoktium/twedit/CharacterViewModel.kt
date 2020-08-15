@@ -203,6 +203,11 @@ class CharacterViewModel: ViewModel() {
         var cv = ContentValues()
         cv.put("name", item.name)
         cv.put("desc", item.desc)
+        cv.put("current_quality", item.cur_qual)
+        cv.put("original_quality", item.orig_qual)
+        cv.put("weight", item.weight)
+        cv.put("price", item.price)
+
         cv.put("char_id", char_id)
 
         var row_id = db.insert("char_items",null, cv)

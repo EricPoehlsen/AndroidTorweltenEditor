@@ -10,8 +10,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
+        android:hint="@string/ci_name"
         android:inputType="textPersonName"
-        android:text="Name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -21,9 +21,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
+        android:hint="@string/ci_desc"
         android:inputType="textPersonName"
-        android:text="Beschreibung"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/newitem_name" />
 
@@ -35,4 +36,64 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/newitem_quality"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="5"
+        android:hint="@string/cinv_quality"
+        android:inputType="number"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toStartOf="@+id/newitem_price"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/newitem_desc" />
+
+    <EditText
+        android:id="@+id/newitem_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="5"
+        android:hint="@string/cinv_price"
+        android:inputType="numberDecimal"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toStartOf="@+id/newitem_weight"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/newitem_quality"
+        app:layout_constraintTop_toBottomOf="@+id/newitem_desc" />
+
+    <EditText
+        android:id="@+id/newitem_weight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="5"
+        android:hint="@string/cinv_weight"
+        android:inputType="numberDecimal"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/newitem_price"
+        app:layout_constraintTop_toBottomOf="@+id/newitem_desc" />
+
+    <TextView
+        android:id="@+id/newitem_price_unit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:letterSpacing="-.1"
+        android:paddingEnd="8dp"
+        android:text="IR"
+        app:layout_constraintBottom_toBottomOf="@+id/newitem_price"
+        app:layout_constraintEnd_toEndOf="@+id/newitem_price"
+        app:layout_constraintTop_toTopOf="@+id/newitem_price" />
+
+    <TextView
+        android:id="@+id/newitem_weight_unit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingEnd="8dp"
+        android:text="g"
+        app:layout_constraintBottom_toBottomOf="@+id/newitem_weight"
+        app:layout_constraintEnd_toEndOf="@+id/newitem_weight"
+        app:layout_constraintTop_toTopOf="@+id/newitem_weight" />
 </androidx.constraintlayout.widget.ConstraintLayout>
