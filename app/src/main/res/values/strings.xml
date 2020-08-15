@@ -98,6 +98,7 @@
     <string name="ci_new_error_exists">Fehler: Gruppe existiert bereits.</string>
     <string name="ci_new_error_core">Fehler: Diese Gruppe kann nicht gelöscht werden.</string>
 
+    <string name="cinv_equipped">Ausgerüstete Gegenstände</string>
     <string name="cinv_equip">ausrüsten</string>
     <string name="cinv_pack">einpacken</string>
     <string name="cinv_unpack">auspacken</string>

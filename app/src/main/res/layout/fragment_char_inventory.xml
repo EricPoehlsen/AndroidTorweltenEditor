@@ -29,4 +29,12 @@
             android:layout_height="wrap_content"
             android:text="Alles andere ..." />
     </LinearLayout>
+
+    <Button
+        android:id="@+id/cinv_equipped"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/cinv_equipped"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

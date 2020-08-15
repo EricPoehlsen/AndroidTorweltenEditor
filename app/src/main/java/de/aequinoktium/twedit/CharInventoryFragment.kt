@@ -58,6 +58,10 @@ class CharInventoryFragment : Fragment(){
         b_other.item = Item(c)
         b_other.setOnClickListener { v -> showContainer(v) }
 
+        val b_equipped = view.findViewById<Button>(R.id.cinv_equipped)
+        b_equipped.setOnClickListener {
+            this.findNavController().navigate(R.id.action_cinv_to_cinvequip)
+        }
         displayEquippedContainers()
 
 

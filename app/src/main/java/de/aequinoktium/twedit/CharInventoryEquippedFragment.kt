@@ -1,33 +1,22 @@
 package de.aequinoktium.twedit
 
-import android.content.res.Resources
-import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
 import android.widget.LinearLayout
-import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
-import androidx.core.text.HtmlCompat
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import org.w3c.dom.Text
 
 
-class CharItemFragment : Fragment(){
+/**
+ * This [Fragment] is used to display the items the character
+ * has currently equipped. Those are worn pieces of clothing,
+ * bags and containers, tools and weapons.
+ */
+class CharInventoryEquippedFragment : Fragment(){
     private val c: CharacterViewModel by activityViewModels()
-    lateinit var item: Item
-    lateinit var tv_title: TextView
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,12 +31,10 @@ class CharItemFragment : Fragment(){
         val root: View
 
         root = inflater.inflate(
-            R.layout.fragment_char_item,
+            R.layout.fragment_char_inventory_equipped,
             container,
             false
         )
-
-        item = c.current_item
 
         return root
     }
@@ -55,12 +42,23 @@ class CharItemFragment : Fragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        tv_title = view.findViewById(R.id.char_item_name)
-        tv_title.text = item.name
+        var ll = view.findViewById<LinearLayout>(R.id.cinv_equipped_container)
 
+        for (item in c.getInventory()) {
+            if (item.equipped == 1) {
+                val iv = ItemView(context)
+                iv.item = item
+                iv.text = item.name
+                ll.addView(iv)
+            }
+        }
     }
 
-    fun equip() {
-        item.equip()
+    fun editItem(view: View) {
+        view as ItemView
+        c.current_item = view.item
+        this.findNavController().navigate(R.id.action_cinvcont_to_citem)
+
+
     }
 }
