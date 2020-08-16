@@ -46,7 +46,7 @@ class CharTraitView: LinearLayout {
     private fun init() {
         orientation = VERTICAL
 
-        var lp = LayoutParams(
+        val lp = LayoutParams(
             LayoutParams.MATCH_PARENT,
             LayoutParams.WRAP_CONTENT
         )
@@ -60,7 +60,7 @@ class CharTraitView: LinearLayout {
         ll_title.addView(tv_xp)
         this.addView(ll_title)
 
-        var views = arrayOf(
+        val views = arrayOf(
             tv_desc,
             ll_more_info
         )
@@ -78,7 +78,7 @@ class CharTraitView: LinearLayout {
         ll_title.setOnClickListener {expandView()}
         tv_name.setTypeface(null, Typeface.BOLD)
 
-        var xp_layout = LayoutParams(
+        val xp_layout = LayoutParams(
             LayoutParams.MATCH_PARENT,
             LayoutParams.WRAP_CONTENT
         )
@@ -110,9 +110,13 @@ class CharTraitView: LinearLayout {
         variants = v.replace(" ", ",")
     }
 
-    fun setRank(rank: Int) {
+    /**
+     * displays the rank of the trait
+     * @param rank the trait rank
+     */
+    fun showRank(rank: Int) {
         if (rank > 0) {
-            tv_rank.text = " (" + rank.toString() + ") "
+            tv_rank.setText(resources.getString(R.string.tv_rank, rank))
             tv_rank.visibility = VISIBLE
         }
 
@@ -139,7 +143,7 @@ class CharTraitView: LinearLayout {
     private fun expandView() {
         if (data.max_rank == 0) {
             c.viewModelScope.launch {
-                var trait_data = loadTrait(data)
+                val trait_data = loadTrait(data)
                 withContext(Dispatchers.Main) {
                     toggleDetails(trait_data)
                 }
@@ -155,7 +159,7 @@ class CharTraitView: LinearLayout {
      * @return a TraitData object with all available trait data from the database
      */
     private suspend fun loadTrait(data: TraitData): TraitData {
-        var result = TraitData()
+        val result = TraitData()
         var sql = """
             SELECT 
                 name,
@@ -170,7 +174,7 @@ class CharTraitView: LinearLayout {
             WHERE 
                 id = ${data.id}
         """.trimMargin()
-        var trait: Cursor = c.db.rawQuery(sql, null)
+        val trait: Cursor = c.db.rawQuery(sql, null)
         if (trait.moveToFirst()) {
             result.name = trait.getString(0)
             result.min_rank = trait.getInt(1)
@@ -200,9 +204,9 @@ class CharTraitView: LinearLayout {
                 ($variants)
         """.trimIndent()
 
-        var trait_var = c.db.rawQuery(sql, null)
+        val trait_var = c.db.rawQuery(sql, null)
         while (trait_var.moveToNext()) {
-            var variant = TraitVariant()
+            val variant = TraitVariant()
             variant.var_id = trait_var.getInt(0)
             variant.name = trait_var.getString(1)
             variant.xp_factor = trait_var.getFloat(2)
@@ -211,6 +215,7 @@ class CharTraitView: LinearLayout {
             variant.txt = trait_var.getString(5)
             trait_vars[variant.var_id] = variant
         }
+        trait_var.close()
         return result
     }
 

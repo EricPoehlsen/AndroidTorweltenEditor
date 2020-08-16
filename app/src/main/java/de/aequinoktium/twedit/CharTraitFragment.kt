@@ -1,20 +1,16 @@
 package de.aequinoktium.twedit
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
-import androidx.core.database.getStringOrNull
-import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.DisposableHandle
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -92,7 +88,7 @@ class CharTraitFragment : Fragment() {
             tv.setXp(trait.xp_cost)
             tv.setTraitId(trait.trait_id)
             tv.setVariants(trait.variants)
-            tv.setRank(trait.rank)
+            tv.showRank(trait.rank)
             tv.setOnLongClickListener { view -> editTrait(view)}
             layout.addView(tv)
         }
