@@ -1,30 +1,19 @@
 package de.aequinoktium.twedit
 
-import android.content.ContentValues
-import android.content.res.Resources
-import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
-import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
-import androidx.core.text.HtmlCompat
-import androidx.core.text.isDigitsOnly
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.findFragment
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kotlin.math.roundToInt
 
 
@@ -79,9 +68,13 @@ class CharInventoryNewFragment : Fragment(){
         tv_weight_unit.setOnClickListener{switchWeightUnit()}
 
 
-        var bt_add = view.findViewById<Button>(R.id.newitem_add)
-        bt_add.setOnClickListener {
+        val bt_take = view.findViewById<Button>(R.id.newitem_take)
+        bt_take.setOnClickListener {
             addItem()
+        }
+        val bt_buy = view.findViewById<Button>(R.id.newitem_buy)
+        bt_buy.setOnClickListener {
+            addItem(pay=true)
         }
 
 
@@ -91,7 +84,7 @@ class CharInventoryNewFragment : Fragment(){
      * prepares the item to be added to the character and
      * hands over item storage to [CharacterViewModel]
      */
-    fun addItem() {
+    fun addItem(pay: Boolean = false) {
         var item = Item(c)
 
         // name
@@ -102,7 +95,7 @@ class CharInventoryNewFragment : Fragment(){
         // description
         var desc = et_desc.text.toString()
         desc = desc.replace("'", "\u2019")
-        if (desc.length > 0) item.desc = name
+        if (desc.length > 0) item.desc = desc
 
         // quality
         var s_quality = et_quality.text.toString()
@@ -130,6 +123,14 @@ class CharInventoryNewFragment : Fragment(){
         if (!item.name.isBlank()) {
             c.viewModelScope.launch(Dispatchers.IO) {
                 c.addToInventory(item)
+                if (pay) {
+                    c.moneyTransaction(
+                        c.primaryAccount().nr,
+                        0,
+                        item.price,
+                        getString(R.string.cinv_bought, item.name)
+                    )
+                }
             }
         } else {
             // TODO inform user that item was not created

@@ -27,6 +27,7 @@ import kotlinx.coroutines.withContext
 class CharInventoryFragment : Fragment(){
     private val c: CharacterViewModel by activityViewModels()
     private lateinit var ll_containers: LinearLayout
+    private lateinit var tv_cash: TextView
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,6 +54,8 @@ class CharInventoryFragment : Fragment(){
         super.onViewCreated(view, savedInstanceState)
 
         ll_containers = view.findViewById(R.id.cinv_containers)
+        tv_cash = view.findViewById(R.id.cinv_cash)
+        tv_cash.setText(getString(R.string.cinv_cash, c.primaryAccount().balance))
 
         val b_other = view.findViewById<ItemView>(R.id.cinv_other_items)
         b_other.item = Item(c)

@@ -62,6 +62,7 @@
     <string name="te_rank">Rang</string>
     <string name="te_xp">XP</string>
     <string name="te_removed">%1$s gelöscht</string>
+    <string name="tv_rank"> (%1$d) </string>
     <string name="ci_core_title">Kerninfos</string>
     <string name="ci_desc_title">Aussehen</string>
     <string name="ci_name">Name</string>
@@ -105,8 +106,13 @@
     <string name="cinv_unpack">auspacken</string>
     <string name="cinv_drop">ablegen</string>
     <string name="cinv_expend">verbrauchen</string>
+    <string name="cinv_buy">kaufen</string>
+    <string name="cinv_bought">%1$s gekauft</string>
+    <string name="cinv_take">nehmen</string>
     <string name="cinv_quality">Qualität</string>
+    <string name="cinv_quantity">Menge</string>
     <string name="cinv_price">Preis</string>
+    <string name="cinv_cash">Barvermögen %1$.2f R</string>
     <string name="cinv_weight">Gewicht</string>
 
 </resources>
