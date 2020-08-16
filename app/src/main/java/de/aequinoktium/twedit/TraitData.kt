@@ -15,6 +15,7 @@ class TraitData {
     var total_xp = 0
     var cls = 0
     var grp = 0
+    var effects = ""
     var variants: MutableMap<String, MutableMap<Int, TraitVariant>> = mutableMapOf()
     var complex = false
 }
@@ -45,4 +46,5 @@ class CharTrait {
     var name = ""
     var txt = ""
     var reduced = 0
+    var effects = ""
 }

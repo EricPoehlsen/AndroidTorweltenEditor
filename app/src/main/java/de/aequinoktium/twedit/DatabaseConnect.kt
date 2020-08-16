@@ -120,7 +120,7 @@ class DatabaseConnect(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
                 min_rank INT DEFAULT 1, 
                 max_rank INT DEFAULT 1,
                 xp_cost INT,
-                effects VARCHAR(255),
+                effects VARCHAR(255) DEFAULT '',
                 FOREIGN KEY (cls) REFERENCES trait_cls(id)
                 FOREIGN KEY (grp) REFERENCES trait_grp(id)
             );

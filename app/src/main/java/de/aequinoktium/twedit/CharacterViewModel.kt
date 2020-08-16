@@ -7,6 +7,8 @@ import android.util.Log
 import androidx.annotation.UiThread
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.util.*
@@ -58,7 +60,7 @@ class CharacterViewModel: ViewModel() {
         var data: Cursor = db.rawQuery(sql, null)
         if (data.count == 1) {
             data.moveToFirst()
-            var attrib_names = arrayOf("phy", "men", "soz", "nk", "fk", "lp", "ep", "mp")
+            val attrib_names = arrayOf("phy", "men", "soz", "nk", "fk", "lp", "ep", "mp")
             for (n in attrib_names) {
                 attribs[n] = data.getInt(data.getColumnIndex(n))
             }
@@ -98,10 +100,10 @@ class CharacterViewModel: ViewModel() {
             WHERE
                 char_id = $char_id 
         """.trimIndent()
-        var data = db.rawQuery(sql, null)
+        val data = db.rawQuery(sql, null)
         while (data.moveToNext()) {
             val dataset = data.getString(3)
-            var i = Info()
+            val i = Info()
             i.info_id = data.getInt(0)
             i.name = data.getString(1)
             i.txt = data.getString(2)
@@ -155,10 +157,10 @@ class CharacterViewModel: ViewModel() {
     }
 
     suspend fun loadInventory() {
-        var items = mutableListOf<Item>()
+        val items = mutableListOf<Item>()
 
-        var sql = "SELECT * FROM char_items WHERE char_id = ${char_id}"
-        var data = db.rawQuery(sql, null)
+        val sql = "SELECT * FROM char_items WHERE char_id = ${char_id}"
+        val data = db.rawQuery(sql, null)
 
         while (data.moveToNext()) {
             var item = Item(this)
@@ -187,6 +189,7 @@ class CharacterViewModel: ViewModel() {
             items.add(item)
         }
 
+        data.close()
         this.inv = items
     }
 
@@ -202,7 +205,7 @@ class CharacterViewModel: ViewModel() {
      * Adds an item to the character inventory.
       */
     suspend fun addToInventory(item: Item) {
-        var cv = ContentValues()
+        val cv = ContentValues()
         cv.put("name", item.name)
         cv.put("desc", item.desc)
         cv.put("current_quality", item.cur_qual)
@@ -212,7 +215,7 @@ class CharacterViewModel: ViewModel() {
 
         cv.put("char_id", char_id)
 
-        var row_id = db.insert("char_items",null, cv)
+        val row_id = db.insert("char_items",null, cv)
         item.id = row_id.toInt()
         inv.add(item)
     }
@@ -233,12 +236,14 @@ class CharacterViewModel: ViewModel() {
         }
         data.close()
 
+        Log.d("info", "accounts: ${accounts.size}")
+
         // retrieve account balances
         for (acc in accounts) {
             sql = """
                 SELECT (
-                    (SELECT SUM(amount) FROM money_transfers WHERE target_acc = ${acc.nr}) 
-                    - (SELECT SUM(amount) FROM money_transfers WHERE origin_acc = ${acc.nr})
+                    (SELECT COALESCE(SUM(amount),0) FROM money_transfers WHERE target_acc = ${acc.nr}) 
+                    - (SELECT COALESCE(SUM(amount),0) FROM money_transfers WHERE origin_acc = ${acc.nr})
                 )
             """.trimIndent()
             val acc_value = db.rawQuery(sql, null)
@@ -251,21 +256,66 @@ class CharacterViewModel: ViewModel() {
 
         // create primary account if necessary
         if (accounts.isEmpty()) {
-            var acc = Account()
+            val acc = Account()
             acc.name = "primary"
 
-            var cv = ContentValues()
+            val cv = ContentValues()
             cv.put("name", acc.name)
             cv.put("char_id", char_id)
 
-            var row_id = db.insert("accounts",null, cv)
+            val row_id = db.insert("accounts",null, cv)
             acc.nr = row_id.toInt()
 
             accounts.add(acc)
         }
     }
 
+    fun primaryAccount(): Account {
+        return accounts[0]
+    }
 
+    /**
+     * Execute a money transaction between two accounts.
+     * transaction is only passed to the database if either the originating
+     * or targeted account belong to this character.
+     * There are no checks if the second account of the transaction exists
+     * or who owns it!
+     * @param origin account number of the origin account
+     * @param target account number of the target account
+     * @param amount the amount to be transferred
+     * @param purpose optional string to explain the transaction
+     * @return check result of the account
+     */
+    suspend fun moneyTransaction(
+        origin: Int,
+        target: Int,
+        amount: Float,
+        purpose: String = ""): Boolean
+    {
+        var valid_account = false
+        for (acc in accounts) {
+            if (acc.nr == origin) {
+                acc.balance -= amount
+                valid_account = true
+            }
+            if (acc.nr == target) {
+                acc.balance += amount
+                valid_account = true
+            }
+        }
+        if (valid_account) {
+            val sql = """
+            INSERT INTO
+                money_transfers
+                (origin_acc, target_acc, amount, purpose)
+            VALUES
+                ($origin, $target, $amount, '$purpose')
+            """.trimIndent()
+            db.execSQL(sql)
+        }
+
+        return valid_account
+    }
 
     /**
      * View Model is destroyed. Clean up the database connection.

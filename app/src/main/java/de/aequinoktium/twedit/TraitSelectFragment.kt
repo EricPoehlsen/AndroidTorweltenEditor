@@ -130,7 +130,8 @@ class TraitSelectFragment : Fragment() {
                 txt,
                 min_rank, 
                 max_rank,
-                xp_cost
+                xp_cost,
+                effects
             FROM 
                 traits
             ORDER BY
@@ -147,6 +148,7 @@ class TraitSelectFragment : Fragment() {
             trait.min_rank = data.getInt(5)
             trait.max_rank = data.getInt(6)
             trait.xp = data.getInt(7)
+            trait.effects = data.getString(8)
 
             sql = """
                 SELECT 

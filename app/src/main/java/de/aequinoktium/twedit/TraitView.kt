@@ -10,6 +10,10 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.text.HtmlCompat
 import androidx.core.view.children
 import androidx.core.view.size
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.w3c.dom.Text
 
 class TraitView: LinearLayout {
@@ -49,7 +53,7 @@ class TraitView: LinearLayout {
     private fun init() {
         orientation = VERTICAL
 
-        var lp = LayoutParams(
+        val lp = LayoutParams(
             LayoutParams.MATCH_PARENT,
             LayoutParams.WRAP_CONTENT
         )
@@ -62,9 +66,16 @@ class TraitView: LinearLayout {
         this.addView(ll_title)
 
         bt_add_trait.text = resources.getText(R.string.ts_add_trait)
-        bt_add_trait.setOnClickListener {addTrait()}
+        bt_add_trait.setOnClickListener {
+            c.viewModelScope.launch(Dispatchers.IO) {
+                addTrait()
+                withContext(Dispatchers.Main) {
+                    updateName()
+                }
+            }
+        }
 
-        var views = arrayOf(
+        val views = arrayOf(
             tv_desc,
             ll_rank,
             bt_add_trait
@@ -83,12 +94,12 @@ class TraitView: LinearLayout {
         ll_title.setOnClickListener {toggleDetails()}
         tv_name.setTypeface(null, Typeface.BOLD)
 
-        var xp_layout = LayoutParams(
+        val xp_layout = LayoutParams(
             LayoutParams.MATCH_PARENT,
             LayoutParams.WRAP_CONTENT
         )
         tv_xp.layoutParams = xp_layout
-        tv_xp.gravity = Gravity.RIGHT
+        tv_xp.gravity = Gravity.END
     }
 
     fun setTrait(trait: TraitData) {
@@ -137,9 +148,9 @@ class TraitView: LinearLayout {
         )
 
         if (data.max_rank > 1) {
-            var act = context as MainActivity
+            val act = context as MainActivity
 
-            var lp = LayoutParams(act.calc_dp(32), act.calc_dp(32))
+            val lp = LayoutParams(act.calc_dp(32), act.calc_dp(32))
 
             iv_dec_rank.setImageResource(R.drawable.arrow_left)
             iv_dec_rank.layoutParams = lp
@@ -289,12 +300,11 @@ class TraitView: LinearLayout {
             data.total_xp = data.cur_rank * data.xp
         }
 
-        Log.d("info", "Size: ${data.variants.size}")
         // for variant traits
         if (data.variants.isNotEmpty()) {
             var new_xp = 0f
             for (k in selected_variants.keys) {
-                var variant = data.variants[k]?.get(selected_variants[k]) as TraitVariant
+                val variant = data.variants[k]?.get(selected_variants[k]) as TraitVariant
                 if (variant.oper == 0) {
                     new_xp += variant.xp_factor
                 } else {
@@ -317,14 +327,14 @@ class TraitView: LinearLayout {
      * calls updateXp()
      */
     private fun onVariantSelectionChanged(grp: RadioGroup?, id: Int) {
-        var g = grp as RadioGroup
-        var t = g.getChildAt(0) as TextView
+        val g = grp as RadioGroup
+        val t = g.getChildAt(0) as TextView
         selected_variants[t.text.toString()] = id
 
         updateXp()
     }
 
-    private fun addTrait() {
+    private suspend fun addTrait() {
         var variants = ""
         for (k in selected_variants.keys) {
             variants += selected_variants.get(k).toString() + " "
@@ -333,7 +343,7 @@ class TraitView: LinearLayout {
 
         var rank = 0
         if (data.max_rank > 1) rank = data.cur_rank
-
+        handleEffects()
         var sql = """
             INSERT INTO char_traits (
                 char_id, 
@@ -342,7 +352,8 @@ class TraitView: LinearLayout {
                 variants,
                 xp_cost,
                 name, 
-                txt
+                txt, 
+                effects
             ) VALUES (
                 ${c.char_id},
                 ${data.id},
@@ -350,7 +361,8 @@ class TraitView: LinearLayout {
                 '$variants',
                 ${data.total_xp},
                 '${data.name}',
-                ''
+                '',
+                '${data.effects}'
             )
         """.trimIndent()
         c.db.execSQL(sql)
@@ -365,6 +377,30 @@ class TraitView: LinearLayout {
         """.trimIndent()
         c.db.execSQL(sql)
         c.char_traits += data.id
-        updateName()
+    }
+
+    /**
+     * handler for effects which are defined in the traits
+     */
+    suspend fun handleEffects() {
+        if (data.effects.length > 0) {
+            var applied_effects = ""
+            val effects = data.effects.split(",")
+            for (effect in effects) {
+                if (effect.startsWith("money")) {
+                    applied_effects += moneyEffect(effect)
+                }
+            }
+        }
+    }
+
+    /**
+     * the money effect denoted by the 'money:0000' effect
+     */
+    suspend fun moneyEffect(effect: String): String {
+        val amount = effect.replace("money:", "").toFloat() * data.cur_rank
+        Log.d("info", "adding: $amount R")
+        c.moneyTransaction(0, c.primaryAccount().nr, amount, data.name)
+        return "money:$amount"
     }
 }
