@@ -45,6 +45,7 @@ class CharacterViewModel: ViewModel() {
 
     lateinit var current_item: Item
 
+    private var accounts = mutableListOf<Account>()
 
     fun setDatabase(db: SQLiteDatabase) {
         this.db = db
@@ -76,6 +77,7 @@ class CharacterViewModel: ViewModel() {
         data.close()
 
         loadInfo()
+        loadAccounts()
         loadInventory()
     }
 
@@ -215,6 +217,56 @@ class CharacterViewModel: ViewModel() {
         inv.add(item)
     }
 
+
+    /**
+     * loads the characters accounts and current balances
+     */
+    suspend fun loadAccounts() {
+        // find char accounts
+        var sql = "SELECT * FROM accounts WHERE char_id=$char_id"
+        val data = db.rawQuery(sql, null)
+        while (data.moveToNext()) {
+            val acc = Account()
+            acc.nr = data.getInt(0)
+            acc.name = data.getString(2)
+            accounts.add(acc)
+        }
+        data.close()
+
+        // retrieve account balances
+        for (acc in accounts) {
+            sql = """
+                SELECT (
+                    (SELECT SUM(amount) FROM money_transfers WHERE target_acc = ${acc.nr}) 
+                    - (SELECT SUM(amount) FROM money_transfers WHERE origin_acc = ${acc.nr})
+                )
+            """.trimIndent()
+            val acc_value = db.rawQuery(sql, null)
+            if (acc_value.moveToFirst()) {
+                acc.balance = acc_value.getFloat(0)
+                Log.d("info", "Account: ${acc.name} - Amount: ${acc.balance}")
+            }
+            acc_value.close()
+        }
+
+        // create primary account if necessary
+        if (accounts.isEmpty()) {
+            var acc = Account()
+            acc.name = "primary"
+
+            var cv = ContentValues()
+            cv.put("name", acc.name)
+            cv.put("char_id", char_id)
+
+            var row_id = db.insert("accounts",null, cv)
+            acc.nr = row_id.toInt()
+
+            accounts.add(acc)
+        }
+    }
+
+
+
     /**
      * View Model is destroyed. Clean up the database connection.
      */
@@ -227,5 +279,11 @@ class CharacterViewModel: ViewModel() {
         var info_id = 0
         var name = ""
         var txt = ""
+    }
+
+    class Account() {
+        var nr = 0
+        var name = ""
+        var balance = 0f
     }
 }

@@ -21,7 +21,10 @@ class DatabaseConnect(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
     }
 
     override fun onUpgrade(db: SQLiteDatabase, old: Int, new: Int) {
-
+        db.execSQL("DROP TABLE IF EXISTS 'money_transfers'")
+        db.execSQL("DROP TABLE IF EXISTS 'accounts'")
+        db.execSQL("DROP TABLE IF EXISTS 'char_items'")
+        db.execSQL("DROP TABLE IF EXISTS 'items'")
         db.execSQL("DROP TABLE IF EXISTS 'char_traits'")
         db.execSQL("DROP TABLE IF EXISTS 'trait_vars'")
         db.execSQL("DROP TABLE IF EXISTS 'traits'")
@@ -117,6 +120,7 @@ class DatabaseConnect(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
                 min_rank INT DEFAULT 1, 
                 max_rank INT DEFAULT 1,
                 xp_cost INT,
+                effects VARCHAR(255),
                 FOREIGN KEY (cls) REFERENCES trait_cls(id)
                 FOREIGN KEY (grp) REFERENCES trait_grp(id)
             );
@@ -148,6 +152,7 @@ class DatabaseConnect(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
                 name VARCHAR(255),
                 txt TEXT,
                 is_reduced BOOLEAN DEFAULT FALSE,
+                effects VARCHAR(255),
                 FOREIGN KEY (char_id) REFERENCES char_core(id),
                 FOREIGN KEY (trait_id) REFERENCES traits(id)
             );
@@ -184,7 +189,29 @@ class DatabaseConnect(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
                 price FLOAT DEFAULT 0,
                 equipped BOOLEAN DEFAULT false,
                 packed_into INT DEFAULT 0,
-                extra_data TEXT DEFAULT ''
+                extra_data TEXT DEFAULT '',
+                FOREIGN KEY (char_id) REFERENCES char_core(id)
+            );
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            CREATE TABLE accounts (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                char_id INT,
+                name VARCHAR(255),
+                FOREIGN KEY (char_id) REFERENCES char_core(id)
+            );
+        """.trimIndent()
+        db.execSQL(sql)
+
+        sql = """
+            CREATE TABLE money_transfers (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                origin_acc INT,
+                target_acc INT,
+                amount FLOAT,
+                purpose VARCHAR(255)
             );
         """.trimIndent()
         db.execSQL(sql)
@@ -1075,6 +1102,14 @@ class DatabaseConnect(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
             (106, 'Gesellschaftlicher Makel', 1, 3, 15, 'Der Charakter ist aus irgend einem Grund in seiner gewöhnlichen Gesellschaft nicht akzeptiert. Das kann verschiedenste Gründe haben. Die Höhe der Punkte für diesen Nachteil hängt davon ab, wie stark der Charakter in der Gesellschaft zurückgesetzt wird.<br/>Der Nachteil kann von <i>vernachlässigbar</i> (ein Mann auf einer matriarchischen Welt) für 1 Punkt bis hin zu <i>lebensbedrohlich</i> (ein Agent hinter feindlichen Linien) für 18 Punkte gehen.', 1, 18)
         """.trimIndent()
         db.execSQL(sql)
+
+        sql = """
+            UPDATE traits
+            SET effects='money:1000'
+            WHERE id=101
+        """.trimIndent()
+        db.execSQL(sql)
+
 
         sql = """
             INSERT INTO items (name, cls, grp, base_price, weight, weight_limit, extra_data, desc) VALUES
