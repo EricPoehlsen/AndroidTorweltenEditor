@@ -11,8 +11,8 @@ class TraitData {
     var min_rank = 0
     var max_rank = 0
     var cur_rank = 0
-    var rank_xp = 0
     var total_xp = 0
+    var rank_xp = 0
     var cls = 0
     var grp = 0
     var effects = ""

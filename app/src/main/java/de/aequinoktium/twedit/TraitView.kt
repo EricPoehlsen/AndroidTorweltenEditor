@@ -149,6 +149,8 @@ class TraitView: LinearLayout {
 
         if (data.max_rank > 1) {
             val act = context as MainActivity
+            data.cur_rank = data.min_rank
+            updateRank(0)
 
             val lp = LayoutParams(act.calc_dp(32), act.calc_dp(32))
 
@@ -286,7 +288,7 @@ class TraitView: LinearLayout {
             new_rank = kotlin.math.min(new_rank, data.max_rank)
         }
         data.cur_rank = new_rank
-        data.total_xp = new_rank * data.rank_xp
+        data.total_xp = new_rank * data.xp
         tv_rank.text = new_rank.toString()
         tv_xp.text = data.total_xp.toString()
     }
