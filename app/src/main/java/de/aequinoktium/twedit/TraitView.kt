@@ -393,7 +393,10 @@ class TraitView: LinearLayout {
                     applied_effects += moneyEffect(effect)
                 }
             }
+
+        data.effects = applied_effects.dropLast(1)
         }
+
     }
 
     /**
@@ -401,8 +404,7 @@ class TraitView: LinearLayout {
      */
     suspend fun moneyEffect(effect: String): String {
         val amount = effect.replace("money:", "").toFloat() * data.cur_rank
-        Log.d("info", "adding: $amount R")
         c.moneyTransaction(0, c.primaryAccount().nr, amount, data.name)
-        return "money:$amount"
+        return "money:$amount,"
     }
 }

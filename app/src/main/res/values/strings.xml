@@ -61,6 +61,7 @@
     <string name="te_name">Eigenschaft</string>
     <string name="te_rank">Rang</string>
     <string name="te_xp">XP</string>
+    <string name="te_removed">%1$s gelöscht</string>
     <string name="ci_core_title">Kerninfos</string>
     <string name="ci_desc_title">Aussehen</string>
     <string name="ci_name">Name</string>

@@ -102,7 +102,6 @@ class CharTraitFragment : Fragment() {
         var attrib = v as CharTraitView
         // switch to trait selector fragment
         c.edit_trait = v.getCharTraitId()
-        Log.d("INFO", "Trait to edit: ${c.edit_trait}" )
         this.findNavController().navigate(R.id.action_ct_to_cet)
         return true
     }

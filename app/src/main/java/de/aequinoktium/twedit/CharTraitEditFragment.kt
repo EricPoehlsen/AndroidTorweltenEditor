@@ -67,7 +67,6 @@ class CharTraitEditFragment : Fragment(),
         // load trait data from database and display ...
         c.viewModelScope.launch {
             loadData()
-            Log.d("info", "trait data reduced: ${trait_data.reduced}")
             withContext(Dispatchers.Main) {
                 if (trait_data.reduced == 0 && trait_vars.size > 0){
                     b_collapse.visibility = View.VISIBLE
@@ -120,7 +119,8 @@ class CharTraitEditFragment : Fragment(),
                 xp_cost, 
                 rank,
                 variants,
-                is_reduced
+                is_reduced,
+                effects
             FROM 
                 char_traits
             WHERE
@@ -137,6 +137,7 @@ class CharTraitEditFragment : Fragment(),
             trait_data.rank = data.getInt(4)
             trait_data.variants = data.getString(5).replace(" ", ",")
             trait_data.reduced = data.getInt(6)
+            trait_data.effects = data.getString(7)
         }
         data.close()
         sql = """
@@ -267,7 +268,6 @@ class CharTraitEditFragment : Fragment(),
                     id = ${c.char_id}
             """.trimIndent()
 
-            Log.d("info", "reduced?: {${trait_data.reduced}}")
             c.db.execSQL(sql)
 
             withContext(Dispatchers.Main) {
@@ -320,8 +320,19 @@ class CharTraitEditFragment : Fragment(),
                 WHERE
                     id = ${c.char_id}
             """.trimIndent()
-
             c.db.execSQL(sql)
+
+            if (!trait_data.effects.isBlank()) {
+                val effects = trait_data.effects.split(",")
+                for (e in effects) {
+                    if (e.startsWith("money:")) {
+                        val amount = e.replace("money:", "").toFloat()
+                        val purpose = getString(R.string.te_removed, trait_data.name)
+                        c.moneyTransaction(c.primaryAccount().nr, 0, amount, purpose)
+                    }
+                }
+            }
+
             withContext(Dispatchers.Main) {
                 backToCharTraits()
             }

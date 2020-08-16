@@ -200,7 +200,6 @@ class CharTraitView: LinearLayout {
                 ($variants)
         """.trimIndent()
 
-        Log.d("info", sql)
         var trait_var = c.db.rawQuery(sql, null)
         while (trait_var.moveToNext()) {
             var variant = TraitVariant()
