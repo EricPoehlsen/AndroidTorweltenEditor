@@ -24,10 +24,11 @@ import kotlinx.coroutines.withContext
 import org.w3c.dom.Text
 
 
-class CharItemFragment : Fragment(){
+class CharItemFragment : Fragment() {
     private val c: CharacterViewModel by activityViewModels()
     lateinit var item: Item
     lateinit var tv_title: TextView
+    lateinit var bt_equip: Button
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,9 +59,23 @@ class CharItemFragment : Fragment(){
         tv_title = view.findViewById(R.id.char_item_name)
         tv_title.text = item.name
 
+        bt_equip = view.findViewById(R.id.char_item_equip)
+        if (item.equipped == 1) {
+            bt_equip.setText(R.string.cinv_drop)
+        }
+        bt_equip.setOnClickListener { equip() }
+
     }
 
     fun equip() {
-        item.equip()
+        val is_equipped = item.equip()
+        if (is_equipped == 1) {
+            bt_equip.setText(R.string.cinv_drop)
+        } else {
+            bt_equip.setText(R.string.cinv_equip)
+        }
+
     }
+
+
 }

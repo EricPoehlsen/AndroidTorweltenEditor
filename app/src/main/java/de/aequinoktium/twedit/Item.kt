@@ -1,6 +1,10 @@
 package de.aequinoktium.twedit
 
+import android.util.Log
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.consumesAll
+import kotlinx.coroutines.launch
 
 open class Item(private var c: CharacterViewModel) {
     var id = 0
@@ -24,9 +28,27 @@ open class Item(private var c: CharacterViewModel) {
 
     }
 
-    fun equip() {
-        unpack()
-        this.equipped = 1
+    /**
+     * Equipping or unequipping an item
+     * @return 0: unequipped 1: equipped
+     */
+    fun equip(): Int {
+        if (equipped == 1) {
+            equipped = 0
+        } else {
+            unpack()
+            equipped = 1
+        }
+        c.viewModelScope.launch(Dispatchers.IO) {
+            val sql = """
+                UPDATE char_items 
+                SET equipped = ${equipped}
+                WHERE id = ${id}
+            """.trimMargin()
+            Log.d("info", sql)
+            c.db.execSQL(sql)
+        }
+        return equipped
     }
 
     fun getTotalWeight(): Int {

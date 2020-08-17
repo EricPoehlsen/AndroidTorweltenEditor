@@ -172,6 +172,7 @@ class CharacterViewModel: ViewModel() {
                 "tool" -> item = Tool(this)
             }
 
+            item.id = data.getInt(data.getColumnIndex("id"))
             item.name = data.getString(data.getColumnIndex("name"))
             item.desc = data.getString(data.getColumnIndex("desc"))
             item.qty = data.getInt(data.getColumnIndex("qty"))
