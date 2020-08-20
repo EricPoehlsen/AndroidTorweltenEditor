@@ -208,6 +208,7 @@ class CharacterViewModel: ViewModel() {
     suspend fun addToInventory(item: Item) {
         val cv = ContentValues()
         cv.put("name", item.name)
+        cv.put("qty", item.qty)
         cv.put("desc", item.desc)
         cv.put("current_quality", item.cur_qual)
         cv.put("original_quality", item.orig_qual)

@@ -45,7 +45,6 @@ open class Item(private var c: CharacterViewModel) {
                 SET equipped = ${equipped}
                 WHERE id = ${id}
             """.trimMargin()
-            Log.d("info", sql)
             c.db.execSQL(sql)
         }
         return equipped

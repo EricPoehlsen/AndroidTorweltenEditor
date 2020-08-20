@@ -7,26 +7,25 @@
 
     <EditText
         android:id="@+id/newitem_name"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="@string/ci_name"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/newitem_name_label" />
 
     <EditText
         android:id="@+id/newitem_desc"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="@string/ci_desc"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/newitem_name" />
+        app:layout_constraintTop_toBottomOf="@+id/textView10" />
 
     <Button
         android:id="@+id/newitem_take"
@@ -39,43 +38,73 @@
         app:layout_constraintStart_toEndOf="@+id/newitem_buy" />
 
     <EditText
-        android:id="@+id/newitem_quality"
-        android:layout_width="wrap_content"
+        android:id="@+id/newitem_quantity"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:ems="5"
-        android:hint="@string/cinv_quality"
-        android:inputType="number"
+        android:layout_marginTop="1dp"
+        android:ems="3"
+        android:hint="1"
+        android:inputType="numberDecimal"
+        android:maxLength="6"
         android:textAlignment="center"
-        app:layout_constraintEnd_toStartOf="@+id/newitem_price"
+        app:layout_constraintEnd_toStartOf="@+id/newitem_quality"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/newitem_desc" />
+        app:layout_constraintTop_toBottomOf="@+id/newitem_quantity_label" />
 
     <EditText
-        android:id="@+id/newitem_price"
-        android:layout_width="wrap_content"
+        android:id="@+id/newitem_quality"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:ems="5"
-        android:hint="@string/cinv_price"
-        android:inputType="numberDecimal"
+        android:layout_marginTop="1dp"
+        android:ems="3"
+        android:hint="7"
+        android:inputType="number"
+        android:maxLength="2"
         android:textAlignment="center"
         app:layout_constraintEnd_toStartOf="@+id/newitem_weight"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/newitem_quality"
-        app:layout_constraintTop_toBottomOf="@+id/newitem_desc" />
+        app:layout_constraintStart_toEndOf="@+id/newitem_quantity"
+        app:layout_constraintTop_toBottomOf="@+id/newitem_quality_label" />
 
     <EditText
         android:id="@+id/newitem_weight"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1dp"
+        android:ems="3"
+        android:hint="100"
+        android:inputType="numberDecimal"
+        android:maxLength="8"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toStartOf="@+id/newitem_price"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/newitem_quality"
+        app:layout_constraintTop_toBottomOf="@+id/newitem_weight_label" />
+
+    <TextView
+        android:id="@+id/newitem_weight_unit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:ems="5"
-        android:hint="@string/cinv_weight"
+        android:paddingEnd="8dp"
+        android:text="g"
+        app:layout_constraintBottom_toBottomOf="@+id/newitem_weight"
+        app:layout_constraintEnd_toStartOf="@+id/newitem_price"
+        app:layout_constraintTop_toTopOf="@+id/newitem_weight" />
+
+    <EditText
+        android:id="@+id/newitem_price"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ems="3"
+        android:hint="10"
         android:inputType="numberDecimal"
+        android:maxLength="8"
         android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/newitem_price"
-        app:layout_constraintTop_toBottomOf="@+id/newitem_desc" />
+        app:layout_constraintStart_toEndOf="@+id/newitem_weight"
+        app:layout_constraintTop_toBottomOf="@+id/newitem_price_label" />
 
     <TextView
         android:id="@+id/newitem_price_unit"
@@ -85,18 +114,8 @@
         android:paddingEnd="8dp"
         android:text="IR"
         app:layout_constraintBottom_toBottomOf="@+id/newitem_price"
-        app:layout_constraintEnd_toEndOf="@+id/newitem_price"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/newitem_price" />
-
-    <TextView
-        android:id="@+id/newitem_weight_unit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingEnd="8dp"
-        android:text="g"
-        app:layout_constraintBottom_toBottomOf="@+id/newitem_weight"
-        app:layout_constraintEnd_toEndOf="@+id/newitem_weight"
-        app:layout_constraintTop_toTopOf="@+id/newitem_weight" />
 
     <Button
         android:id="@+id/newitem_buy"
@@ -107,4 +126,77 @@
         app:layout_constraintEnd_toStartOf="@+id/newitem_take"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <Spinner
+        android:id="@+id/newitem_cls"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/newitem_clslabel"
+        app:layout_constraintTop_toBottomOf="@+id/newitem_desc" />
+
+    <TextView
+        android:id="@+id/newitem_clslabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/cinv_cls"
+        app:layout_constraintBottom_toBottomOf="@+id/newitem_cls"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/newitem_desc" />
+
+    <TextView
+        android:id="@+id/newitem_name_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/cinv_name"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/newitem_quantity_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/cinv_quantity"
+        app:layout_constraintEnd_toStartOf="@+id/newitem_quality_label"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/newitem_name" />
+
+    <TextView
+        android:id="@+id/newitem_price_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/cinv_price"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/newitem_weight_label"
+        app:layout_constraintTop_toTopOf="@+id/newitem_weight_label" />
+
+    <TextView
+        android:id="@+id/newitem_quality_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/cinv_quality"
+        app:layout_constraintEnd_toStartOf="@+id/newitem_weight_label"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/newitem_quantity_label"
+        app:layout_constraintTop_toTopOf="@+id/newitem_quantity_label" />
+
+    <TextView
+        android:id="@+id/newitem_weight_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/cinv_weight"
+        app:layout_constraintEnd_toStartOf="@+id/newitem_price_label"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/newitem_quality_label"
+        app:layout_constraintTop_toTopOf="@+id/newitem_quality_label" />
+
+    <TextView
+        android:id="@+id/textView10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/cinv_desc"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/newitem_quantity" />
 </androidx.constraintlayout.widget.ConstraintLayout>

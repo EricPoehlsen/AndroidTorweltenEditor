@@ -101,6 +101,8 @@
     <string name="ci_new_error_core">Fehler: Diese Gruppe kann nicht gelöscht werden.</string>
 
     <string name="cinv_equipped">Ausgerüstete Gegenstände</string>
+    <string name="cinv_name">Bezeichnung: </string>
+    <string name="cinv_desc">Beschreibung: </string>
     <string name="cinv_equip">ausrüsten</string>
     <string name="cinv_pack">einpacken</string>
     <string name="cinv_unpack">auspacken</string>
@@ -109,10 +111,19 @@
     <string name="cinv_buy">kaufen</string>
     <string name="cinv_bought">%1$s gekauft</string>
     <string name="cinv_take">nehmen</string>
-    <string name="cinv_quality">Qualität</string>
-    <string name="cinv_quantity">Menge</string>
-    <string name="cinv_price">Preis</string>
+    <string name="cinv_quality">Qualität: </string>
+    <string name="cinv_quantity">Menge: </string>
+    <string name="cinv_price">Preis: </string>
     <string name="cinv_cash">Barvermögen %1$.2f R</string>
-    <string name="cinv_weight">Gewicht</string>
+    <string name="cinv_weight">Gewicht: </string>
+    <string name="cinv_cls">Klasse: </string>
+    <string name="cinv_cls_generic">generischer Gegenstand</string>
+    <string name="cinv_cls_clothing">Kleidungsstück</string>
+    <string name="cinv_cls_container">Behälter</string>
+    <string name="cinv_cls_weapon">Waffe</string>
+    <string name="cinv_cls_tool">Werkzeug</string>
+    <string name="cinv_cls_ammo">Munition</string>
+    <string name="cinv_cls_implant">Implantat</string>
+    <string name="cinv_cls_valuable">Wertgegenstand</string>
 
 </resources>

@@ -49,6 +49,7 @@ class CharInventoryEquippedFragment : Fragment(){
                 val iv = ItemView(context)
                 iv.item = item
                 iv.text = item.name
+                iv.setOnClickListener {v -> editItem(v)}
                 ll.addView(iv)
             }
         }
@@ -57,8 +58,6 @@ class CharInventoryEquippedFragment : Fragment(){
     fun editItem(view: View) {
         view as ItemView
         c.current_item = view.item
-        this.findNavController().navigate(R.id.action_cinvcont_to_citem)
-
-
+        this.findNavController().navigate(R.id.action_cinvequip_to_citem)
     }
 }

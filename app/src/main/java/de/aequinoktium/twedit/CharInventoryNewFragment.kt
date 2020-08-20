@@ -3,13 +3,12 @@ package de.aequinoktium.twedit
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
+import android.widget.*
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
@@ -17,7 +16,8 @@ import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 
-class CharInventoryNewFragment : Fragment(){
+class CharInventoryNewFragment : Fragment(), AdapterView.OnItemSelectedListener {
+
     private val c: CharacterViewModel by activityViewModels()
 
     private lateinit var et_name: EditText
@@ -25,7 +25,11 @@ class CharInventoryNewFragment : Fragment(){
     private lateinit var et_weight: EditText
     private lateinit var et_price: EditText
     private lateinit var et_quality: EditText
+    private lateinit var et_quantity: EditText
     private lateinit var tv_weight_unit: TextView
+    private lateinit var sp_cls: Spinner
+
+    private var item_cls = "generic"
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,12 +64,33 @@ class CharInventoryNewFragment : Fragment(){
 
         et_name = view.findViewById(R.id.newitem_name)
         et_desc = view.findViewById(R.id.newitem_desc)
+        et_quantity = view.findViewById(R.id.newitem_quantity)
+        et_quantity.addTextChangedListener(TextChanged(et_quantity))
         et_quality = view.findViewById(R.id.newitem_quality)
         et_quality.addTextChangedListener(TextChanged(et_quality))
         et_price = view.findViewById(R.id.newitem_price)
         et_weight = view.findViewById(R.id.newitem_weight)
         tv_weight_unit = view.findViewById(R.id.newitem_weight_unit)
         tv_weight_unit.setOnClickListener{switchWeightUnit()}
+
+        sp_cls = view.findViewById(R.id.newitem_cls)
+        val adapter = ArrayAdapter<String>(view.context, R.layout.support_simple_spinner_dropdown_item)
+
+        var item_cls = arrayOf(
+            getString(R.string.cinv_cls_generic),
+            getString(R.string.cinv_cls_clothing),
+            getString(R.string.cinv_cls_container),
+            getString(R.string.cinv_cls_tool),
+            getString(R.string.cinv_cls_weapon),
+            getString(R.string.cinv_cls_ammo),
+            getString(R.string.cinv_cls_implant)
+        )
+        for (i in item_cls) {
+            adapter.add(i)
+        }
+
+        sp_cls.adapter = adapter
+        sp_cls.onItemSelectedListener = this
 
 
         val bt_take = view.findViewById<Button>(R.id.newitem_take)
@@ -106,6 +131,12 @@ class CharInventoryNewFragment : Fragment(){
             item.orig_qual = quality
         }
 
+        // quantity
+        var s_quantity = et_quantity.text.toString()
+        if (s_quantity.isBlank()) s_quantity = "1"
+        var qty = s_quantity.toInt()
+        if (qty > 0) item.qty = qty
+
         // weight
         var s_weight = et_weight.text.toString()
         if (s_weight.isBlank()) s_weight = "0"
@@ -127,7 +158,7 @@ class CharInventoryNewFragment : Fragment(){
                     c.moneyTransaction(
                         c.primaryAccount().nr,
                         0,
-                        item.price,
+                        item.price * item.qty,
                         getString(R.string.cinv_bought, item.name)
                     )
                 }
@@ -165,6 +196,30 @@ class CharInventoryNewFragment : Fragment(){
 
 
     /**
+     * Implements a [AdapterView.OnItemSelectedListener]
+     */
+
+    override fun onNothingSelected(p0: AdapterView<*>?) {
+
+    }
+
+    /**
+     * updates the item class when the selection is made.
+     */
+    override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+        when (p2) {
+            0 -> item_cls = "generic"
+            1 -> item_cls = "clothing"
+            2 -> item_cls = "container"
+            3 -> item_cls = "tool"
+            4 -> item_cls = "weapon"
+            5 -> item_cls = "ammo"
+            6 -> item_cls = "implant"
+        }
+    }
+
+
+    /**
      * Implements a [TextWatcher] to monitor the quality field
      */
     class TextChanged: TextWatcher {
@@ -174,14 +229,23 @@ class CharInventoryNewFragment : Fragment(){
         private var et: EditText
 
         override fun afterTextChanged(p0: Editable?) {
+            var min = 0
+            var max = 0
+
             when (et.id) {
                 R.id.newitem_quality -> {
                     var s_quality = et.text.toString()
                     if (s_quality.isBlank()) s_quality = "0"
-                    if (Integer.valueOf(s_quality) > 12) {
-                        s_quality = "12"
-                        et.setText(s_quality)
-                    }
+                    var qual = s_quality.toInt()
+                    if (qual < 1) qual = 1
+                    if (qual > 12) qual = 12
+                    et.setText(qual.toString())
+                }
+                R.id.newitem_quantity -> {
+                    var s_quantity = et.text.toString()
+                    if (s_quantity.isBlank()) s_quantity = "0"
+                    var qty = s_quantity.toInt()
+                    if (qty < 1) et.setText("1")
                 }
             }
         }
@@ -190,5 +254,7 @@ class CharInventoryNewFragment : Fragment(){
 
         override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
     }
+
+
 
 }
