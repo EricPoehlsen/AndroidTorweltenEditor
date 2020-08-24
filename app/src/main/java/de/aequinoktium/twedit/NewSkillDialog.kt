@@ -5,7 +5,6 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
@@ -172,8 +171,8 @@ class NewSkillDialog(
      * The onClickListener for the specialization option selection
      */
     fun setSpec(lvl: Int) {
-        val deselect = ContextCompat.getColor(select_base.context, R.color.colorLite)
-        val select = ContextCompat.getColor(select_base.context, R.color.colorBlue)
+        val deselect = ContextCompat.getColor(select_base.context, R.color.LiteGrey)
+        val select = ContextCompat.getColor(select_base.context, R.color.Blue)
         skill.spec = lvl
         if (lvl == 1) {
             select_base.setTextColor(select)

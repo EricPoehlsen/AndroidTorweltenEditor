@@ -29,10 +29,10 @@ class SkillSelectAdapter(
             .inflate(R.layout.view_skill_select, parent, false) as SkillSelectView
 
         if (col_select == 0) {
-            col_select = ContextCompat.getColor(parent.context, R.color.colorBlue)
+            col_select = ContextCompat.getColor(parent.context, R.color.Blue)
         }
         if (col_standard == 0) {
-            col_standard = ContextCompat.getColor(parent.context, R.color.colorLite)
+            col_standard = ContextCompat.getColor(parent.context, R.color.LiteGrey)
         }
         return ViewHolder(sv)
     }

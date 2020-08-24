@@ -237,6 +237,31 @@ class CharacterViewModel: ViewModel() {
         inv.add(item)
     }
 
+    suspend fun packItem(item: Item) {
+        val sql = """
+            UPDATE char_items 
+            SET 
+                packed_into=${item.packed_into},
+                equipped=0
+            WHERE
+                id=${item.id}
+        """.trimIndent()
+        db.execSQL(sql)
+    }
+
+    suspend fun unpackItem(item: Item) {
+        val sql = """
+            UPDATE char_items 
+            SET 
+                packed_into=0
+            WHERE
+                id=${item.id}
+        """.trimIndent()
+        db.execSQL(sql)
+    }
+
+
+
 
     /**
      * loads the characters accounts and current balances

@@ -51,8 +51,9 @@ open class Item(private var c: CharacterViewModel) {
         return equipped
     }
 
-    fun getTotalWeight(): Int {
-        var weight = this.weight
+    fun getTotalWeight(): Int = this.weight + getContentWeight()
+
+    fun getContentWeight(): Int {
         for (i in getContents()) {
             weight += i.weight * i.qty
         }

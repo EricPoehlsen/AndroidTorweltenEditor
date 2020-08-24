@@ -20,10 +20,9 @@ import java.lang.Exception
 import kotlin.math.roundToInt
 
 /**
- * A DialogFrament that is used to modify a specific character information.
- * @param info_id is the database id for the information to modify
- * @param c is the [CharacterViewModel] for this app.
- * @param v is the [View] calling this dialog
+ * A DialogFrament that is used to modify an items container characteristics
+ * @param capacity is the current capacity for that container.
+ * @param item_cont_name the current name for the container.
  */
 class ItemContainerDialog(
     var capacity: Int,

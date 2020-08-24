@@ -3,8 +3,8 @@
     <color name="colorPrimary">#777</color>
     <color name="colorPrimaryDark">#555</color>
     <color name="colorAccent">#aaa</color>
-    <color name="colorLite">#ccc</color>
-    <color name="colorBlue">#0cf</color>
+    <color name="LiteGrey">#ccc</color>
+    <color name="Blue">#0cf</color>
     <color name="Red">#d00</color>
-    <color name="colorDarkBlue">#06a</color>
+    <color name="DarkBlue">#06a</color>
 </resources>

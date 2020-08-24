@@ -51,7 +51,15 @@ class CharInventoryContainerFragment : Fragment(){
             }
         } else {
             cnt = c.current_item
-            // TODO: Add all packed items
+            for (item in c.getInventory()) {
+                if (item.packed_into == cnt.id) {
+                    var iv = ItemView(context)
+                    iv.text = item.name
+                    iv.item = item
+                    iv.setOnClickListener {v -> editItem(v)}
+                    ll_container.addView(iv)
+                }
+            }
 
             // add self
             var iv = ItemView(context)

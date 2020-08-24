@@ -1,14 +1,8 @@
 package de.aequinoktium.twedit
 
-import android.graphics.Typeface
-import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class TraitSelectAdapter(
     private var data: Array<TraitData>,
@@ -28,10 +22,10 @@ class TraitSelectAdapter(
         val tv = TraitView(parent.context)
 
         if (col_select == 0) {
-            col_select = ContextCompat.getColor(parent.context, R.color.colorBlue)
+            col_select = ContextCompat.getColor(parent.context, R.color.Blue)
         }
         if (col_standard == 0) {
-            col_standard = ContextCompat.getColor(parent.context, R.color.colorLite)
+            col_standard = ContextCompat.getColor(parent.context, R.color.LiteGrey)
         }
         return ViewHolder(tv)
     }
