@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.LinearLayout
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -12,6 +13,8 @@ import androidx.navigation.fragment.findNavController
 
 class CharInventoryContainerFragment : Fragment(){
     private val c: CharacterViewModel by activityViewModels()
+    private lateinit var cnt: Item
+    private lateinit var ll_container: LinearLayout
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,7 +39,7 @@ class CharInventoryContainerFragment : Fragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        view as LinearLayout
+        ll_container = view.findViewById(R.id.inv_container)
         if (c.current_item.id == 0) {
 
             for (item in c.getInventory()) {
@@ -44,8 +47,19 @@ class CharInventoryContainerFragment : Fragment(){
                 tv.text = item.name
                 tv.item = item
                 tv.setOnClickListener {v -> editItem(v)}
-                view.addView(tv)
+                ll_container.addView(tv)
             }
+        } else {
+            cnt = c.current_item
+            // TODO: Add all packed items
+
+            // add self
+            var iv = ItemView(context)
+            iv.text = cnt.name
+            iv.item = cnt
+            iv.setOnClickListener {v -> editItem(v)}
+            ll_container.addView(iv)
+
 
         }
     }
@@ -54,7 +68,5 @@ class CharInventoryContainerFragment : Fragment(){
         view as ItemView
         c.current_item = view.item
         this.findNavController().navigate(R.id.action_cinvcont_to_citem)
-
-
     }
 }
