@@ -185,6 +185,13 @@ class CharacterViewModel: ViewModel() {
             item.packed_into = data.getInt(data.getColumnIndex("packed_into"))
 
             val extra_data = data.getString(data.getColumnIndex("extra_data"))
+            val datasets = extra_data.split(",")
+            for (value in datasets) {
+                if (value.startsWith("cnt:")) {
+                    item.container_name = value.split(":")[1]
+                }
+
+            }
 
 
             items.add(item)
@@ -206,6 +213,10 @@ class CharacterViewModel: ViewModel() {
      * Adds an item to the character inventory.
       */
     suspend fun addToInventory(item: Item) {
+        var extra_data = ""
+        if (item.container_name.length > 0) extra_data += "cnt:${item.container_name},"
+
+
         val cv = ContentValues()
         cv.put("name", item.name)
         cv.put("qty", item.qty)
@@ -214,6 +225,10 @@ class CharacterViewModel: ViewModel() {
         cv.put("original_quality", item.orig_qual)
         cv.put("weight", item.weight)
         cv.put("price", item.price)
+        cv.put("weight_limit", item.weight_limit)
+        cv.put("extra_data", extra_data)
+
+
 
         cv.put("char_id", char_id)
 

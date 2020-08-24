@@ -81,7 +81,15 @@ class CharInventoryFragment : Fragment(){
     fun displayEquippedContainers() {
         for (item in c.getInventory()) {
             if (item.equipped == 1 && item.weight_limit > 0) {
-
+                val tv_cnt = ItemView(context)
+                if (!item.container_name.isBlank()) {
+                    tv_cnt.text = item.container_name
+                } else {
+                    tv_cnt.text = item.name
+                }
+                tv_cnt.item = item
+                tv_cnt.setOnClickListener {v -> showContainer(v)}
+                ll_containers.addView(tv_cnt)
             }
         }
     }

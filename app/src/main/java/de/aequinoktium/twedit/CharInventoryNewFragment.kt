@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +17,10 @@ import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 
-class CharInventoryNewFragment : Fragment(), AdapterView.OnItemSelectedListener {
+class CharInventoryNewFragment : Fragment(),
+                                 AdapterView.OnItemSelectedListener,
+                                 ItemContainerDialog.DialogListener
+{
 
     private val c: CharacterViewModel by activityViewModels()
 
@@ -30,6 +34,8 @@ class CharInventoryNewFragment : Fragment(), AdapterView.OnItemSelectedListener 
     private lateinit var sp_cls: Spinner
 
     private var item_cls = "generic"
+    private var item_cap = 0
+    private var item_cont_name = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -102,6 +108,9 @@ class CharInventoryNewFragment : Fragment(), AdapterView.OnItemSelectedListener 
             addItem(pay=true)
         }
 
+        var bt_cont = view.findViewById<Button>(R.id.newitem_container)
+        bt_cont.setOnClickListener { editContainer() }
+
 
     }
 
@@ -151,6 +160,12 @@ class CharInventoryNewFragment : Fragment(), AdapterView.OnItemSelectedListener 
         if (s_price.isBlank()) s_price = "0"
         item.price = s_price.toFloat()
 
+        // container:
+        if (item_cap > 0) {
+            item.weight_limit = item_cap
+            item.container_name = item_cont_name
+        }
+
         if (!item.name.isBlank()) {
             c.viewModelScope.launch(Dispatchers.IO) {
                 c.addToInventory(item)
@@ -167,6 +182,14 @@ class CharInventoryNewFragment : Fragment(), AdapterView.OnItemSelectedListener 
             // TODO inform user that item was not created
         }
     }
+
+    fun editContainer() {
+        val fm = this.parentFragmentManager
+        val dialog = ItemContainerDialog(item_cap, item_cont_name)
+        dialog.setTargetFragment(this, 301)
+        dialog.show(fm, null)
+    }
+
 
     /**
      * switches weight units between g and kg - updates the input field
@@ -255,6 +278,20 @@ class CharInventoryNewFragment : Fragment(), AdapterView.OnItemSelectedListener 
         override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
     }
 
+    /**
+     * Handle the return of various dialogs
+     */
+    override fun onDialogPositiveClick(dialog: DialogFragment) {
+        if (dialog is ItemContainerDialog) {
+            item_cap = dialog.capacity
+            var cont_name = dialog.item_cont_name
+            cont_name = cont_name.replace(":", "")
+            cont_name = cont_name.replace(",", "")
+            cont_name = cont_name.replace("'", "\u2019")
+            item_cont_name = cont_name
+            Log.d("info", item_cont_name)
+        }
+    }
 
 
 }

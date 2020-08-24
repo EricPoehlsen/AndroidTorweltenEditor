@@ -18,6 +18,7 @@ open class Item(private var c: CharacterViewModel) {
     var weight_limit = 0
     var equipped = 0
     var price = 0f
+    var container_name = ""
 
     fun pack(item: Item) {
         this.equipped = 0

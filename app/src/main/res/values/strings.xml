@@ -37,6 +37,13 @@
     <string name="dialog_skill_filter_active">Aktive Fertigkeiten</string>
     <string name="dialog_skill_filter_passive">Passive Fertigkeiten</string>
     <string name="dialog_edit_info_title">%1$s bearbeiten…</string>
+    <string name="dialog_item_cont_title">Behältereigenschaften</string>
+    <string name="dialog_item_cont_capacity">Kapazität</string>
+    <string name="dialog_item_cont_gram">g / cm³</string>
+    <string name="dialog_item_cont_kgram">kg / Liter</string>
+    <string name="dialog_item_cont_name">Bezeichnung</string>
+    <string name="dialog_item_cont_name_hint">(z.B. Hosentasche)</string>
+    <string name="dialog_item_cont_cap_hint">So viel passt rein</string>
     <string name="dialog_remove_trait_title">Eigenschaft löschen …</string>
     <string name="dialog_remove_trait_msg">Entfernt %1$s und korrigiert die Erfahrungspunkte.</string>
     <string name="dialog_collapse_trait_title">Varianten bearbeiten …</string>
