@@ -42,6 +42,9 @@ class CharItemFragment : Fragment(), ItemPackDialog.DialogListener {
 
         item = c.current_item
 
+        // clear current item so 'back' returns to full inventory.
+        c.current_item = Item(c)
+
         return root
     }
 
@@ -71,6 +74,7 @@ class CharItemFragment : Fragment(), ItemPackDialog.DialogListener {
     fun pack() {
         if (item.packed_into > 0) { // unpack item
             item.packed_into = 0
+            bt_pack.setText(R.string.cinv_pack)
             c.viewModelScope.launch(Dispatchers.IO) {
                 c.unpackItem(item)
             }
@@ -104,6 +108,8 @@ class CharItemFragment : Fragment(), ItemPackDialog.DialogListener {
                 var cnt = dialog.containers.get(dialog.selected)
                 item.packed_into = cnt.id
                 item.equipped = 0
+                bt_equip.setText(R.string.cinv_equip)
+                bt_pack.setText(R.string.cinv_unpack)
                 c.viewModelScope.launch(Dispatchers.IO) {
                     c.packItem(item)
                 }

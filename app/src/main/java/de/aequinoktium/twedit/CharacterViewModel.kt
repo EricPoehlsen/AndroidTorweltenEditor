@@ -4,13 +4,7 @@ import android.content.ContentValues
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
-import androidx.annotation.UiThread
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
-import org.json.JSONObject
 import java.util.*
 
 /**
@@ -204,14 +198,14 @@ class CharacterViewModel: ViewModel() {
     /**
      * Retrieve the characters current items
      * return an array of [Item]
-      */
+     */
     fun getInventory(): Array<Item> {
         return inv.toTypedArray()
     }
 
     /**
      * Adds an item to the character inventory.
-      */
+     */
     suspend fun addToInventory(item: Item) {
         var extra_data = ""
         if (item.container_name.length > 0) extra_data += "cnt:${item.container_name},"
@@ -259,9 +253,6 @@ class CharacterViewModel: ViewModel() {
         """.trimIndent()
         db.execSQL(sql)
     }
-
-
-
 
     /**
      * loads the characters accounts and current balances
