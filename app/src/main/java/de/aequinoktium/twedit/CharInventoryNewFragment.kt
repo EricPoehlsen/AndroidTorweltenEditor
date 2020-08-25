@@ -85,7 +85,7 @@ class CharInventoryNewFragment : Fragment(),
         sp_cls = view.findViewById(R.id.newitem_cls)
         val adapter = ArrayAdapter<String>(view.context, R.layout.support_simple_spinner_dropdown_item)
 
-        var item_cls = arrayOf(
+        val item_cls = arrayOf(
             getString(R.string.cinv_cls_generic),
             getString(R.string.cinv_cls_clothing),
             getString(R.string.cinv_cls_container),
@@ -111,7 +111,7 @@ class CharInventoryNewFragment : Fragment(),
             addItem(pay=true)
         }
 
-        var bt_cont = view.findViewById<Button>(R.id.newitem_container)
+        val bt_cont = view.findViewById<Button>(R.id.newitem_container)
         bt_cont.setOnClickListener { editContainer() }
 
         bt_dmg = view.findViewById(R.id.newitem_weapon)
@@ -124,7 +124,7 @@ class CharInventoryNewFragment : Fragment(),
      * hands over item storage to [CharacterViewModel]
      */
     fun addItem(pay: Boolean = false) {
-        var item = Item(c)
+        val item = Item(c)
 
         // name
         var name = et_name.text.toString()
@@ -139,7 +139,7 @@ class CharInventoryNewFragment : Fragment(),
         // quality
         var s_quality = et_quality.text.toString()
         if (s_quality.isBlank()) s_quality = "0"
-        var quality = Integer.valueOf(s_quality)
+        val quality = Integer.valueOf(s_quality)
         if (quality > 0) {
             item.cur_qual = quality
             item.orig_qual = quality
@@ -148,7 +148,7 @@ class CharInventoryNewFragment : Fragment(),
         // quantity
         var s_quantity = et_quantity.text.toString()
         if (s_quantity.isBlank()) s_quantity = "1"
-        var qty = s_quantity.toInt()
+        val qty = s_quantity.toInt()
         if (qty > 0) item.qty = qty
 
         // weight
@@ -217,7 +217,7 @@ class CharInventoryNewFragment : Fragment(),
      * switches weight units between g and kg - updates the input field
      */
     fun switchWeightUnit() {
-        var cur_unit = tv_weight_unit.text.toString()
+        val cur_unit = tv_weight_unit.text.toString()
         var cur_weight = 0f
         var s_weight = et_weight.text.toString()
         var unit = ""
@@ -285,7 +285,7 @@ class CharInventoryNewFragment : Fragment(),
                 R.id.newitem_quantity -> {
                     var s_quantity = et.text.toString()
                     if (s_quantity.isBlank()) s_quantity = "0"
-                    var qty = s_quantity.toInt()
+                    val qty = s_quantity.toInt()
                     if (qty < 1) et.setText("1")
                 }
             }
