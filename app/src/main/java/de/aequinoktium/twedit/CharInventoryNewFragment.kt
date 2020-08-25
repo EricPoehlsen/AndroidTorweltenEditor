@@ -219,12 +219,11 @@ class CharInventoryNewFragment : Fragment(),
     fun switchWeightUnit() {
         var cur_unit = tv_weight_unit.text.toString()
         var cur_weight = 0f
-        var s_weight = ""
+        var s_weight = et_weight.text.toString()
         var unit = ""
 
-        s_weight = et_weight.text.toString()
-        if (s_weight.isBlank()) s_weight = "0"
 
+        if (s_weight.isBlank()) s_weight = "0"
         when (cur_unit) {
             "g" -> {
                 unit = "kg"
@@ -274,9 +273,6 @@ class CharInventoryNewFragment : Fragment(),
         private var et: EditText
 
         override fun afterTextChanged(p0: Editable?) {
-            var min = 0
-            var max = 0
-
             when (et.id) {
                 R.id.newitem_quality -> {
                     var s_quality = et.text.toString()

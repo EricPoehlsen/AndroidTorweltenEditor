@@ -49,8 +49,7 @@ class CharacterViewModel: ViewModel() {
 
     suspend fun loadCharData(char_id: Int) {
         this.char_id = char_id
-        var sql: String = ""
-        sql = "SELECT * FROM char_core WHERE id = $char_id"
+        var sql = "SELECT * FROM char_core WHERE id = $char_id"
         var data: Cursor = db.rawQuery(sql, null)
         if (data.count == 1) {
             data.moveToFirst()
