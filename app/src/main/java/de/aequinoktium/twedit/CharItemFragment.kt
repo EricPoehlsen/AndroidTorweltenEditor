@@ -19,6 +19,15 @@ class CharItemFragment : Fragment(), ItemPackDialog.DialogListener {
     private val c: CharacterViewModel by activityViewModels()
     lateinit var item: Item
     lateinit var tv_title: TextView
+    lateinit var tv_desc: TextView
+    lateinit var tv_qty: TextView
+    lateinit var tv_qual: TextView
+    lateinit var tv_price: TextView
+    lateinit var tv_weight: TextView
+
+
+
+
     lateinit var bt_equip: Button
     lateinit var bt_pack: Button
 
@@ -53,6 +62,31 @@ class CharItemFragment : Fragment(), ItemPackDialog.DialogListener {
 
         tv_title = view.findViewById(R.id.char_item_name)
         tv_title.text = item.name
+
+        tv_desc = view.findViewById(R.id.char_item_desc)
+        tv_desc.text = item.desc
+
+        tv_qty = view.findViewById(R.id.char_item_qty)
+        var text = resources.getString(R.string.cinv_quantity) + " " + item.qty.toString()
+        tv_qty.text = text
+
+        tv_qual = view.findViewById(R.id.char_item_qual)
+        var q = resources.getStringArray(R.array.cinv_qualities)
+        text = resources.getString(R.string.cinv_quality) +
+               " " + q[item.cur_qual] + " (" + item.cur_qual.toString() + ")"
+        tv_qual.text = text
+
+        tv_price = view.findViewById(R.id.char_item_price)
+        text = resources.getString(R.string.cinv_price) + " " + item.price.toString() + " IR"
+        tv_price.text = text
+
+        tv_weight = view.findViewById(R.id.char_item_weight)
+        var s_wgt = " " + item.weight.toString() + " g"
+        if (item.weight >= 1000) {
+            s_wgt = " " + (item.weight.toFloat()/1000).toString() + " kg"
+        }
+        text = resources.getString(R.string.cinv_weight) + s_wgt
+        tv_weight.text = text
 
         bt_equip = view.findViewById(R.id.char_item_equip)
         if (item.equipped == 1) {

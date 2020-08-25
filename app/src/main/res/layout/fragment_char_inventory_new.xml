@@ -58,7 +58,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="1dp"
         android:ems="3"
-        android:hint="7"
+        android:hint="6"
         android:inputType="number"
         android:maxLength="2"
         android:textAlignment="center"
@@ -206,5 +206,13 @@
         android:layout_height="wrap_content"
         android:text="Container"
         app:layout_constraintBottom_toTopOf="@+id/newitem_take"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/newitem_weapon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/cinv_damage"
+        app:layout_constraintBottom_toTopOf="@+id/newitem_container"
         app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

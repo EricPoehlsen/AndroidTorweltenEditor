@@ -209,6 +209,8 @@ class CharacterViewModel: ViewModel() {
     suspend fun addToInventory(item: Item) {
         var extra_data = ""
         if (item.container_name.length > 0) extra_data += "cnt:${item.container_name},"
+        if (!item.dmg.isBlank()) extra_data += "dmg:${item.dmg},"
+        if (!item.dmg_mod.isBlank()) extra_data += "dmg_mod:${item.dmg_mod},"
 
 
         val cv = ContentValues()
@@ -221,8 +223,6 @@ class CharacterViewModel: ViewModel() {
         cv.put("price", item.price)
         cv.put("weight_limit", item.weight_limit)
         cv.put("extra_data", extra_data)
-
-
 
         cv.put("char_id", char_id)
 

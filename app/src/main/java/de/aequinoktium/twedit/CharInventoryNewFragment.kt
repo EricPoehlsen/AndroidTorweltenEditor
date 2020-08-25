@@ -19,7 +19,8 @@ import kotlin.math.roundToInt
 
 class CharInventoryNewFragment : Fragment(),
                                  AdapterView.OnItemSelectedListener,
-                                 ItemContainerDialog.DialogListener
+                                 ItemContainerDialog.DialogListener,
+                                 ItemDamageDialog.DialogListener
 {
 
     private val c: CharacterViewModel by activityViewModels()
@@ -32,10 +33,12 @@ class CharInventoryNewFragment : Fragment(),
     private lateinit var et_quantity: EditText
     private lateinit var tv_weight_unit: TextView
     private lateinit var sp_cls: Spinner
+    private lateinit var bt_dmg: Button
 
     private var item_cls = "generic"
     private var item_cap = 0
     private var item_cont_name = ""
+    private var item_dmg = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -111,6 +114,8 @@ class CharInventoryNewFragment : Fragment(),
         var bt_cont = view.findViewById<Button>(R.id.newitem_container)
         bt_cont.setOnClickListener { editContainer() }
 
+        bt_dmg = view.findViewById(R.id.newitem_weapon)
+        bt_dmg.setOnClickListener { editDamage() }
 
     }
 
@@ -166,6 +171,17 @@ class CharInventoryNewFragment : Fragment(),
             item.container_name = item_cont_name
         }
 
+        // damage
+        if (!item_dmg.isBlank()) {
+            if (item_dmg.startsWith("-") ||
+                item_dmg.startsWith("±") ||
+                item_dmg.startsWith("+")) {
+                item.dmg_mod = item_dmg
+            } else {
+                item.dmg = item_dmg
+            }
+        }
+
         if (!item.name.isBlank()) {
             c.viewModelScope.launch(Dispatchers.IO) {
                 c.addToInventory(item)
@@ -190,6 +206,12 @@ class CharInventoryNewFragment : Fragment(),
         dialog.show(fm, null)
     }
 
+    fun editDamage() {
+        val fm = this.parentFragmentManager
+        val dialog = ItemDamageDialog()
+        dialog.setTargetFragment(this, 301)
+        dialog.show(fm, null)
+    }
 
     /**
      * switches weight units between g and kg - updates the input field
@@ -290,6 +312,43 @@ class CharInventoryNewFragment : Fragment(),
             cont_name = cont_name.replace("'", "\u2019")
             item_cont_name = cont_name
             Log.d("info", item_cont_name)
+        }
+        if (dialog is ItemDamageDialog) {
+            val s = dialog.s.toString()
+            val d = dialog.d.toString()
+            var e = dialog.e
+            var dmg = ""
+
+            if (dialog.cb_mod.isChecked) {
+                if (s.startsWith("0")) {
+                    dmg += "±"
+                } else if (!s.startsWith("-")) {
+                    dmg += "+"
+                }
+            }
+            dmg += s + "/"
+            if (dialog.cb_mod.isChecked) {
+                if (d.startsWith("0")) {
+                    dmg += "±"
+                } else if (!d.startsWith("-")) {
+                    dmg += "+"
+                }
+            }
+            dmg += d
+            e = e.replace("'", "\u2019")
+            if (!e.isBlank()) {
+                dmg += "/" + e
+            }
+
+            if (dmg == "0/0") {
+                dmg = ""
+                bt_dmg.text = resources.getString(R.string.cinv_damage)
+            } else {
+                bt_dmg.text = dmg
+            }
+
+            item_dmg = dmg
+
         }
     }
 

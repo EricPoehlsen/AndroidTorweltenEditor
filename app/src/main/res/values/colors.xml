@@ -5,6 +5,7 @@
     <color name="colorAccent">#aaa</color>
     <color name="LiteGrey">#ccc</color>
     <color name="Blue">#0cf</color>
+    <color name="White">#fff</color>
     <color name="Red">#d00</color>
     <color name="DarkBlue">#06a</color>
 </resources>

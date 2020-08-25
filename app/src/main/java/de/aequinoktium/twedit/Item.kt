@@ -13,12 +13,14 @@ open class Item(private var c: CharacterViewModel) {
     var qty = 1
     var weight = 0
     var packed_into = 0
-    var cur_qual = 7
-    var orig_qual = 7
+    var cur_qual = 6
+    var orig_qual = 6
     var weight_limit = 0
     var equipped = 0
     var price = 0f
     var container_name = ""
+    var dmg = ""
+    var dmg_mod = ""
 
     fun pack(item: Item) {
         this.equipped = 0
