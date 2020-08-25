@@ -184,6 +184,12 @@ class CharacterViewModel: ViewModel() {
                 if (value.startsWith("cnt:")) {
                     item.container_name = value.split(":")[1]
                 }
+                if (value.startsWith("dmg:")) {
+                    item.dmg = value.split(":")[1]
+                }
+                if (value.startsWith("dmg_mod:")) {
+                    item.dmg_mod = value.split(":")[1]
+                }
 
             }
 
