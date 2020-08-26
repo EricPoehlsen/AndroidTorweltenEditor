@@ -91,9 +91,6 @@ class ItemDamageDialog(
         } ?: throw IllegalStateException("Activity cant't be null")
     }
 
-
-
-
     /**
      * Implementation of the [TextWatcher]
      */

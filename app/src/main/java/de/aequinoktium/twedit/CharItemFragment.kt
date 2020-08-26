@@ -17,7 +17,8 @@ import kotlinx.coroutines.launch
 
 class CharItemFragment : Fragment(),
                          ItemPackDialog.DialogListener,
-                         ItemQualDialog.DialogListener
+                         ItemQualDialog.DialogListener,
+                         ItemSellDialog.DialogListener
 {
     private val c: CharacterViewModel by activityViewModels()
     lateinit var item: Item
@@ -83,6 +84,7 @@ class CharItemFragment : Fragment(),
         tv_price = view.findViewById(R.id.char_item_price)
         text = resources.getString(R.string.cinv_price) + " " + item.price.toString() + " IR"
         tv_price.text = text
+        tv_price.setOnClickListener {sellItem()}
 
         tv_weight = view.findViewById(R.id.char_item_weight)
         var s_wgt = " " + item.weight.toString() + " g"
@@ -140,6 +142,14 @@ class CharItemFragment : Fragment(),
         dialog.show(fm, null)
     }
 
+    fun sellItem() {
+        val fm = this.parentFragmentManager
+        val dialog = ItemSellDialog(item)
+        dialog.setTargetFragment(this, 301)
+        dialog.show(fm, null)
+    }
+
+
     /**
      * Equip or unequip an item
      */
@@ -169,7 +179,7 @@ class CharItemFragment : Fragment(),
                 }
             }
         }
-        if (dialog is ItemQualDialog) {
+        if (dialog is ItemQualDialog) { // change quality
             val q = dialog.q
             var text = resources.getString(R.string.cinv_quality)
             val qualities = resources.getStringArray(R.array.cinv_qualities)
@@ -179,6 +189,28 @@ class CharItemFragment : Fragment(),
             c.viewModelScope.launch(Dispatchers.IO) {
                 c.updateItem(item)
             }
+        }
+        if (dialog is ItemSellDialog) { // sell item
+            val p = dialog.p * item.qty
+
+            // unpack all items packed into
+            for (i in c.getInventory()) {
+                if (i.packed_into == item.id) {
+                    c.viewModelScope.launch(Dispatchers.IO) {
+                        c.unpackItem(i)
+                    }
+                }
+            }
+
+            // sell item
+            c.viewModelScope.launch(Dispatchers.IO) {
+                var purpose = resources.getString(R.string.cinv_sold, item.name)
+                c.moneyTransaction(0, c.primaryAccount().nr, p, purpose)
+                c.removeItem(item)
+            }
+
+
+
         }
     }
 

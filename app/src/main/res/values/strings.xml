@@ -37,6 +37,8 @@
     <string name="dialog_skill_filter_active">Aktive Fertigkeiten</string>
     <string name="dialog_skill_filter_passive">Passive Fertigkeiten</string>
     <string name="dialog_edit_info_title">%1$s bearbeiten…</string>
+    <string name="dialog_item_sell_title">%1$dx %2$s verkaufen…</string>
+    <string name="dialog_item_sell_info">Stückpreis</string>
     <string name="dialog_item_cont_title">Behältereigenschaften</string>
     <string name="dialog_item_cont_capacity">Kapazität</string>
     <string name="dialog_item_cont_gram">g / cm³</string>
@@ -123,6 +125,7 @@
     <string name="cinv_expend">verbrauchen</string>
     <string name="cinv_buy">kaufen</string>
     <string name="cinv_bought">%1$s gekauft</string>
+    <string name="cinv_sold">%1$s verkauft</string>
     <string name="cinv_take">nehmen</string>
     <string name="cinv_quality">Qualität: </string>
     <string name="cinv_quantity">Menge: </string>

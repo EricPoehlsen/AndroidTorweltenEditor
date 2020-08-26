@@ -271,6 +271,15 @@ class CharacterViewModel: ViewModel() {
         db.execSQL(sql)
     }
 
+    suspend fun removeItem(item: Item) {
+        inv.remove(item)
+        val sql = """
+            DELETE FROM char_items
+            WHERE id = ${item.id}
+        """.trimIndent()
+        db.execSQL(sql)
+    }
+
     /**
      * loads the characters accounts and current balances
      */
