@@ -208,10 +208,7 @@ class CharacterViewModel: ViewModel() {
         return inv.toTypedArray()
     }
 
-    /**
-     * Adds an item to the character inventory.
-     */
-    suspend fun addToInventory(item: Item) {
+    fun prepareItem(item: Item): ContentValues {
         var extra_data = ""
         if (item.container_name.length > 0) extra_data += "cnt:${item.container_name},"
         if (!item.dmg.isBlank()) extra_data += "dmg:${item.dmg},"
@@ -231,10 +228,25 @@ class CharacterViewModel: ViewModel() {
 
         cv.put("char_id", char_id)
 
+        return cv
+    }
+
+    /**
+     * Adds an item to the character inventory.
+     */
+    suspend fun addToInventory(item: Item) {
+        val cv = prepareItem(item)
+
         val row_id = db.insert("char_items",null, cv)
         item.id = row_id.toInt()
         inv.add(item)
     }
+
+    suspend fun updateItem(item: Item) {
+        val cv = prepareItem(item)
+        db.update("char_items", cv, "id=${item.id}", null)
+    }
+
 
     suspend fun packItem(item: Item) {
         val sql = """

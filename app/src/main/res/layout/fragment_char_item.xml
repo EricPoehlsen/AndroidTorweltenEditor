@@ -70,4 +70,12 @@
         android:text="@string/cinv_price"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/char_item_qual" />
+
+    <TextView
+        android:id="@+id/char_item_dmg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/cinv_damage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/char_item_price" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -44,7 +44,10 @@
     <string name="dialog_item_cont_name">Bezeichnung</string>
     <string name="dialog_item_cont_name_hint">(z.B. Hosentasche)</string>
     <string name="dialog_item_cont_cap_hint">So viel passt rein</string>
-    <string name="dialog_item_dmg_title">Schadenswerte</string>
+    <string name="dialog_item_qual_title">Qualität ändern:</string>
+    <string name="dialog_item_qual_inc">verbessern / reparieren</string>
+    <string name="dialog_item_qual_dec">verschlechtern / beschädigen</string>
+    <string name="dialog_item_dmg_title">Schadenswerte: </string>
     <string name="dialog_item_dmg_code">Schadenscode: </string>
     <string name="dialog_item_dmg_mod">modifiziert anderen Schadenswert</string>
     <string name="dialog_remove_trait_title">Eigenschaft löschen …</string>
@@ -125,8 +128,7 @@
     <string name="cinv_quantity">Menge: </string>
     <string name="cinv_price">Preis: </string>
     <string name="cinv_damage">Schaden</string>
-    <string name="cinv_S">S: </string>
-    <string name="cinv_D">D: </string>    <string name="cinv_cash">Barvermögen %1$.2f R</string>
+    <string name="cinv_cash">Barvermögen %1$.2f R</string>
     <string name="cinv_weight">Gewicht: </string>
     <string name="cinv_cls">Klasse: </string>
     <string name="cinv_cls_generic">generischer Gegenstand</string>

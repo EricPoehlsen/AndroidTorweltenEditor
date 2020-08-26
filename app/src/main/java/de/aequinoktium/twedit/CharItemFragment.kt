@@ -15,7 +15,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
-class CharItemFragment : Fragment(), ItemPackDialog.DialogListener {
+class CharItemFragment : Fragment(),
+                         ItemPackDialog.DialogListener,
+                         ItemQualDialog.DialogListener
+{
     private val c: CharacterViewModel by activityViewModels()
     lateinit var item: Item
     lateinit var tv_title: TextView
@@ -24,7 +27,7 @@ class CharItemFragment : Fragment(), ItemPackDialog.DialogListener {
     lateinit var tv_qual: TextView
     lateinit var tv_price: TextView
     lateinit var tv_weight: TextView
-
+    lateinit var tv_dmg: TextView
 
 
 
@@ -75,6 +78,7 @@ class CharItemFragment : Fragment(), ItemPackDialog.DialogListener {
         text = resources.getString(R.string.cinv_quality) +
                " " + q[item.cur_qual] + " (" + item.cur_qual.toString() + ")"
         tv_qual.text = text
+        tv_qual.setOnClickListener {editQual()}
 
         tv_price = view.findViewById(R.id.char_item_price)
         text = resources.getString(R.string.cinv_price) + " " + item.price.toString() + " IR"
@@ -88,6 +92,16 @@ class CharItemFragment : Fragment(), ItemPackDialog.DialogListener {
         text = resources.getString(R.string.cinv_weight) + s_wgt
         tv_weight.text = text
 
+        tv_dmg = view.findViewById(R.id.char_item_dmg)
+        var dmg = item.dmg
+        if (dmg.isBlank()) dmg = item.dmg_mod
+        text = resources.getString(R.string.cinv_damage) + ": " + dmg
+        if (dmg.isBlank()) {
+            tv_dmg.visibility = View.GONE
+        } else {
+            tv_dmg.text = text
+        }
+
         bt_equip = view.findViewById(R.id.char_item_equip)
         if (item.equipped == 1) {
             bt_equip.setText(R.string.cinv_drop)
@@ -99,7 +113,6 @@ class CharItemFragment : Fragment(), ItemPackDialog.DialogListener {
             bt_pack.setText(resources.getString(R.string.cinv_unpack))
         }
         bt_pack.setOnClickListener { pack() }
-
     }
 
     /**
@@ -118,6 +131,13 @@ class CharItemFragment : Fragment(), ItemPackDialog.DialogListener {
             dialog.setTargetFragment(this, 301)
             dialog.show(fm, null)
         }
+    }
+
+    fun editQual() {
+        val fm = this.parentFragmentManager
+        val dialog = ItemQualDialog(item.cur_qual)
+        dialog.setTargetFragment(this, 301)
+        dialog.show(fm, null)
     }
 
     /**
@@ -147,6 +167,17 @@ class CharItemFragment : Fragment(), ItemPackDialog.DialogListener {
                 c.viewModelScope.launch(Dispatchers.IO) {
                     c.packItem(item)
                 }
+            }
+        }
+        if (dialog is ItemQualDialog) {
+            val q = dialog.q
+            var text = resources.getString(R.string.cinv_quality)
+            val qualities = resources.getStringArray(R.array.cinv_qualities)
+            text += "${qualities[q]} ($q)"
+            tv_qual.text = text
+            item.cur_qual = q
+            c.viewModelScope.launch(Dispatchers.IO) {
+                c.updateItem(item)
             }
         }
     }
