@@ -1,12 +1,7 @@
 package de.aequinoktium.twedit
 
-import android.util.Log
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.consumesAll
-import kotlinx.coroutines.launch
 
-open class Item(private var c: CharacterViewModel) {
+class Item() {
     var id = 0
     var name = ""
     var desc = ""
@@ -22,90 +17,45 @@ open class Item(private var c: CharacterViewModel) {
     var dmg = ""
     var dmg_mod = ""
 
-    fun pack(item: Item) {
-        this.equipped = 0
-        this.packed_into = item.id
-    }
+    fun copy(): Item {
+        var new = Item()
+        new.name = this.name
+        new.desc = this.desc
+        new.qty = this.qty
+        new.weight = this.weight
+        new.packed_into = this.packed_into
+        new.cur_qual = this.cur_qual
+        new.orig_qual = this.orig_qual
+        new.weight_limit = this.weight_limit
+        new.equipped = this.equipped
+        new.price = this.price
+        new.container_name = this.container_name
+        new.dmg = this.dmg
+        new.dmg_mod = this.dmg_mod
 
-    fun unpack() {
-
-    }
-
-    /**
-     * Equipping or unequipping an item
-     * @return 0: unequipped 1: equipped
-     */
-    fun equip(): Int {
-        if (equipped == 1) {
-            equipped = 0
-        } else {
-            unpack()
-            equipped = 1
-        }
-        c.viewModelScope.launch(Dispatchers.IO) {
-            val sql = """
-                UPDATE char_items 
-                SET equipped = ${equipped}
-                WHERE id = ${id}
-            """.trimMargin()
-            c.db.execSQL(sql)
-        }
-        return equipped
-    }
-
-    fun getTotalWeight(): Int = this.weight + getContentWeight()
-
-    fun getContentWeight(): Int {
-        for (i in getContents()) {
-            weight += i.weight * i.qty
-        }
-        return weight
+        return new
     }
 
     /**
-     * retrieve an array of all packed items
-     * @param levels how deep to search the tree 0 = unlimited
-     * @return an array of [Item].
+     * checks if the item equals this item
+     * disregards qty and id
+     * @param item: The [Item] to compare
+     * @return true if 'equal'
      */
-    fun getContents(levels: Int = 0): Array<Item> {
-        var loop = 0
-        var result = arrayOf<Item>()
-        var look_into = arrayOf(this.id)
-        while (look_into.size > 0) {
-            var next_look = arrayOf<Int>()
-            for (item in c.getInventory()) {
-                if (item.packed_into in look_into) {
-                    result += item
-                    next_look += item.id
-                }
-            }
-            look_into = next_look
-            loop++
-            if (levels in 1..loop) break
-        }
-        return result
+    fun eq(item: Item): Boolean {
+        return (
+            item.name == this.name &&
+            item.desc == this.desc &&
+            item.weight == this.weight &&
+            item.packed_into == this.packed_into &&
+            item.cur_qual == this.cur_qual &&
+            item.orig_qual == this.orig_qual &&
+            item.weight_limit == this.weight_limit &&
+            item.equipped == this.equipped &&
+            item.price == this.price &&
+            item.container_name == this.container_name &&
+            item.dmg == this.dmg &&
+            item.dmg_mod == this.dmg_mod
+        )
     }
-
-
-}
-
-class Clothing(c: CharacterViewModel): Item(c) {
-
-}
-
-class Tool(c: CharacterViewModel): Item(c) {
-
-}
-
-open class Weapon(c: CharacterViewModel): Item(c) {
-    var damage = 0
-    var penetration = 0
-}
-
-class MeleeWeapon(c: CharacterViewModel): Weapon(c) {
-
-}
-
-class RangedWeapon(c: CharacterViewModel): Weapon(c) {
-
 }

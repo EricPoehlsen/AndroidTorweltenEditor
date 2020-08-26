@@ -46,6 +46,14 @@
     <string name="dialog_item_cont_name">Bezeichnung</string>
     <string name="dialog_item_cont_name_hint">(z.B. Hosentasche)</string>
     <string name="dialog_item_cont_cap_hint">So viel passt rein</string>
+    <string name="dialog_item_qty_title">Menge bearbeiten:</string>
+    <string name="dialog_item_qty_amount">Anzahl</string>
+    <string name="dialog_item_qty_buy">kaufen</string>
+    <string name="dialog_item_qty_take">nehmen</string>
+    <string name="dialog_item_qty_split">abteilen</string>
+    <string name="dialog_item_qty_part">aufteilen</string>
+    <string name="dialog_item_qty_join">vereinen</string>
+    <string name="dialog_item_qty_all">Alle</string>
     <string name="dialog_item_qual_title">Qualität ändern:</string>
     <string name="dialog_item_qual_inc">verbessern / reparieren</string>
     <string name="dialog_item_qual_dec">verschlechtern / beschädigen</string>
@@ -124,8 +132,8 @@
     <string name="cinv_drop">ablegen</string>
     <string name="cinv_expend">verbrauchen</string>
     <string name="cinv_buy">kaufen</string>
-    <string name="cinv_bought">%1$s gekauft</string>
-    <string name="cinv_sold">%1$s verkauft</string>
+    <string name="cinv_bought">%1$dx %2$s gekauft</string>
+    <string name="cinv_sold">%1$dx %2$s verkauft</string>
     <string name="cinv_take">nehmen</string>
     <string name="cinv_quality">Qualität: </string>
     <string name="cinv_quantity">Menge: </string>

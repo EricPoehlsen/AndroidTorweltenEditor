@@ -124,7 +124,7 @@ class CharInventoryNewFragment : Fragment(),
      * hands over item storage to [CharacterViewModel]
      */
     fun addItem(pay: Boolean = false) {
-        val item = Item(c)
+        val item = Item()
 
         // name
         var name = et_name.text.toString()
@@ -190,7 +190,7 @@ class CharInventoryNewFragment : Fragment(),
                         c.primaryAccount().nr,
                         0,
                         item.price * item.qty,
-                        getString(R.string.cinv_bought, item.name)
+                        getString(R.string.cinv_bought, item.qty, item.name)
                     )
                 }
             }

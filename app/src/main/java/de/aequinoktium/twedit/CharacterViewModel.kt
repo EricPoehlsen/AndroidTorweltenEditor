@@ -5,6 +5,9 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.*
 
 /**
@@ -156,14 +159,9 @@ class CharacterViewModel: ViewModel() {
         val data = db.rawQuery(sql, null)
 
         while (data.moveToNext()) {
-            var item = Item(this)
+            var item = Item()
 
             val cls = data.getString(data.getColumnIndex("cls"))
-
-            when (cls) {
-                "clothing" -> item = Clothing(this)
-                "tool" -> item = Tool(this)
-            }
 
             item.id = data.getInt(data.getColumnIndex("id"))
             item.name = data.getString(data.getColumnIndex("name"))
@@ -247,7 +245,6 @@ class CharacterViewModel: ViewModel() {
         db.update("char_items", cv, "id=${item.id}", null)
     }
 
-
     suspend fun packItem(item: Item) {
         val sql = """
             UPDATE char_items 
@@ -278,6 +275,66 @@ class CharacterViewModel: ViewModel() {
             WHERE id = ${item.id}
         """.trimIndent()
         db.execSQL(sql)
+    }
+
+    /**
+     * Equipping or unequipping an item
+     * @return 0: unequipped 1: equipped
+     */
+    fun equipItem(item: Item): Int {
+        if (item.equipped == 1) {
+            item.equipped = 0
+        } else {
+            item.equipped = 1
+        }
+        this.viewModelScope.launch(Dispatchers.IO) {
+            updateItem(item)
+        }
+        return item.equipped
+    }
+
+    /**
+     * Retrieves the [Item]s content weights plus the own weight
+     * @param item: The [Item] of interest
+     * @return the total weight in grams
+     */
+    fun getItemTotalWeight(item: Item): Int = item.weight + getItemContentWeight(item)
+
+    /**
+     * Retrieve the weight of the contents packed into an item
+     * @param item: the [Item] which contents are of interest to us
+     * @return the weight of contents in grams
+     */
+    fun getItemContentWeight(item: Item): Int {
+        for (i in getItemContents(item)) {
+            item.weight += i.weight * i.qty
+        }
+        return item.weight
+    }
+
+    /**
+     * retrieve an array of all packed items
+     * @param levels how deep to search the tree 0 = unlimited
+     * @param item the [Item] which contents are of interest
+     * @return an array of [Item].
+     */
+    fun getItemContents(item: Item, levels: Int = 0): Array<Item> {
+        var loop = 0
+        var result = arrayOf<Item>()
+        var look_into = arrayOf(item.id)
+        while (look_into.size > 0) {
+            var next_look = arrayOf<Int>()
+            for (i in getInventory()) {
+                if (i.packed_into in look_into) {
+                    result += i
+                    next_look += i.id
+                }
+            }
+            look_into = next_look
+            loop++
+            if (levels in 1..loop) break
+        }
+        return result
     }
 
     /**

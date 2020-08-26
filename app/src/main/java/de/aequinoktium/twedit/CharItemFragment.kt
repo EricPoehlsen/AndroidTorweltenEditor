@@ -18,7 +18,8 @@ import kotlinx.coroutines.launch
 class CharItemFragment : Fragment(),
                          ItemPackDialog.DialogListener,
                          ItemQualDialog.DialogListener,
-                         ItemSellDialog.DialogListener
+                         ItemSellDialog.DialogListener,
+                         ItemQtyDialog.DialogListener
 {
     private val c: CharacterViewModel by activityViewModels()
     lateinit var item: Item
@@ -29,8 +30,6 @@ class CharItemFragment : Fragment(),
     lateinit var tv_price: TextView
     lateinit var tv_weight: TextView
     lateinit var tv_dmg: TextView
-
-
 
     lateinit var bt_equip: Button
     lateinit var bt_pack: Button
@@ -56,7 +55,7 @@ class CharItemFragment : Fragment(),
         item = c.current_item
 
         // clear current item so 'back' returns to full inventory.
-        c.current_item = Item(c)
+        c.current_item = Item()
 
         return root
     }
@@ -73,6 +72,7 @@ class CharItemFragment : Fragment(),
         tv_qty = view.findViewById(R.id.char_item_qty)
         var text = resources.getString(R.string.cinv_quantity) + " " + item.qty.toString()
         tv_qty.text = text
+        tv_qty.setOnClickListener {editQty()}
 
         tv_qual = view.findViewById(R.id.char_item_qual)
         var q = resources.getStringArray(R.array.cinv_qualities)
@@ -114,13 +114,13 @@ class CharItemFragment : Fragment(),
         if (item.packed_into > 0) {
             bt_pack.setText(resources.getString(R.string.cinv_unpack))
         }
-        bt_pack.setOnClickListener { pack() }
+        bt_pack.setOnClickListener { packItem() }
     }
 
     /**
      * Pack or unpack an item
      */
-    fun pack() {
+    fun packItem() {
         if (item.packed_into > 0) { // unpack item
             item.packed_into = 0
             bt_pack.setText(R.string.cinv_pack)
@@ -142,6 +142,13 @@ class CharItemFragment : Fragment(),
         dialog.show(fm, null)
     }
 
+    fun editQty() {
+        val fm = this.parentFragmentManager
+        val dialog = ItemQtyDialog(item.qty)
+        dialog.setTargetFragment(this, 301)
+        dialog.show(fm, null)
+    }
+
     fun sellItem() {
         val fm = this.parentFragmentManager
         val dialog = ItemSellDialog(item)
@@ -154,7 +161,7 @@ class CharItemFragment : Fragment(),
      * Equip or unequip an item
      */
     fun equip() {
-        val is_equipped = item.equip()
+        val is_equipped = c.equipItem(item)
         if (is_equipped == 1) {
             bt_equip.setText(R.string.cinv_drop)
         } else {
@@ -164,55 +171,167 @@ class CharItemFragment : Fragment(),
     }
 
     /**
-     * Implements the [DialogListener]
+     * Implements the [DialogListener] for multiple dialogs
+     * and calls the appropriate methods.
      */
     override fun onDialogPositiveClick(dialog: DialogFragment) {
         if (dialog is ItemPackDialog) { // pack item
             if (dialog.selected >= 0) {
-                var cnt = dialog.containers.get(dialog.selected)
-                item.packed_into = cnt.id
-                item.equipped = 0
-                bt_equip.setText(R.string.cinv_equip)
-                bt_pack.setText(R.string.cinv_unpack)
-                c.viewModelScope.launch(Dispatchers.IO) {
-                    c.packItem(item)
-                }
+                val cnt = dialog.containers.get(dialog.selected)
+                pack(cnt)
             }
         }
         if (dialog is ItemQualDialog) { // change quality
-            val q = dialog.q
-            var text = resources.getString(R.string.cinv_quality)
-            val qualities = resources.getStringArray(R.array.cinv_qualities)
-            text += "${qualities[q]} ($q)"
-            tv_qual.text = text
-            item.cur_qual = q
-            c.viewModelScope.launch(Dispatchers.IO) {
-                c.updateItem(item)
-            }
+            setQuality(dialog.q)
         }
         if (dialog is ItemSellDialog) { // sell item
             val p = dialog.p * item.qty
-
-            // unpack all items packed into
-            for (i in c.getInventory()) {
-                if (i.packed_into == item.id) {
-                    c.viewModelScope.launch(Dispatchers.IO) {
-                        c.unpackItem(i)
-                    }
-                }
-            }
-
-            // sell item
-            c.viewModelScope.launch(Dispatchers.IO) {
-                var purpose = resources.getString(R.string.cinv_sold, item.name)
-                c.moneyTransaction(0, c.primaryAccount().nr, p, purpose)
-                c.removeItem(item)
-            }
-
-
-
+            sell(p)
+        }
+        if (dialog is ItemQtyDialog) {
+            changeQuantity(dialog.action, dialog.qty)
         }
     }
 
+    /**
+     * pack the item into the specified container
+     * @param cnt an [Item] which serves as container
+     */
+    fun pack(cnt: Item) {
+        item.packed_into = cnt.id
+        item.equipped = 0
+        bt_equip.setText(R.string.cinv_equip)
+        bt_pack.setText(R.string.cinv_unpack)
+        c.viewModelScope.launch(Dispatchers.IO) {
+            c.packItem(item)
+        }
+    }
 
+    /**
+     * set the item quality to the given value
+     * @param q: Int quality in range 0-12
+     */
+    fun setQuality(q: Int) {
+        var text = resources.getString(R.string.cinv_quality)
+        val qualities = resources.getStringArray(R.array.cinv_qualities)
+        text += "${qualities[q]} ($q)"
+        tv_qual.text = text
+        item.cur_qual = q
+        c.viewModelScope.launch(Dispatchers.IO) {
+            c.updateItem(item)
+        }
+    }
+
+    /**
+     * sell the item for the given price
+     * @param price: total price to sell the item(stack)
+     */
+    fun sell(price: Float) {
+        // unpack all items packed into
+        for (i in c.getInventory()) {
+            if (i.packed_into == item.id) {
+                c.viewModelScope.launch(Dispatchers.IO) {
+                    c.unpackItem(i)
+                }
+            }
+        }
+        // sell item
+        c.viewModelScope.launch(Dispatchers.IO) {
+            val purpose = resources.getString(R.string.cinv_sold, item.qty, item.name)
+            c.moneyTransaction(0, c.primaryAccount().nr, price, purpose)
+            c.removeItem(item)
+        }
+    }
+
+    /**
+     * handles changes in quantity, like buying or taking additional items
+     * split the stack or joining the item with 'similar' items
+     */
+    fun changeQuantity(action: String, qty: Int) {
+        when (action) {
+            "buy" -> buy(qty, item.price)
+            "take" -> buy(qty, 0f)
+            "split" -> split(qty)
+            "part" -> part()
+            "join" -> join()
+        }
+    }
+
+    /**
+     * Buy additional items and add them to the stack
+     * @param qty: Integer number of items to buy
+     * @param price: Float price per unit
+     */
+    fun buy(qty: Int, price: Float) {
+        item.qty += qty
+        val text = resources.getString(R.string.cinv_quantity) + " " + item.qty.toString()
+        tv_qty.text = text
+        c.viewModelScope.launch(Dispatchers.IO) {
+            val purpose = resources.getString(R.string.cinv_bought, item.qty, item.name)
+            c.moneyTransaction(c.primaryAccount().nr, 0, price * qty, purpose)
+            c.updateItem(item)
+        }
+    }
+
+    /**
+     * Split an item stack into two ...
+     *
+     */
+    fun split(qty: Int) {
+        if (qty in 1..item.qty-1) {
+            val new_item = item.copy()
+            item.qty = item.qty - qty
+            val text = resources.getString(R.string.cinv_quantity) + " " + item.qty.toString()
+            tv_qty.text = text
+            new_item.qty = qty
+            c.viewModelScope.launch(Dispatchers.IO) {
+                c.updateItem(item)
+                c.addToInventory(new_item)
+            }
+        }
+    }
+
+    /**
+     * part an item stack into items with quantity one
+     */
+    fun part() {
+        var new_items = arrayOf<Item>()
+        repeat(item.qty-1) {
+            val new_item = item.copy()
+            new_item.qty = 1
+            new_items += new_item
+        }
+        item.qty = 1
+        val text = resources.getString(R.string.cinv_quantity) + " " + item.qty.toString()
+        tv_qty.text = text
+        c.viewModelScope.launch(Dispatchers.IO) {
+            c.updateItem(item)
+            for (new_item in new_items) {
+                c.addToInventory(new_item)
+            }
+        }
+    }
+
+    /**
+     * join all similar items
+     */
+    fun join() {
+        var equal_items = arrayOf<Item>()
+        for (i in c.getInventory()) {
+            if (i.id != item.id) {
+                if (i.eq(item)) {
+                    equal_items += i
+                    item.qty += i.qty
+                }
+            }
+        }
+        val text = resources.getString(R.string.cinv_quantity) + " " + item.qty.toString()
+        tv_qty.text = text
+        c.viewModelScope.launch(Dispatchers.IO) {
+            c.updateItem(item)
+            for (i in equal_items) {
+                c.removeItem(i)
+            }
+        }
+    }
 }

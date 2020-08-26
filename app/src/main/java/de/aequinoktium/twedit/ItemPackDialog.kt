@@ -96,7 +96,7 @@ class ItemPackDialog(val item: Item, val c: CharacterViewModel): DialogFragment(
             }
 
             // the remaining capacity in the container is insufficient
-            if (i.weight_limit < item.getTotalWeight() + i.getContentWeight()) {
+            if (i.weight_limit < c.getItemTotalWeight(item) + c.getItemContentWeight(i)) {
                 text += " (!)"
                 state = 1
             }

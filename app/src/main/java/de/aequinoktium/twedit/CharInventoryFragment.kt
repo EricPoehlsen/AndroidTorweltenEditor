@@ -58,7 +58,7 @@ class CharInventoryFragment : Fragment(){
         tv_cash.setText(getString(R.string.cinv_cash, c.primaryAccount().balance))
 
         val b_other = view.findViewById<ItemView>(R.id.cinv_other_items)
-        b_other.item = Item(c)
+        b_other.item = Item()
         b_other.setOnClickListener { v -> showContainer(v) }
 
         val b_equipped = view.findViewById<Button>(R.id.cinv_equipped)
