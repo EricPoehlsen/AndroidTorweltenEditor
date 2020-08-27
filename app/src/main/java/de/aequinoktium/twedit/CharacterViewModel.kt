@@ -30,6 +30,11 @@ class CharacterViewModel: ViewModel() {
         "ep" to 0,
         "mp" to 0
     )
+    var vitals = mutableMapOf(
+        "lp" to 0f,
+        "ep" to 0f,
+        "mp" to 0f
+    )
     var info = mutableMapOf(
         "core" to mutableListOf<Info>(),
         "desc" to mutableListOf<Info>()
@@ -59,6 +64,10 @@ class CharacterViewModel: ViewModel() {
             val attrib_names = arrayOf("phy", "men", "soz", "nk", "fk", "lp", "ep", "mp")
             for (n in attrib_names) {
                 attribs[n] = data.getInt(data.getColumnIndex(n))
+            }
+            val vitals_names = arrayOf("lp", "ep", "mp")
+            for (n in vitals_names) {
+                vitals[n] = data.getFloat(data.getColumnIndex(n))
             }
             xp_used = data.getInt(data.getColumnIndex("xp_used"))
             xp_total = data.getInt(data.getColumnIndex("xp_total"))
@@ -149,6 +158,22 @@ class CharacterViewModel: ViewModel() {
 
         if (reload) {
             loadInfo()
+        }
+    }
+
+    fun updateAttrib(attr: String, new_value: Int, xp_cost: Int) {
+        var data = ContentValues()
+        data.put(attr, new_value)
+
+        this.viewModelScope.launch(Dispatchers.IO) {
+            db.update("char_core", data, "id = $char_id", null)
+
+            var sql = """
+                UPDATE char_core 
+                SET xp_used = xp_used + ${xp_cost}
+                WHERE id = ${char_id}
+            """.trimIndent()
+            db.execSQL(sql)
         }
     }
 

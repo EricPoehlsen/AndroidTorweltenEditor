@@ -41,7 +41,7 @@ class CharacterFragment: Fragment(), EditAttribDialog.EditAttribDialogListener {
         tb?.title = c.name
 
         // initializes attribute buttons
-        val attrib_list = arrayOf("phy", "men", "soz", "nk", "fk")
+        val attrib_list = arrayOf("phy", "men", "soz", "nk", "fk", "lp", "ep", "mp")
         for (a in attrib_list) {
             var view_id = when {
                 a == "phy" -> R.id.cv_phy
@@ -49,6 +49,9 @@ class CharacterFragment: Fragment(), EditAttribDialog.EditAttribDialogListener {
                 a == "soz" -> R.id.cv_soz
                 a == "nk" -> R.id.cv_nk
                 a == "fk" -> R.id.cv_fk
+                a == "lp" -> R.id.cv_lp
+                a == "ep" -> R.id.cv_ep
+                a == "mp" -> R.id.cv_mp
                 else -> 0
             }
             val attr_view = act.findViewById<TextView>(view_id)
@@ -102,18 +105,14 @@ class CharacterFragment: Fragment(), EditAttribDialog.EditAttribDialogListener {
             dialog.char_attrib == "soz" -> R.id.cv_soz
             dialog.char_attrib == "nk" -> R.id.cv_nk
             dialog.char_attrib == "fk" -> R.id.cv_fk
+            dialog.char_attrib == "lp" -> R.id.cv_lp
+            dialog.char_attrib == "ep" -> R.id.cv_ep
+            dialog.char_attrib == "mp" -> R.id.cv_mp
             else -> 0
         }
         var view: TextView = act.findViewById(view_id)
         view.text = dialog.new_value.toString()
 
-        var data = ContentValues()
-        data.put(dialog.char_attrib, dialog.new_value)
-        c.db.update("char_core", data, "id = $char_id", null)
-        var sql = "UPDATE char_core SET xp_used = xp_used + " +
-                   dialog.xp_cost.toString() +
-                   " WHERE id = " + char_id.toString()
-        c.db.execSQL(sql)
-
+        c.updateAttrib(dialog.char_attrib, dialog.new_value, dialog.xp_cost)
     }
 }
