@@ -26,6 +26,8 @@ class CharacterFragment: Fragment(),
     private lateinit var ep_bar: VitalAttribView
     private lateinit var mp_bar: VitalAttribView
 
+    private lateinit var bars: Map<String, VitalAttribView>
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,9 +67,9 @@ class CharacterFragment: Fragment(),
             val attr_view = view.findViewById<TextView>(view_id)
             val attr_value = c.attribs[a]?: 0
             attr_view.text = attr_value.toString()
-            attr_view.setOnClickListener { editAttribs(a, attr_value) }
+            attr_view.setOnLongClickListener { editAttribs(a) }
             if (a in arrayOf("lp", "ep", "mp")) {
-                attr_view.setOnLongClickListener { toggleBar(a) }
+                attr_view.setOnClickListener { toggleBar(a) }
             }
         }
 
@@ -75,16 +77,17 @@ class CharacterFragment: Fragment(),
         ep_bar = view.findViewById(R.id.cv_ep_bar)
         mp_bar = view.findViewById(R.id.cv_mp_bar)
 
-        val bars = arrayOf(
-            Pair(lp_bar, "lp"),
-            Pair(ep_bar, "ep"),
-            Pair(mp_bar, "mp")
+        bars = mapOf(
+            "lp" to lp_bar,
+            "ep" to ep_bar,
+            "mp" to mp_bar
         )
 
-        for ((bar, attr) in bars) {
+        for ((attr, bar) in bars) {
             bar.max_value = c.attribs[attr]!!
+            bar.cur_value = c.vitals[attr]!!
             bar.visibility = View.GONE
-            bar.setOnClickListener { editDamage() }
+            bar.setOnClickListener { editDamage(attr) }
         }
 
 
@@ -114,16 +117,17 @@ class CharacterFragment: Fragment(),
 
     }
 
-    fun editAttribs(char_attrib: String, cur_value: Int) {
+    fun editAttribs(char_attrib: String):Boolean {
         val fm = this.parentFragmentManager
-        val dialog = EditAttribDialog(char_attrib, cur_value)
+        val dialog = EditAttribDialog(char_attrib, c.attribs[char_attrib]!!)
         dialog.setTargetFragment(this, 300)
         dialog.show(fm, null)
+        return true
     }
 
-    fun editDamage() {
+    fun editDamage(attr: String) {
         val fm = this.parentFragmentManager
-        val dialog = EditDamageDialog()
+        val dialog = EditDamageDialog(attr)
         dialog.setTargetFragment(this, 300)
         dialog.show(fm, null)
     }
@@ -149,29 +153,37 @@ class CharacterFragment: Fragment(),
 
         c.updateAttrib(dialog.char_attrib, dialog.new_value, dialog.xp_cost)
         if (dialog.char_attrib in arrayOf("lp", "ep", "mp")) {
+            val bars = mapOf(
+                "lp" to lp_bar,
+                "ep" to ep_bar,
+                "mp" to mp_bar
+            )
+            bars[dialog.char_attrib]!!.max_value = dialog.new_value
+            bars[dialog.char_attrib]!!.cur_value = dialog.new_value.toFloat()
             c.updateVital(dialog.char_attrib, dialog.new_value.toFloat())
         }
     }
 
-    fun toggleBar(attr: String): Boolean {
-        var view: VitalAttribView
+    fun toggleBar(attr: String) {
+        val view: VitalAttribView
         when (attr) {
             "lp" -> view = lp_bar
             "ep" -> view = ep_bar
             "mp" -> view = mp_bar
-            else -> return false
+            else -> return
         }
 
         if (view.visibility == View.GONE) {
-            view.invalidate()
             view.visibility = View.VISIBLE
         } else {
             view.visibility = View.GONE
         }
-        return true
     }
 
     override fun onDamageDialogPositiveClick(dialog: EditDamageDialog) {
-        Log.d("info", "damage check")
+        val dmg = dialog.action * dialog.delta
+        val new_value = bars[dialog.attr]!!.cur_value + dmg
+        bars[dialog.attr]!!.cur_value = new_value
+        c.updateVital(dialog.attr, new_value)
     }
 }

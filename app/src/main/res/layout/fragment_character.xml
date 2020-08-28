@@ -198,24 +198,30 @@
 
     <de.aequinoktium.twedit.VitalAttribView
         android:id="@+id/cv_lp_bar"
-        android:layout_width="208dp"
-        android:layout_height="48dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:box_size="16dp"
         app:layout_constraintStart_toEndOf="@+id/cv_lp_label"
-        app:layout_constraintTop_toTopOf="@+id/cv_lp_label" />
+        app:layout_constraintTop_toTopOf="@+id/cv_lp_label"
+        app:variant="lp" />
 
     <de.aequinoktium.twedit.VitalAttribView
         android:id="@+id/cv_ep_bar"
-        android:layout_width="208dp"
-        android:layout_height="48dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:box_size="16dp"
         app:layout_constraintStart_toEndOf="@+id/cv_ep_label"
-        app:layout_constraintTop_toTopOf="@+id/cv_ep_label" />
+        app:layout_constraintTop_toTopOf="@+id/cv_ep_label"
+        app:variant="ep" />
 
     <de.aequinoktium.twedit.VitalAttribView
         android:id="@+id/cv_mp_bar"
-        android:layout_width="208dp"
-        android:layout_height="48dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:box_size="16dp"
         app:layout_constraintStart_toEndOf="@+id/cv_mp_label"
-        app:layout_constraintTop_toTopOf="@+id/cv_mp_label" />
+        app:layout_constraintTop_toTopOf="@+id/cv_mp_label"
+        app:variant="mp" />
 
     <Button
         android:id="@+id/cv_skills"

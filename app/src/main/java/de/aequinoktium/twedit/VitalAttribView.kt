@@ -14,28 +14,72 @@ class VitalAttribView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
+    var max_value:Int = 8
+        set(value){
+            field = value
+            invalidate()
+        }
 
-    private val x0 = 0f
-    private val y0 = 0f
+    var cur_value:Float = 0f
+        set(value){
+            field = value
+            invalidate()
+        }
+
+    private var x0 = 0f
+    private var y0 = 0f
     private var s_bx:Float = px(16)
     private var l_bx:Float = (s_bx * 1.5).toFloat()
-    private val bx_p = 2
+    private var bx_p:Float = 2f
 
+    // shadow variable to set both the small and large box sizes
+    var box_size:Float = px(16)
+    set(value){
+        field = value
+        s_bx = value
+        l_bx = (value * 1.5).toFloat()
+        invalidate()
+    }
 
+    var box_color = Color.GRAY
+        set(value){
+            field = value
+            invalidate()
+        }
 
+    var line_color = Color.GRAY
+        set(value){
+            field = value
+            invalidate()
+        }
 
-    var max_value = 8
-    var cur_value = 8f
+    var tick_color = Color.RED
+        set(value){
+            field = value
+            invalidate()
+        }
+
+    var tick_width = px(2)
+        set(value){
+            field = value
+            invalidate()
+        }
+
+    var variant = 0
+        set(value){
+            field = value
+            invalidate()
+        }
 
     // positions of the boxes
     private var fields = mutableMapOf<Int, Array<Float>>()
 
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val min_width = (4 * s_bx + 6 * l_bx).toInt()
+        val min_width = (paddingLeft + 4 * s_bx + 6 * l_bx + paddingRight).toInt()
         val w: Int = resolveSizeAndState(min_width, widthMeasureSpec, 1)
 
-        val min_height = (2 * l_bx).toInt()
+        val min_height = (paddingTop + 2 * l_bx + paddingBottom).toInt()
         val h: Int = resolveSizeAndState(min_height, heightMeasureSpec, 1)
 
         setMeasuredDimension(w, h)
@@ -51,7 +95,7 @@ class VitalAttribView @JvmOverloads constructor(
         for (i in max_value+1..12) box(canvas, i)
         for (i in -12..-max_value-1) box(canvas, i)
 
-        txt(canvas,1)
+        txt(canvas,variant)
 
         cur_dmg(canvas)
 
@@ -59,7 +103,7 @@ class VitalAttribView @JvmOverloads constructor(
 
     fun grid(canvas: Canvas) {
         val paint = Paint()
-        paint.color = Color.GRAY
+        paint.color = line_color
         paint.strokeWidth = px(1)
         paint.style = Paint.Style.STROKE
 
@@ -110,9 +154,12 @@ class VitalAttribView @JvmOverloads constructor(
         }
     }
 
+    /**
+     * draws boxes into the fields that are outside the range of
+     */
     fun box(canvas: Canvas, pos: Int) {
         val paint = Paint()
-        paint.color = Color.GRAY
+        paint.color = box_color
         paint.style = Paint.Style.FILL
 
         canvas.drawRect(
@@ -125,14 +172,14 @@ class VitalAttribView @JvmOverloads constructor(
     }
 
     fun dmg(canvas: Canvas, pos: Int, full:Boolean=true) {
-        val x1 = fields[pos]!![0]
-        val y1 = fields[pos]!![1]
-        val x2 = fields[pos]!![2]
-        val y2 = fields[pos]!![3]
+        val x1 = fields[pos]!![0] + tick_width
+        val y1 = fields[pos]!![1] + tick_width
+        val x2 = fields[pos]!![2] - tick_width
+        val y2 = fields[pos]!![3] - tick_width
 
         val paint = Paint()
-        paint.color = Color.WHITE
-        paint.strokeWidth = px(2)
+        paint.color = tick_color
+        paint.strokeWidth = tick_width
         paint.strokeCap = Paint.Cap.ROUND
         paint.style = Paint.Style.STROKE
 
@@ -167,7 +214,7 @@ class VitalAttribView @JvmOverloads constructor(
 
     fun txt(canvas: Canvas, variant: Int=0) {
         val paint = Paint()
-        paint.textSize = px(12)
+        paint.textSize = s_bx -2
         paint.color = Color.GRAY
         if (variant == 0) {
             canvas.drawText("-2", fields[1]!![0], fields[1]!![3], paint)
@@ -228,15 +275,24 @@ class VitalAttribView @JvmOverloads constructor(
             0,
             0).apply {
             try {
-                val size = getDimension(R.styleable.VitalAttribView_box_size, 16f)
-
-                Log.d("info", "Size: $size")
-                s_bx = size
-                l_bx = (size * 1.5).toFloat()
+                box_size = getDimension(R.styleable.VitalAttribView_box_size, px(16))
+                max_value = getInteger(R.styleable.VitalAttribView_max_value, 4)
+                cur_value = getFloat(R.styleable.VitalAttribView_cur_value, 2.5f)
+                tick_color = getColor(R.styleable.VitalAttribView_tick_color, Color.RED)
+                box_color = getColor(R.styleable.VitalAttribView_box_color, Color.GRAY)
+                line_color = getColor(R.styleable.VitalAttribView_line_color, Color.GRAY)
+                tick_width = getDimension(R.styleable.VitalAttribView_tick_width, px(2))
+                variant = getInteger(R.styleable.VitalAttribView_variant, 0)
+                bx_p = getDimension(R.styleable.VitalAttribView_box_padding, px(2))
             } finally {
                 recycle()
             }
         }
+    }
+
+    fun handlePadding() {
+        x0 = paddingLeft.toFloat()
+        y0 = paddingTop.toFloat()
     }
 
     // calculate px for dp value
@@ -245,6 +301,7 @@ class VitalAttribView @JvmOverloads constructor(
 
 
     init {
+        handlePadding()
         if (attrs != null) readAttribSet(attrs)
         prepFields()
 
