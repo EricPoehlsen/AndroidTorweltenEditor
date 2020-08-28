@@ -9,18 +9,11 @@
     android:layout_height="match_parent"
     tools:context=".TestFragment">
 
- <de.aequinoktium.twedit.VitalAttribView
+ <Button
+     android:id="@+id/test_button"
      android:layout_width="wrap_content"
      android:layout_height="wrap_content"
-     android:layout_marginStart="8dp"
-     android:layout_marginTop="8dp"
-     android:padding="2dp"
-     app:box_padding="2dp"
-     app:box_size="20dp"
+     android:text="Button"
      app:layout_constraintStart_toStartOf="parent"
-     app:layout_constraintTop_toTopOf="parent"
-     app:tick_color="@color/Blue"
-     app:tick_width="4dp"
-     app:variant="lp" />
-
+     app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
