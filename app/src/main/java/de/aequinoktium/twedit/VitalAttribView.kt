@@ -204,7 +204,7 @@ class VitalAttribView @JvmOverloads constructor(
                 val f_i = i.toFloat()
                 if (cur_value - f_i-1 in -0.9f..-0.1f) {
                     dmg(canvas,i,false)
-                } else if (f_i > cur_value) {
+                } else if (f_i+1 > cur_value) {
                     dmg(canvas,i)
                 }
             }
@@ -230,7 +230,7 @@ class VitalAttribView @JvmOverloads constructor(
      */
     fun prepFields() {
         // setting the fields for the small boxes
-        var row = 0
+        var row = 2
         var col = 0
         for (i in -12..-1) {
             fields[i] = arrayOf(
@@ -242,7 +242,7 @@ class VitalAttribView @JvmOverloads constructor(
             col++
             if (col > 3) {
                 col = 0
-                row++
+                row--
             }
         }
 
