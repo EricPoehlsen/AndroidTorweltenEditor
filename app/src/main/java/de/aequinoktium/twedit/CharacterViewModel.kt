@@ -65,7 +65,7 @@ class CharacterViewModel: ViewModel() {
             for (n in attrib_names) {
                 attribs[n] = data.getInt(data.getColumnIndex(n))
             }
-            val vitals_names = arrayOf("lp", "ep", "mp")
+            val vitals_names = arrayOf("lp_cur", "ep_cur", "mp_cur")
             for (n in vitals_names) {
                 vitals[n] = data.getFloat(data.getColumnIndex(n))
             }
@@ -161,14 +161,21 @@ class CharacterViewModel: ViewModel() {
         }
     }
 
+    /**
+     * Update an attribute in the database and the ViewModel
+     * @param attr: the attribute
+     * @param new_value: the new value for this attribute
+     * @param xp_cost: the xp cost for the modification
+     */
     fun updateAttrib(attr: String, new_value: Int, xp_cost: Int) {
-        var data = ContentValues()
+        attribs[attr] = new_value
+        val data = ContentValues()
         data.put(attr, new_value)
 
         this.viewModelScope.launch(Dispatchers.IO) {
             db.update("char_core", data, "id = $char_id", null)
 
-            var sql = """
+            val sql = """
                 UPDATE char_core 
                 SET xp_used = xp_used + ${xp_cost}
                 WHERE id = ${char_id}
@@ -176,6 +183,17 @@ class CharacterViewModel: ViewModel() {
             db.execSQL(sql)
         }
     }
+
+    fun updateVital(attr: String, new_value: Float) {
+        vitals[attr] = new_value
+        val data = ContentValues()
+        data.put("${attr}_cur", new_value)
+        this.viewModelScope.launch(Dispatchers.IO) {
+            db.update("char_core", data, "id = $char_id", null)
+        }
+    }
+
+
 
     suspend fun loadInventory() {
         val items = mutableListOf<Item>()

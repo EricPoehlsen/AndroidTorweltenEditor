@@ -23,7 +23,7 @@
     <TextView
         android:id="@+id/cv_lp_label"
         android:layout_width="32dp"
-        android:layout_height="wrap_content"
+        android:layout_height="16dp"
         android:layout_marginStart="4dp"
         android:layout_marginTop="12dp"
         android:background="#515151"
@@ -35,7 +35,7 @@
     <TextView
         android:id="@+id/cv_ep_label"
         android:layout_width="32dp"
-        android:layout_height="wrap_content"
+        android:layout_height="16dp"
         android:layout_marginStart="4dp"
         android:layout_marginTop="6dp"
         android:background="#515151"
@@ -47,7 +47,7 @@
     <TextView
         android:id="@+id/cv_mp_label"
         android:layout_width="32dp"
-        android:layout_height="wrap_content"
+        android:layout_height="16dp"
         android:layout_marginStart="4dp"
         android:layout_marginTop="6dp"
         android:background="#515151"
@@ -70,36 +70,33 @@
     <TextView
         android:id="@+id/cv_lp"
         android:layout_width="32dp"
-        android:layout_height="0dp"
+        android:layout_height="32dp"
         android:background="#7A7A7A"
         android:text="0"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        app:layout_constraintBottom_toBottomOf="@+id/cv_lp_bar"
         app:layout_constraintStart_toStartOf="@+id/cv_lp_label"
         app:layout_constraintTop_toBottomOf="@+id/cv_lp_label" />
 
     <TextView
         android:id="@+id/cv_ep"
         android:layout_width="32dp"
-        android:layout_height="0dp"
+        android:layout_height="32dp"
         android:background="#7A7A7A"
         android:text="0"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        app:layout_constraintBottom_toBottomOf="@+id/cv_ep_bar"
         app:layout_constraintStart_toStartOf="@+id/cv_lp_label"
         app:layout_constraintTop_toBottomOf="@+id/cv_ep_label" />
 
     <TextView
         android:id="@+id/cv_mp"
         android:layout_width="32dp"
-        android:layout_height="0dp"
+        android:layout_height="32dp"
         android:background="#7A7A7A"
         android:text="0"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        app:layout_constraintBottom_toBottomOf="@+id/cv_mp_bar"
         app:layout_constraintStart_toStartOf="@+id/cv_lp_label"
         app:layout_constraintTop_toBottomOf="@+id/cv_mp_label" />
 
@@ -201,22 +198,22 @@
 
     <de.aequinoktium.twedit.VitalAttribView
         android:id="@+id/cv_lp_bar"
-        android:layout_width="210dp"
-        android:layout_height="50dp"
+        android:layout_width="208dp"
+        android:layout_height="48dp"
         app:layout_constraintStart_toEndOf="@+id/cv_lp_label"
         app:layout_constraintTop_toTopOf="@+id/cv_lp_label" />
 
     <de.aequinoktium.twedit.VitalAttribView
         android:id="@+id/cv_ep_bar"
-        android:layout_width="210dp"
-        android:layout_height="50dp"
+        android:layout_width="208dp"
+        android:layout_height="48dp"
         app:layout_constraintStart_toEndOf="@+id/cv_ep_label"
         app:layout_constraintTop_toTopOf="@+id/cv_ep_label" />
 
     <de.aequinoktium.twedit.VitalAttribView
         android:id="@+id/cv_mp_bar"
-        android:layout_width="210dp"
-        android:layout_height="50dp"
+        android:layout_width="208dp"
+        android:layout_height="48dp"
         app:layout_constraintStart_toEndOf="@+id/cv_mp_label"
         app:layout_constraintTop_toTopOf="@+id/cv_mp_label" />
 

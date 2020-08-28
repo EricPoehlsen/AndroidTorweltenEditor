@@ -13,38 +13,33 @@ class VitalAttribView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : View(context, attrs, defStyleAttr){
+) : View(context, attrs, defStyleAttr) {
+
+    private val x0 = 0f
+    private val y0 = 0f
+    private var s_bx:Float = px(16)
+    private var l_bx:Float = (s_bx * 1.5).toFloat()
+    private val bx_p = 2
+
+
+
+
     var max_value = 8
     var cur_value = 8f
 
     // positions of the boxes
-    private val fields = mapOf(
-        -12 to arrayOf(2,34,14,46),
-        -11 to arrayOf(18,34,30,46),
-        -10 to arrayOf(34,34,46,46),
-        -9 to arrayOf(50,34,62,46),
-        -8 to arrayOf(2,18,14,30),
-        -7 to arrayOf(18,18,30,30),
-        -6 to arrayOf(34,18,46,30),
-        -5 to arrayOf(50,18,62,30),
-        -4 to arrayOf(2,2,14,14),
-        -3 to arrayOf(18,2,30,14),
-        -2 to arrayOf(34,2,46,14),
-        -1 to arrayOf(50,2,62,14),
-        0 to arrayOf(62,2,66,22),
-        1 to arrayOf(66,2,86,22),
-        2 to arrayOf(90,2,110,22),
-        3 to arrayOf(114,2,134,22),
-        4 to arrayOf(138,2,158,22),
-        5 to arrayOf(162,2,182,22),
-        6 to arrayOf(186,2,206,22),
-        7 to arrayOf(66,26,86,46),
-        8 to arrayOf(90,26,110,46),
-        9 to arrayOf(114,26,134,46),
-        10 to arrayOf(138,26,158,46),
-        11 to arrayOf(162,26,182,46),
-        12 to arrayOf(186,26,206,46)
-    )
+    private var fields = mutableMapOf<Int, Array<Float>>()
+
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val min_width = (4 * s_bx + 6 * l_bx).toInt()
+        val w: Int = resolveSizeAndState(min_width, widthMeasureSpec, 1)
+
+        val min_height = (2 * l_bx).toInt()
+        val h: Int = resolveSizeAndState(min_height, heightMeasureSpec, 1)
+
+        setMeasuredDimension(w, h)
+    }
 
 
     // Called when the view should render its content.
@@ -68,29 +63,50 @@ class VitalAttribView @JvmOverloads constructor(
         paint.strokeWidth = px(1)
         paint.style = Paint.Style.STROKE
 
-        val coords = arrayOf(
-            arrayOf(0,0,0,48),
-            arrayOf(16,0,16,48),
-            arrayOf(32,0,32,48),
-            arrayOf(48,0,48,48),
-            arrayOf(64,0,64,48),
-            arrayOf(88,0,88,48),
-            arrayOf(112,0,112,48),
-            arrayOf(136,0,136,48),
-            arrayOf(160,0,160,48),
-            arrayOf(184,0,184,48),
-            arrayOf(208,0,208,48),
-            arrayOf(0,0,208,0),
-            arrayOf(0,48,208,48),
-            arrayOf(0,16,64,16),
-            arrayOf(64,24,208,24),
-            arrayOf(0,32,64,32),
-            arrayOf(0,48,208,48)
+        var coords = arrayOf<Array<Float>>()
+        // vertical lines for small boxes
+        for (i in 0..4) {
+            val vs = arrayOf(
+                x0 + i * s_bx,
+                y0,
+                x0 + i * s_bx,
+                y0 + 2 * l_bx
             )
-
+            coords += vs
+        }
+        // vertical lines for the large boxes
+        for (i in 0..6) {
+            val vl = arrayOf(
+                x0 + 4 * s_bx + i * l_bx,
+                y0,
+                x0 + 4 * s_bx + i * l_bx,
+                y0 + 2 * l_bx
+            )
+            coords += vl
+        }
+        // horizontal lines for small boxes
+        for (i in 0..3) {
+            val hs = arrayOf(
+                x0,
+                y0 + i * s_bx,
+                x0 + 4 * s_bx,
+                y0 + i * s_bx
+            )
+            coords += hs
+        }
+        // horizontal lines for large boxes
+        for (i in 0..2) {
+            val hs = arrayOf(
+                x0 + 4 * s_bx,
+                y0 + i * l_bx,
+                x0 + 4 * s_bx + 6 * l_bx,
+                y0 + i * l_bx
+            )
+            coords += hs
+        }
 
         for (c in coords) {
-            canvas.drawLine(px(c[0]),px (c[1]), px(c[2]), px(c[3]), paint)
+            canvas.drawLine(c[0], c[1], c[2], c[3], paint)
         }
     }
 
@@ -100,10 +116,10 @@ class VitalAttribView @JvmOverloads constructor(
         paint.style = Paint.Style.FILL
 
         canvas.drawRect(
-            px(fields[pos]!![0]),
-            px(fields[pos]!![1]),
-            px(fields[pos]!![2]),
-            px(fields[pos]!![3]),
+            fields[pos]!![0],
+            fields[pos]!![1],
+            fields[pos]!![2],
+            fields[pos]!![3],
             paint
         )
     }
@@ -120,8 +136,8 @@ class VitalAttribView @JvmOverloads constructor(
         paint.strokeCap = Paint.Cap.ROUND
         paint.style = Paint.Style.STROKE
 
-        canvas.drawLine(px(x1),px(y2),px(x2),px(y1), paint)
-        if (full) canvas.drawLine(px(x1),px(y1),px(x2),px(y2), paint)
+        canvas.drawLine(x1, y2, x2, y1, paint)
+        if (full) canvas.drawLine(x1, y1, x2, y2, paint)
     }
 
     fun cur_dmg(canvas: Canvas) {
@@ -154,15 +170,83 @@ class VitalAttribView @JvmOverloads constructor(
         paint.textSize = px(12)
         paint.color = Color.GRAY
         if (variant == 0) {
-            canvas.drawText("-2",px(fields[1]!![0]),px(fields[1]!![3]),paint)
-            canvas.drawText("-1",px(fields[2]!![0]),px(fields[2]!![3]),paint)
+            canvas.drawText("-2", fields[1]!![0], fields[1]!![3], paint)
+            canvas.drawText("-1", fields[2]!![0], fields[2]!![3], paint)
         } else {
-            canvas.drawText("-2",px(fields[-1]!![0]),px(fields[-1]!![3]),paint)
-            canvas.drawText("-1",px(fields[1]!![0]),px(fields[1]!![3]),paint)
+            canvas.drawText("-2", fields[-1]!![0] , fields[-1]!![3], paint)
+            canvas.drawText("-1", fields[1]!![0] , fields[1]!![3], paint)
         }
     }
 
+    /**
+     * sets up the coordinates map for the fields
+     */
+    fun prepFields() {
+        // setting the fields for the small boxes
+        var row = 0
+        var col = 0
+        for (i in -12..-1) {
+            fields[i] = arrayOf(
+                x0 + col * s_bx + bx_p,
+                y0 + row * s_bx + bx_p,
+                x0 + col * s_bx + s_bx - bx_p,
+                y0 + row * s_bx + s_bx - bx_p
+            )
+            col++
+            if (col > 3) {
+                col = 0
+                row++
+            }
+        }
+
+        // setting the fields for the large boxes
+        row = 0
+        col = 0
+        val _x = x0 + 4 * s_bx
+        for (i in 1..12) {
+            fields[i] = arrayOf(
+                (_x + col * l_bx + bx_p).toFloat(),
+                (y0 + row * l_bx + bx_p).toFloat(),
+                (_x + col * l_bx + l_bx - bx_p).toFloat(),
+                (y0 + row * l_bx + l_bx - bx_p).toFloat()
+            )
+            col++
+            if (col > 5) {
+                col = 0
+                row++
+            }
+        }
+
+        // contingency
+        fields[0] = arrayOf(0f,0f,0f,0f)
+    }
+
+    fun readAttribSet(attrs: AttributeSet) {
+        context.theme.obtainStyledAttributes(
+            attrs,
+            R.styleable.VitalAttribView,
+            0,
+            0).apply {
+            try {
+                val size = getDimension(R.styleable.VitalAttribView_box_size, 16f)
+
+                Log.d("info", "Size: $size")
+                s_bx = size
+                l_bx = (size * 1.5).toFloat()
+            } finally {
+                recycle()
+            }
+        }
+    }
 
     // calculate px for dp value
     fun px(dp: Int): Float = dp * resources.displayMetrics.density
+
+
+
+    init {
+        if (attrs != null) readAttribSet(attrs)
+        prepFields()
+
+    }
 }
