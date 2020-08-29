@@ -186,14 +186,15 @@ class CharacterViewModel: ViewModel() {
 
     fun updateVital(attr: String, new_value: Float) {
         vitals[attr] = new_value
-        val data = ContentValues()
-        data.put("${attr}_cur", new_value)
+        val sql = """
+            UPDATE char_core
+            SET ${attr}_cur = $new_value
+            WHERE id = $char_id
+        """.trimIndent()
         this.viewModelScope.launch(Dispatchers.IO) {
-            db.update("char_core", data, "id = $char_id", null)
+            db.execSQL(sql)
         }
     }
-
-
 
     suspend fun loadInventory() {
         val items = mutableListOf<Item>()

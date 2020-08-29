@@ -85,7 +85,8 @@ class CharacterFragment: Fragment(),
 
         for ((attr, bar) in bars) {
             bar.max_value = c.attribs[attr]!!
-            bar.cur_value = c.vitals[attr]!!
+            val attr_cur = "${attr}_cur"
+            bar.cur_value = c.vitals[attr_cur]!!
             bar.visibility = View.GONE
             bar.setOnClickListener { editDamage(attr) }
         }
