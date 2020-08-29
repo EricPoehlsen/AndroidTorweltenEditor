@@ -76,6 +76,7 @@ class SkillSelectAdapter(
         holder.sv.skill_id = 0
         holder.sv.spec = 0
         holder.sv.has_lvl = false
+        holder.sv.is_activated = false
         holder.sv.setTypeface(null, Typeface.NORMAL)
         holder.sv.setTextColor(col_standard)
         holder.sv.setCompoundDrawables(null, null, null, null)
