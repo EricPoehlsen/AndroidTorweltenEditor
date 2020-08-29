@@ -34,7 +34,7 @@ class TestFragment : Fragment() {
 
     fun clicked(v: View) {
         if (v is Button) {
-            v.text = "Clicked"
+            v.text = ewt.roll(3,-2)[0].toString()
         }
     }
 

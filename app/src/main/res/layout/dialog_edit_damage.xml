@@ -5,40 +5,91 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/dia_dmg_val"
+    <EditText
+        android:id="@+id/dia_dmg_dice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:ems="5"
-        android:text="0"
+        android:ems="2"
+        android:hint="1"
+        android:inputType="number"
         android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        app:layout_constraintBottom_toBottomOf="@+id/dia_dmg_inc"
-        app:layout_constraintEnd_toStartOf="@+id/dia_dmg_inc"
-        app:layout_constraintStart_toEndOf="@+id/dia_dmg_dec"
+        android:nextFocusDown="@+id/dia_dmg_col"
+        android:nextFocusRight="@+id/dia_dmg_col"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/dia_dmg_col"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="2"
+        android:hint="0"
+        android:inputType="numberSigned"
+        android:textAlignment="center"
+        app:layout_constraintStart_toEndOf="@+id/textView8"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/dia_dmg_inc"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="+"
+        app:layout_constraintEnd_toEndOf="@+id/dia_dmg_roll"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dia_dmg_roll" />
 
     <Switch
         android:id="@+id/dia_dmg_switch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/dia_dmg_val" />
+
+    <TextView
+        android:id="@+id/dia_dmg_val"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="3"
+        android:text="0"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        app:layout_constraintStart_toEndOf="@+id/dia_dmg_inc"
         app:layout_constraintTop_toBottomOf="@+id/dia_dmg_inc" />
 
     <Button
         android:id="@+id/dia_dmg_dec"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="-"
+        app:layout_constraintEnd_toEndOf="@+id/dia_dmg_roll"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/dia_dmg_inc" />
 
-    <Button
-        android:id="@+id/dia_dmg_inc"
+    <TextView
+        android:id="@+id/textView8"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="+"
+        android:text="/"
+        app:layout_constraintBottom_toBottomOf="@+id/dia_dmg_dice"
+        app:layout_constraintStart_toEndOf="@+id/dia_dmg_dice"
+        app:layout_constraintTop_toTopOf="@+id/dia_dmg_dice" />
+
+    <Button
+        android:id="@+id/dia_dmg_roll"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/dialog_dmg_roll"
+        app:layout_constraintEnd_toEndOf="@+id/dia_dmg_col"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dia_dmg_col" />
+
+    <GridLayout
+        android:id="@+id/dia_dmg_dice_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="1dp"
+        app:layout_constraintBottom_toTopOf="@+id/dia_dmg_val"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/dia_dmg_roll"
         app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

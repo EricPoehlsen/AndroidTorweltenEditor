@@ -26,21 +26,22 @@ class EWT() {
         "O" to 0f
     )
 
-    fun roll(dice: Int, col: Int):Float {
+    fun roll(dice: Int, col: Int):Array<Any> {
+        var rolled = arrayOf<Int>()
         var result = 0f
         var rolls = dice
         val i = col + 7
 
         while (rolls > 0) {
             val roll = Random.nextInt(1,12)
-            val cell:Char = table[roll]!![i]
-            // if (cell == "#")
+            val cell = table[roll]!![i].toString()
+            if (cell == "#") rolls++
+            result += values[cell]!!
+            rolled += roll
             rolls--
         }
 
-
-        return result
-
+        return arrayOf(result, rolled)
     }
 
 }
