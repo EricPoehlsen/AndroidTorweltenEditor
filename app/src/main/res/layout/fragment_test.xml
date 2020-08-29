@@ -16,4 +16,16 @@
      android:text="Button"
      app:layout_constraintStart_toStartOf="parent"
      app:layout_constraintTop_toTopOf="parent" />
+
+ <de.aequinoktium.twedit.VitalAttribView
+     android:id="@+id/vitalAttribView"
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content"
+     app:box_size="20dp"
+     app:cur_value="6"
+     app:layout_constraintStart_toStartOf="parent"
+     app:layout_constraintTop_toBottomOf="@+id/test_button"
+     app:max_value="6"
+     app:tick_color="@color/Blue"
+     app:tick_width="4dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

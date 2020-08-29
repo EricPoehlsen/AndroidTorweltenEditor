@@ -1,5 +1,8 @@
 package de.aequinoktium.twedit
 
+import java.time.LocalDateTime
+import kotlin.random.Random
+
 class EWT() {
     private val table = mapOf(
         1  to "#########XXXXX/",
@@ -16,8 +19,27 @@ class EWT() {
         12 to "////OOOOOOOOOOO"
     )
 
-    fun roll(dice: Int, col: Int) {
+    private val values = mapOf(
+        "#" to 1f,
+        "X" to 1f,
+        "/" to 0.5f,
+        "O" to 0f
+    )
+
+    fun roll(dice: Int, col: Int):Float {
+        var result = 0f
+        var rolls = dice
         val i = col + 7
+
+        while (rolls > 0) {
+            val roll = Random.nextInt(1,12)
+            val cell:Char = table[roll]!![i]
+            // if (cell == "#")
+            rolls--
+        }
+
+
+        return result
 
     }
 
