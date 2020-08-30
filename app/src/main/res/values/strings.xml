@@ -19,6 +19,17 @@
     <string name="charselect_name">Charaktername</string>
     <string name="charselect_xp">XP: %1$d/%2$d</string>
 
+
+    <string name="dialog_del_char_title">%1$s löschen …</string>
+    <string name="dialog_del_char_del">Löschen</string>
+    <string name="dialog_del_char_warn">Dies entfernt den Charakter endgültig aus der Datenbank.
+        \nDiese Aktion kann nicht rückgängig gemacht werden!
+    </string>
+    <string name="dialog_del_char_text">Der Charakter wird als gelöscht markiert.
+        \nDurch ein vorangestelltes \'#\' bei der Suche, lassen sich gelöschte Charaktere
+        wiederfinden.
+    </string>
+
     <string name="dialog_edit_attrib_title">Attribut ändern …</string>
     <string name="dialog_edit_attrib_xp">XP: </string>
     <string name="dialog_edit_skill_lvl0">gefährliches Halbwissen</string>

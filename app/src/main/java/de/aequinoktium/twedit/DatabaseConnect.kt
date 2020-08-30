@@ -54,7 +54,8 @@ class DatabaseConnect(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
                 mp_cur FLOAT DEFAULT 0,
                 xp_used INT DEFAULT 0,
                 xp_total INT DEFAULT 0,
-                career_mode BOOLEAN DEFAULT FALSE
+                career_mode BOOLEAN DEFAULT FALSE,
+                deleted BOOLEAN DEFAULT FALSE
             );
         """.trimIndent()
         db.execSQL(sql)

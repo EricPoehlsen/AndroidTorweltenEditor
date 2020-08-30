@@ -103,10 +103,11 @@ class DataViewModel: ViewModel() {
 
         var sql = """
             SELECT 
-                char_core.id as id, 
-                char_core.name as name, 
-                char_core.xp_used as xp_used, 
-                char_core.xp_total as xp_total
+                id, 
+                name, 
+                xp_used, 
+                xp_total,
+                deleted
             FROM 
                 char_core 
         """.trimIndent()
@@ -126,6 +127,7 @@ class DataViewModel: ViewModel() {
             char_info.name = data.getString(1)
             char_info.xp_free = data.getInt(3) - data.getInt(2)
             char_info.xp_total = data.getInt(3)
+            char_info.deleted = (data.getInt(4) == 1)
             sql = """
                 SELECT 
                     txt 
@@ -156,6 +158,68 @@ class DataViewModel: ViewModel() {
         db.insert("char_core", null, data)
     }
 
+    suspend fun deleteCharacter(char: CharInfo) {
+        if (char.deleted) { // wipe character
+            // find character accounts
+            var sql = """
+                SELECT id
+                FROM accounts
+                WHERE char_id = ${char.id}
+            """.trimIndent()
+            var data = db.rawQuery(sql, null)
+            var accounts = ""
+            while (data.moveToNext()) {
+                accounts += data.getInt(0).toString() + ","
+            }
+            data.close()
+
+            // remove money transfers to and from 'bank'
+            if (!accounts.isBlank()) {
+                accounts = accounts.dropLast(1)
+                sql = """
+                    DELETE FROM money_transfers
+                    WHERE 
+                        (origin_acc IN ($accounts) AND target_acc = 0) 
+                        OR
+                        (origin_acc = 0 and target_acc IN ($accounts))
+                    """.trimIndent()
+                db.execSQL(sql)
+            }
+
+            // delete character information from other tables
+            val tables = arrayOf(
+                "accounts",
+                "char_items",
+                "char_traits",
+                "char_skills",
+                "char_info"
+            )
+            for (table in tables) {
+                sql = """
+                    DELETE FROM $table
+                    WHERE char_id = ${char.id}
+                """.trimIndent()
+                db.execSQL(sql)
+            }
+
+            // remove core information
+            sql = """ 
+                DELETE FROM char_core
+                WHERE id = ${char.id}    
+            """.trimMargin()
+            db.execSQL(sql)
+        } else { // mark as deleted
+            val sql = """
+                UPDATE char_core
+                SET 
+                    deleted = 1,
+                    name = '#${char.name}'
+                WHERE id = ${char.id}
+            """.trimIndent()
+            db.execSQL(sql)
+        }
+    }
+
 
 
     /**
@@ -167,10 +231,11 @@ class DataViewModel: ViewModel() {
     }
 
     class CharInfo {
-        var id: Int = 0
-        var name: String = ""
-        var concept: String = ""
-        var xp_free: Int = 0
-        var xp_total: Int = 0
+        var id = 0
+        var name = ""
+        var concept = ""
+        var xp_free = 0
+        var xp_total = 0
+        var deleted = false
     }
 }

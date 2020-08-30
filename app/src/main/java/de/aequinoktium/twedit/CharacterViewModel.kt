@@ -16,7 +16,7 @@ import java.util.*
  */
 
 class CharacterViewModel: ViewModel() {
-    var char_id: Int = 0
+    var char_id = 0
     val LOCALE = Locale.GERMAN
     lateinit var db: SQLiteDatabase
     var name: String = ""
@@ -51,6 +51,8 @@ class CharacterViewModel: ViewModel() {
 
     private var accounts = mutableListOf<Account>()
 
+    private var deleted = false
+
     fun setDatabase(db: SQLiteDatabase) {
         this.db = db
     }
@@ -72,6 +74,7 @@ class CharacterViewModel: ViewModel() {
             xp_used = data.getInt(data.getColumnIndex("xp_used"))
             xp_total = data.getInt(data.getColumnIndex("xp_total"))
             name = data.getString(data.getColumnIndex("name"))
+            deleted = (data.getInt(data.getColumnIndex("deleted")) == 1)
         }
         data.close()
 
@@ -476,6 +479,7 @@ class CharacterViewModel: ViewModel() {
 
         return valid_account
     }
+
 
     /**
      * View Model is destroyed. Clean up the database connection.

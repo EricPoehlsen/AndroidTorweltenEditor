@@ -23,7 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/dialog_edit_attrib_xp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/v_csb_delete"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -35,4 +35,12 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/v_csb_name" />
+
+    <ImageView
+        android:id="@+id/v_csb_delete"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/remove_red" />
 </androidx.constraintlayout.widget.ConstraintLayout>

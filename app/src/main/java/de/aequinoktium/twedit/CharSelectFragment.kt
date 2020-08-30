@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
@@ -14,14 +15,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 
-class CharSelectFragment : Fragment() {
+class CharSelectFragment : Fragment(), CharDeleteDialog.DialogListener {
     private val c: CharacterViewModel by activityViewModels()
     private val d: DataViewModel by activityViewModels()
-
-    private lateinit var bt_add: Button
-    private lateinit var bt_search: Button
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,16 +44,16 @@ class CharSelectFragment : Fragment() {
         tb?.title = getString(R.string.charselect_title)
 
         // attach on click listeners ...
-        bt_add = view.findViewById<View>(R.id.charselect_add) as Button
-        bt_add.setOnClickListener { v -> newChar() }
-        bt_search = view.findViewById<View>(R.id.charselect_search) as Button
-        bt_search.setOnClickListener { v -> listChars() }
+        val bt_add = view.findViewById<View>(R.id.charselect_add) as Button
+        bt_add.setOnClickListener { newChar() }
+        val bt_search = view.findViewById<View>(R.id.charselect_search) as Button
+        bt_search.setOnClickListener { listChars() }
 
         listChars()
     }
 
 
-    fun displayCharacters(characters: Array<DataViewModel.CharInfo>) {
+    fun displayCharacters(characters: Array<DataViewModel.CharInfo>, deleted: Boolean = false) {
         // retrieve and clear the list+
         val act = activity as MainActivity
         val ll: LinearLayout = act.findViewById(R.id.charselect_charlist)
@@ -65,11 +61,18 @@ class CharSelectFragment : Fragment() {
 
         for (char in characters) {
         // add entries to the list ...
+            if (
+                !deleted
+                && char.name.startsWith("#")
+                && char.deleted
+            ) continue
+
             val csv = CharSelectView(context)
             csv.name.text = char.name
             csv.xp.text = getString(R.string.charselect_xp, char.xp_free, char.xp_total)
             csv.concept.text = char.concept
             csv.setOnClickListener { openChar(char.id) }
+            csv.delete.setOnLongClickListener{ deleteChar(char) }
             ll.addView(csv)
         }
     }
@@ -81,11 +84,12 @@ class CharSelectFragment : Fragment() {
         // get the name as search string
         val act = context as MainActivity
         val name: String = act.findViewById<EditText>(R.id.charselect_name).text.toString()
+        val deleted = name.startsWith("#")
 
         c.viewModelScope.launch(Dispatchers.IO) {
             val characters = d.findCharacters(name)
             withContext(Dispatchers.Main) {
-                displayCharacters(characters)
+                displayCharacters(characters, deleted)
             }
         }
     }
@@ -115,6 +119,22 @@ class CharSelectFragment : Fragment() {
                 fragment.findNavController().navigate(R.id.action_cs_to_ce)
             }
         }
+    }
 
+    fun deleteChar(char: DataViewModel.CharInfo): Boolean {
+        val fm = this.parentFragmentManager
+        val dialog = CharDeleteDialog(char)
+        dialog.setTargetFragment(this, 301)
+        dialog.show(fm, null)
+        return true
+    }
+
+    override fun onDialogPositiveClick(dialog: CharDeleteDialog) {
+        d.viewModelScope.launch(Dispatchers.IO) {
+            d.deleteCharacter(dialog.char)
+            withContext(Dispatchers.Main) {
+                listChars()
+            }
+        }
     }
 }
