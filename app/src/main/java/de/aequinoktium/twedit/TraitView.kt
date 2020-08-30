@@ -30,7 +30,6 @@ class TraitView: LinearLayout {
 
     lateinit var c: CharacterViewModel
     private var data = TraitData()
-    private var char_trait = CharTrait()
     private var show_details = false
     private var selected_variants = mutableMapOf<String, Int>()
 
@@ -57,6 +56,9 @@ class TraitView: LinearLayout {
             LayoutParams.MATCH_PARENT,
             LayoutParams.WRAP_CONTENT
         )
+        val act = context as MainActivity
+        lp.topMargin = act.calc_dp(4)
+
 
         this.layoutParams = lp
 
@@ -123,6 +125,7 @@ class TraitView: LinearLayout {
         var display_name = data.name
         if (data.id in c.char_traits) {
             display_name += " ✔"
+            tv_name.setTextColor(resources.getColor(R.color.Blue))
         }
         tv_name.text = display_name
     }
@@ -147,10 +150,9 @@ class TraitView: LinearLayout {
             HtmlCompat.FROM_HTML_MODE_LEGACY)
         )
 
+        updateRank(0)
         if (data.max_rank > 1) {
             val act = context as MainActivity
-            data.cur_rank = data.min_rank
-            updateRank(0)
 
             val lp = LayoutParams(act.calc_dp(32), act.calc_dp(32))
 
@@ -239,6 +241,7 @@ class TraitView: LinearLayout {
         var_grps = arrayOf<RadioGroup>()
         tv_desc.text = ""
         tv_name.text = ""
+        tv_name.setTextColor(resources.getColor(R.color.Grey))
         hideDetails()
     }
 
@@ -297,10 +300,8 @@ class TraitView: LinearLayout {
      * Updating the xp if rank or variants are changed ...
      */
     private fun updateXp() {
-        // for ranked traits
-        if (data.max_rank > 1) {
-            data.total_xp = data.cur_rank * data.xp
-        }
+        data.total_xp = data.cur_rank * data.xp
+
 
         // for variant traits
         if (data.variants.isNotEmpty()) {
@@ -343,7 +344,7 @@ class TraitView: LinearLayout {
         }
         variants = variants.trim()
 
-        var rank = 0
+        var rank = 1
         if (data.max_rank > 1) rank = data.cur_rank
         handleEffects()
         var sql = """

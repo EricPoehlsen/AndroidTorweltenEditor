@@ -25,7 +25,7 @@ class TraitSelectAdapter(
             col_select = ContextCompat.getColor(parent.context, R.color.Blue)
         }
         if (col_standard == 0) {
-            col_standard = ContextCompat.getColor(parent.context, R.color.LiteGrey)
+            col_standard = ContextCompat.getColor(parent.context, R.color.Grey)
         }
         return ViewHolder(tv)
     }
@@ -34,8 +34,8 @@ class TraitSelectAdapter(
      * When binding a value to a view assign the correct formatting and data
      */
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        var trait = data[position]
-        var view = holder.tv
+        val trait = data[position]
+        val view = holder.tv
 
         view.c = c
         view.setTrait(trait)
