@@ -6,7 +6,9 @@ import android.graphics.Typeface
 import android.util.AttributeSet
 import android.util.Log
 import android.util.TypedValue
+import android.view.View
 import android.view.View.MeasureSpec.getSize
+import android.view.ViewGroup
 import android.widget.CursorAdapter
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -20,35 +22,21 @@ import kotlinx.coroutines.launch
 
 class CharSelectView: ConstraintLayout {
     constructor(context: Context?) : super(context) {
-        init()
     }
     constructor(context: Context?, attrs: AttributeSet): super(context, attrs){
-        init()
     }
     constructor(context: Context?, attrs: AttributeSet, defStyleAttr: Int):
             super(context, attrs, defStyleAttr){
-        init()
     }
 
-    var name: TextView = TextView(context)
-    var xp: TextView = TextView(context)
-    var concept: TextView = TextView(context)
+    var name: TextView
+    var xp: TextView
+    var concept: TextView
 
-    fun init() {
-        var constraints = ConstraintSet()
-        constraints.clone(context, R.layout.view_char_select_button)
-        this.setConstraintSet(constraints)
-        name.id = R.id.v_csb_name
-        name.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20f)
-        name.setTypeface(null, Typeface.BOLD)
-
-        xp.id = R.id.v_csb_xp
-        concept.id = R.id.v_csb_concept
-        this.addView(name)
-        this.addView(xp)
-        this.addView(concept)
-        this.background = ResourcesCompat.getDrawable(resources, R.drawable.simple_border, null)
+    init {
+        inflate(context, R.layout.view_char_select_button, this)
+        name = this.findViewById(R.id.v_csb_name)
+        xp = this.findViewById(R.id.v_csb_xp)
+        concept = this.findViewById(R.id.v_csb_concept)
     }
-
-
 }

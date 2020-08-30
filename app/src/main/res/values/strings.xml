@@ -17,6 +17,7 @@
 
     <!-- CHAR_SELECT FRAGMENT -->
     <string name="charselect_name">Charaktername</string>
+    <string name="charselect_xp">XP: %1$d/%2$d</string>
 
     <string name="dialog_edit_attrib_title">Attribut ändern …</string>
     <string name="dialog_edit_attrib_xp">XP: </string>

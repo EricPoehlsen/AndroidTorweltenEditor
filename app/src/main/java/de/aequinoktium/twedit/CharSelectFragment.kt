@@ -1,9 +1,6 @@
 package de.aequinoktium.twedit
 
-import android.content.ContentValues
-import android.database.Cursor
 import android.os.Bundle
-import android.provider.ContactsContract
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -68,11 +65,12 @@ class CharSelectFragment : Fragment() {
 
         for (char in characters) {
         // add entries to the list ...
-            val tv = CharSelectView(context)
-            tv.name.text = char.name
-            tv.xp.text = char.xp_free.toString() + "/" + char.xp_total.toString()
-            tv.setOnClickListener { openChar(char.id) }
-            ll.addView(tv)
+            val csv = CharSelectView(context)
+            csv.name.text = char.name
+            csv.xp.text = getString(R.string.charselect_xp, char.xp_free, char.xp_total)
+            csv.concept.text = char.concept
+            csv.setOnClickListener { openChar(char.id) }
+            ll.addView(csv)
         }
     }
 
@@ -85,7 +83,7 @@ class CharSelectFragment : Fragment() {
         val name: String = act.findViewById<EditText>(R.id.charselect_name).text.toString()
 
         c.viewModelScope.launch(Dispatchers.IO) {
-            var characters = d.findCharacters(name)
+            val characters = d.findCharacters(name)
             withContext(Dispatchers.Main) {
                 displayCharacters(characters)
             }
@@ -98,20 +96,19 @@ class CharSelectFragment : Fragment() {
      */
     fun newChar() {
         val act = context as MainActivity
-        var name = act.findViewById<EditText>(R.id.charselect_name).text.toString()
+        val name = act.findViewById<EditText>(R.id.charselect_name).text.toString()
         if (name.length > 1) {
-            name = name.replace("'", "\u2019")
-            var data = ContentValues()
-            data.put("name", name)
-            data.put("xp_total", 330)
-            c.db.insert("char_core", null, data)
+            d.viewModelScope.launch(Dispatchers.IO) {
+                d.addCharacter(name)
+                withContext(Dispatchers.Main) {
+                    listChars()
+                }
+            }
         }
-
-        listChars()
     }
 
     fun openChar(char_id: Int) {
-        var fragment = this
+        val fragment = this
         c.viewModelScope.launch(Dispatchers.IO) {
             c.loadCharData(char_id)
             withContext(Dispatchers.Main) {
