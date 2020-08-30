@@ -3,6 +3,7 @@ package de.aequinoktium.twedit
 import android.content.ContentValues
 import android.database.Cursor
 import android.os.Bundle
+import android.provider.ContactsContract
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -18,14 +19,7 @@ import kotlinx.coroutines.withContext
 
 class CharSelectFragment : Fragment() {
     private val c: CharacterViewModel by activityViewModels()
-
-    class CharInfo {
-        var id: Int = 0
-        var name: String = ""
-        var concept: String = ""
-        var xp_free: Int = 0
-        var xp_total: Int = 0
-    }
+    private val d: DataViewModel by activityViewModels()
 
     private lateinit var bt_add: Button
     private lateinit var bt_search: Button
@@ -65,70 +59,16 @@ class CharSelectFragment : Fragment() {
         listChars()
     }
 
-    /**
-     * Retrieves some character info from the database
-     * @param name partial search string used to formulate the WHERE clause
-     * @return an array of CharInfo
-     */
-    fun findCharacters(name: String): Array<CharInfo> {
-        var result = emptyArray<CharInfo>()
 
-        var sql = """
-            SELECT 
-                char_core.id as id, 
-                char_core.name as name, 
-                char_core.xp_used as xp_used, 
-                char_core.xp_total as xp_total
-            FROM 
-                char_core 
-        """.trimIndent()
-
-        if (name.length > 0) {
-            var select = name.replace("'", "\u2019")
-            sql += " WHERE name LIKE '%$select%'"
-        }
-
-        sql += " ORDER BY name"
-
-        val data: Cursor = c.db.rawQuery(sql, null)
-
-        while (data.moveToNext()) {
-            val char_info = CharInfo()
-            char_info.id = data.getInt(0)
-            char_info.name = data.getString(1)
-            char_info.xp_free = data.getInt(3) - data.getInt(2)
-            char_info.xp_total = data.getInt(3)
-            sql = """
-                SELECT 
-                    txt 
-                FROM 
-                    char_info
-                WHERE
-                    char_id = ${char_info.id}
-                    AND
-                    name = 'concept'
-            """.trimIndent()
-            var concept = c.db.rawQuery(sql, null)
-            if (concept.moveToFirst()) {
-                char_info.concept = concept.getString(0).toString()
-            }
-            concept.close()
-            result += char_info
-        }
-
-        data.close()
-        return result
-    }
-
-    fun displayCharacters(characters: Array<CharInfo>) {
+    fun displayCharacters(characters: Array<DataViewModel.CharInfo>) {
         // retrieve and clear the list+
         val act = activity as MainActivity
-        var ll: LinearLayout = act.findViewById(R.id.charselect_charlist)
+        val ll: LinearLayout = act.findViewById(R.id.charselect_charlist)
         ll.removeAllViews()
 
         for (char in characters) {
         // add entries to the list ...
-            var tv = CharSelectView(context)
+            val tv = CharSelectView(context)
             tv.name.text = char.name
             tv.xp.text = char.xp_free.toString() + "/" + char.xp_total.toString()
             tv.setOnClickListener { openChar(char.id) }
@@ -142,10 +82,10 @@ class CharSelectFragment : Fragment() {
     fun listChars() {
         // get the name as search string
         val act = context as MainActivity
-        var name: String = act.findViewById<EditText>(R.id.charselect_name).text.toString()
+        val name: String = act.findViewById<EditText>(R.id.charselect_name).text.toString()
 
         c.viewModelScope.launch(Dispatchers.IO) {
-            var characters = findCharacters(name)
+            var characters = d.findCharacters(name)
             withContext(Dispatchers.Main) {
                 displayCharacters(characters)
             }

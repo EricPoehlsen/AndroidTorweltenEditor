@@ -94,10 +94,75 @@ class DataViewModel: ViewModel() {
     }
 
     /**
+     * Retrieves some character info from the database
+     * @param name partial search string used to formulate the WHERE clause
+     * @return an array of CharInfo
+     */
+    suspend fun findCharacters(name: String = ""): Array<CharInfo> {
+        var result = emptyArray<CharInfo>()
+
+        var sql = """
+            SELECT 
+                char_core.id as id, 
+                char_core.name as name, 
+                char_core.xp_used as xp_used, 
+                char_core.xp_total as xp_total
+            FROM 
+                char_core 
+        """.trimIndent()
+
+        if (name.length > 0) {
+            val select = name.replace("'", "\u2019")
+            sql += " WHERE name LIKE '%$select%'"
+        }
+
+        sql += " ORDER BY name"
+
+        val data: Cursor = db.rawQuery(sql, null)
+
+        while (data.moveToNext()) {
+            val char_info = CharInfo()
+            char_info.id = data.getInt(0)
+            char_info.name = data.getString(1)
+            char_info.xp_free = data.getInt(3) - data.getInt(2)
+            char_info.xp_total = data.getInt(3)
+            sql = """
+                SELECT 
+                    txt 
+                FROM 
+                    char_info
+                WHERE
+                    char_id = ${char_info.id}
+                    AND
+                    name = 'concept'
+            """.trimIndent()
+            val concept = db.rawQuery(sql, null)
+            if (concept.moveToFirst()) {
+                char_info.concept = concept.getString(0).toString()
+            }
+            concept.close()
+            result += char_info
+        }
+
+        data.close()
+        return result
+    }
+
+
+
+    /**
      * View Model is destroyed. Clean up the database connection.
      */
     override fun onCleared() {
         db.close()
         super.onCleared()
+    }
+
+    class CharInfo {
+        var id: Int = 0
+        var name: String = ""
+        var concept: String = ""
+        var xp_free: Int = 0
+        var xp_total: Int = 0
     }
 }
