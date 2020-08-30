@@ -10,7 +10,11 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * The main character view.
@@ -25,6 +29,7 @@ class CharacterFragment: Fragment(),
     private lateinit var lp_bar: VitalAttribView
     private lateinit var ep_bar: VitalAttribView
     private lateinit var mp_bar: VitalAttribView
+    private lateinit var tv_del: TextView
 
     private lateinit var bars: Map<String, VitalAttribView>
 
@@ -91,6 +96,13 @@ class CharacterFragment: Fragment(),
             bar.setOnClickListener { editDamage(attr) }
         }
 
+
+        tv_del = view.findViewById(R.id.cv_deleted)
+        if (c.isDeleted()) {
+            tv_del.setOnLongClickListener { restore() }
+        } else {
+            tv_del.visibility = View.GONE
+        }
 
         // button: switch to skills
         val b_skills = view.findViewById<Button>(R.id.cv_skills)
@@ -179,6 +191,16 @@ class CharacterFragment: Fragment(),
         } else {
             view.visibility = View.GONE
         }
+    }
+
+    fun restore():Boolean {
+        c.viewModelScope.launch(Dispatchers.IO) {
+            c.restore()
+            withContext(Dispatchers.Main) {
+                tv_del.visibility = View.GONE
+            }
+        }
+        return true
     }
 
     override fun onDamageDialogPositiveClick(dialog: EditDamageDialog) {

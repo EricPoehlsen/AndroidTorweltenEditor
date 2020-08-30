@@ -480,6 +480,28 @@ class CharacterViewModel: ViewModel() {
         return valid_account
     }
 
+    /**
+     * is the character marked as deleted?
+     * @return true if marked
+     */
+    fun isDeleted():Boolean {
+        return deleted
+    }
+
+    suspend fun restore() {
+        name = name.drop(1)
+        deleted = false
+        val sql = """
+            UPDATE char_core
+            SET
+                name = '$name',
+                deleted = 0
+            WHERE
+                id = $char_id
+        """.trimIndent()
+        db.execSQL(sql)
+    }
+
 
     /**
      * View Model is destroyed. Clean up the database connection.

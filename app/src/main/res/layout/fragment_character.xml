@@ -8,6 +8,19 @@
     tools:context=".CharacterFragment">
 
     <TextView
+        android:id="@+id/cv_deleted"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#0D000000"
+        android:gravity="center"
+        android:text="@string/cv_del"
+        android:textColor="@color/Red"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
         android:id="@+id/cv_phy_label"
         android:layout_width="64dp"
         android:layout_height="wrap_content"
@@ -230,8 +243,7 @@
         android:text="@string/cv_skills"
         app:layout_constraintBottom_toTopOf="@+id/cv_traits"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="@+id/cv_traits" />
 
     <Button
         android:id="@+id/cv_traits"
@@ -239,8 +251,7 @@
         android:layout_height="wrap_content"
         android:text="@string/cv_traits"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
         android:id="@+id/cv_info"
@@ -249,7 +260,7 @@
         android:text="@string/cv_info"
         app:layout_constraintBottom_toTopOf="@+id/cv_skills"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="@+id/cv_skills" />
 
     <Button
         android:id="@+id/cv_inv"
@@ -258,6 +269,6 @@
         android:text="@string/cv_inv"
         app:layout_constraintBottom_toTopOf="@+id/cv_info"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="@+id/cv_info" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

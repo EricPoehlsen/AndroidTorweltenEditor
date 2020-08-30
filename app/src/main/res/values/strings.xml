@@ -9,7 +9,6 @@
     <string name="ep">EP</string>
     <string name="mp">MP</string>
     <string name="install_title">Datenbank wird eingerichtet…</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <!-- MENU STRINGS -->
     <string name="menu_cs">Charakterauswahl</string>
@@ -18,8 +17,6 @@
     <!-- CHAR_SELECT FRAGMENT -->
     <string name="charselect_name">Charaktername</string>
     <string name="charselect_xp">XP: %1$d/%2$d</string>
-
-
     <string name="dialog_del_char_title">%1$s löschen …</string>
     <string name="dialog_del_char_del">Löschen</string>
     <string name="dialog_del_char_warn">Dies entfernt den Charakter endgültig aus der Datenbank.
@@ -29,7 +26,6 @@
         \nDurch ein vorangestelltes \'#\' bei der Suche, lassen sich gelöschte Charaktere
         wiederfinden.
     </string>
-
     <string name="dialog_edit_attrib_title">Attribut ändern …</string>
     <string name="dialog_edit_attrib_xp">XP: </string>
     <string name="dialog_edit_skill_lvl0">gefährliches Halbwissen</string>
@@ -95,6 +91,9 @@
     <string name="cv_info">Hintergrund</string>
     <string name="cv_traits">Eigenschaften</string>
     <string name="cv_inv">Inventar</string>
+    <string name="cv_del">Der Charakter ist als gelöscht markiert! \nTippe diesen Text lange an,
+        um den Charakter wiederherzustellen.
+    </string>
     <string name="ts_title">Eigenschaft wählen</string>
     <string name="ts_advantages">Vorteile</string>
     <string name="ts_disadvantages">Nachteile</string>
