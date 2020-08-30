@@ -17,7 +17,8 @@ import java.lang.Math.floor
 class EditSkillDialog(
     var char_id: Int,
     var skill_id: Int,
-    var cur_value: Int
+    var cur_value: Int,
+    val c: CharacterViewModel
 ): DialogFragment() {
     var new_value: Int = cur_value
     var xp_cost: Int = 0
@@ -70,7 +71,7 @@ class EditSkillDialog(
                       id = $base_id OR
                       id = $skill_id2
             """.trimIndent()
-            val data: Cursor = act.db.rawQuery(sql, null)
+            val data: Cursor = c.db.rawQuery(sql, null)
 
             while (data.moveToNext()) {
                 when {

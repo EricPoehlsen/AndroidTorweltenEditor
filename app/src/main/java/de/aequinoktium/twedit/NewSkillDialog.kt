@@ -171,7 +171,7 @@ class NewSkillDialog(
      * The onClickListener for the specialization option selection
      */
     fun setSpec(lvl: Int) {
-        val deselect = ContextCompat.getColor(select_base.context, R.color.LiteGrey)
+        val deselect = ContextCompat.getColor(select_base.context, R.color.Grey)
         val select = ContextCompat.getColor(select_base.context, R.color.Blue)
         skill.spec = lvl
         if (lvl == 1) {

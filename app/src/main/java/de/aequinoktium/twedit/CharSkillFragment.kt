@@ -172,7 +172,7 @@ class CharSkillFragment : Fragment(),
      */
     fun editSkill(char_skill: Int, cur_value: Int) {
         val fm = this.parentFragmentManager
-        val dialog = EditSkillDialog(char_id, char_skill, cur_value)
+        val dialog = EditSkillDialog(char_id, char_skill, cur_value, c)
         dialog.setTargetFragment(this, 301)
         dialog.show(fm, null)
     }

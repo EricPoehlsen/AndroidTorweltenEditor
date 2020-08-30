@@ -7,23 +7,27 @@ import androidx.activity.viewModels
 import androidx.fragment.app.FragmentManager
 
 class MainActivity : AppCompatActivity() {
-    lateinit var dbc: DatabaseConnect
-    lateinit var db: SQLiteDatabase
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
 
-        dbc = DatabaseConnect(this.applicationContext)
-        db = dbc.writableDatabase
+        val dbc = DatabaseConnect(this.applicationContext)
+        val db = dbc.writableDatabase
 
         val c: CharacterViewModel by viewModels()
         c.setDatabase(db)
-        // first run?
-        var prefs = this.getSharedPreferences("base", 0)
+        val d: DataViewModel by viewModels()
+        d.setDatabase(db)
 
-        var installed = prefs.getBoolean("installed", false)
+
+
+        // first run?
+        val prefs = this.getSharedPreferences("base", 0)
+
+        val installed = prefs.getBoolean("installed", false)
         if (!installed) {
 
         }
@@ -33,7 +37,6 @@ class MainActivity : AppCompatActivity() {
 
 
     override fun onDestroy() {
-        db.close()
         super.onDestroy()
     }
 
