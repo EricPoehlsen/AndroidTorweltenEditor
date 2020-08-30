@@ -3,14 +3,11 @@ package de.aequinoktium.twedit
 import android.content.ContentValues
 import android.database.Cursor
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.core.database.getStringOrNull
-import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
@@ -30,6 +27,9 @@ class CharSelectFragment : Fragment() {
         var xp_total: Int = 0
     }
 
+    private lateinit var bt_add: Button
+    private lateinit var bt_search: Button
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,17 +47,6 @@ class CharSelectFragment : Fragment() {
             container,
             false
         )
-
-        // attach on click listeners ...
-        var cs_add = root.findViewById<View>(R.id.charselect_add) as Button
-        cs_add.setOnClickListener {
-            this.newChar()
-        }
-        var cs_s = root.findViewById<View>(R.id.charselect_search) as Button
-        cs_s.setOnClickListener {
-            this.listChars()
-        }
-
         return root
     }
 
@@ -66,6 +55,13 @@ class CharSelectFragment : Fragment() {
         var act = activity as MainActivity
         var tb = act.supportActionBar
         tb?.title = getString(R.string.charselect_title)
+
+        // attach on click listeners ...
+        bt_add = view.findViewById<View>(R.id.charselect_add) as Button
+        bt_add.setOnClickListener { v -> newChar() }
+        bt_search = view.findViewById<View>(R.id.charselect_search) as Button
+        bt_search.setOnClickListener { v -> listChars() }
+
         listChars()
     }
 
@@ -144,9 +140,8 @@ class CharSelectFragment : Fragment() {
      * Listing existing characters and filter by name if given
      */
     fun listChars() {
-        var act = activity as MainActivity
-
         // get the name as search string
+        val act = context as MainActivity
         var name: String = act.findViewById<EditText>(R.id.charselect_name).text.toString()
 
         c.viewModelScope.launch(Dispatchers.IO) {
@@ -162,16 +157,14 @@ class CharSelectFragment : Fragment() {
      * gets value from TextEdit and creates a new Character in the database ...
      */
     fun newChar() {
-        var act = activity as MainActivity
-
-
+        val act = context as MainActivity
         var name = act.findViewById<EditText>(R.id.charselect_name).text.toString()
         if (name.length > 1) {
             name = name.replace("'", "\u2019")
             var data = ContentValues()
             data.put("name", name)
             data.put("xp_total", 330)
-            act.db.insert("char_core", null, data)
+            c.db.insert("char_core", null, data)
         }
 
         listChars()

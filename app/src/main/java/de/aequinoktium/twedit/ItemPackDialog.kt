@@ -120,8 +120,8 @@ class ItemPackDialog(val item: Item, val c: CharacterViewModel): DialogFragment(
             var tv = ll_container.getChildAt(i)
             tv as TextView
             when (cont_state[i]) {
-                0 -> tv.setTextColor(resources.getColor(R.color.LiteGrey))
-                1 -> tv.setTextColor(resources.getColor(R.color.LiteGrey))
+                0 -> tv.setTextColor(resources.getColor(R.color.Grey))
+                1 -> tv.setTextColor(resources.getColor(R.color.Grey))
                 2 -> tv.setTextColor(resources.getColor(R.color.Red))
             }
             if (tv == view) selected = i

@@ -50,6 +50,8 @@ class CharTraitView: LinearLayout {
             LayoutParams.MATCH_PARENT,
             LayoutParams.WRAP_CONTENT
         )
+        val act = context as MainActivity
+        lp.topMargin = act.calc_dp(4)
 
         this.layoutParams = lp
 

@@ -32,7 +32,7 @@ class SkillSelectAdapter(
             col_select = ContextCompat.getColor(parent.context, R.color.Blue)
         }
         if (col_standard == 0) {
-            col_standard = ContextCompat.getColor(parent.context, R.color.LiteGrey)
+            col_standard = ContextCompat.getColor(parent.context, R.color.Grey)
         }
         return ViewHolder(sv)
     }
