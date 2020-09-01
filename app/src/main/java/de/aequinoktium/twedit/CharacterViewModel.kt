@@ -488,6 +488,9 @@ class CharacterViewModel: ViewModel() {
         return deleted
     }
 
+    /**
+     *  Restores a character that was marked as deleted
+     */
     suspend fun restore() {
         name = name.drop(1)
         deleted = false

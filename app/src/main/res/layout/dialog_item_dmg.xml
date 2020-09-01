@@ -55,7 +55,7 @@
         app:layout_constraintTop_toTopOf="@+id/dia_itemdmg_s" />
 
     <EditText
-        android:id="@+id/dia_itemdmg_e"
+        android:id="@+id/dia_itemdmg_t"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="2"

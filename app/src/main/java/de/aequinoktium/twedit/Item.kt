@@ -16,9 +16,14 @@ class Item() {
     var container_name = ""
     var dmg = ""
     var dmg_mod = ""
+    var chambers = 0
+    var caliber = ""
+    val color = ""
+    var material = ""
+
 
     fun copy(): Item {
-        var new = Item()
+        val new = Item()
         new.name = this.name
         new.desc = this.desc
         new.qty = this.qty

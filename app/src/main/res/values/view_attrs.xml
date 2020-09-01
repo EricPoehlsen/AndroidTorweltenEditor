@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+
+
+    <declare-styleable name="ColorSelectorView">
+        <attr name="size" format="dimension" />
+        <attr name="stroke_width" format="dimension" />
+        <attr name="stroke_color" format="color"/>
+    </declare-styleable>
+
     <declare-styleable name="VitalAttribView">
         <attr name="max_value" format="integer" />
         <attr name="cur_value" format="float" />

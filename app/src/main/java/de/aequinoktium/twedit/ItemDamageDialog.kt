@@ -5,18 +5,12 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.CheckBox
 import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
-import java.lang.Exception
-import java.util.regex.Pattern
-import kotlin.math.roundToInt
 
 /**
  * A DialogFrament that is used to modify an item damage code
@@ -26,12 +20,12 @@ import kotlin.math.roundToInt
 class ItemDamageDialog(
     var s: Int = 0,
     var d: Int = 0,
-    var e: String = ""): DialogFragment()
+    var t: String = ""): DialogFragment()
 {
     internal lateinit var listener: DialogListener
     private lateinit var et_s: EditText
     private lateinit var et_d: EditText
-    private lateinit var et_e: EditText
+    private lateinit var et_t: EditText
     lateinit var cb_mod: CheckBox
 
 
@@ -72,8 +66,8 @@ class ItemDamageDialog(
             et_s.addTextChangedListener(TextChanged(et_s, this))
             et_d = content.findViewById(R.id.dia_itemdmg_d)
             et_d.addTextChangedListener(TextChanged(et_d, this))
-            et_e = content.findViewById(R.id.dia_itemdmg_e)
-            et_e.addTextChangedListener(TextChanged(et_e, this))
+            et_t = content.findViewById(R.id.dia_itemdmg_t)
+            et_t.addTextChangedListener(TextChanged(et_t, this))
             cb_mod = content.findViewById(R.id.dia_itemdmg_mod)
 
             builder.setView(content)
@@ -122,14 +116,14 @@ class ItemDamageDialog(
                         dialog.d = d
                     }
                 }
-                R.id.dia_itemdmg_e -> {
+                R.id.dia_itemdmg_t -> {
                     val s = et.text.toString()
                     if (s.matches("[pPeEmM]".toRegex())) {
                         et.setTextColor(et.resources.getColor(R.color.White))
                     } else {
                         et.setTextColor(et.resources.getColor(R.color.Red))
                     }
-                    dialog.e = s
+                    dialog.t = s
                 }
             }
         }

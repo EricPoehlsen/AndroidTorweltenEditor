@@ -62,6 +62,8 @@
     <string name="dialog_item_qty_part">aufteilen</string>
     <string name="dialog_item_qty_join">vereinen</string>
     <string name="dialog_item_qty_all">Alle</string>
+    <string name="dialog_item_color_title">Farbe festlegen:</string>
+    <string name="dialog_item_material_title">Material:</string>
     <string name="dialog_item_qual_title">Qualität ändern:</string>
     <string name="dialog_item_qual_inc">verbessern / reparieren</string>
     <string name="dialog_item_qual_dec">verschlechtern / beschädigen</string>
@@ -142,8 +144,8 @@
     <string name="ci_new_error_exists">Fehler: Gruppe existiert bereits.</string>
     <string name="ci_new_error_core">Fehler: Diese Gruppe kann nicht gelöscht werden.</string>
 
-    <string name="cinv_equipped">Ausgerüstete Gegenstände</string>
     <string name="cinv_name">Bezeichnung: </string>
+    <string name="cinv_equipped">Ausgerüstete Gegenstände</string>
     <string name="cinv_desc">Beschreibung: </string>
     <string name="cinv_equip">ausrüsten</string>
     <string name="cinv_pack">einpacken</string>
@@ -158,6 +160,8 @@
     <string name="cinv_quantity">Menge: </string>
     <string name="cinv_price">Preis: </string>
     <string name="cinv_damage">Schaden</string>
+    <string name="cinv_color">Farbe</string>
+    <string name="cinv_material">Material</string>
     <string name="cinv_cash">Barvermögen %1$.2f R</string>
     <string name="cinv_weight">Gewicht: </string>
     <string name="cinv_cls">Klasse: </string>

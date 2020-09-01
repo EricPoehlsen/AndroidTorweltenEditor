@@ -3,7 +3,6 @@ package de.aequinoktium.twedit
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -20,7 +19,9 @@ import kotlin.math.roundToInt
 class CharInventoryNewFragment : Fragment(),
                                  AdapterView.OnItemSelectedListener,
                                  ItemContainerDialog.DialogListener,
-                                 ItemDamageDialog.DialogListener
+                                 ItemDamageDialog.DialogListener,
+                                 ItemMaterialDialog.DialogListener,
+                                 ItemColorDialog.DialogListener
 {
 
     private val c: CharacterViewModel by activityViewModels()
@@ -113,6 +114,13 @@ class CharInventoryNewFragment : Fragment(),
 
         val bt_cont = view.findViewById<Button>(R.id.newitem_container)
         bt_cont.setOnClickListener { editContainer() }
+
+        val bt_color = view.findViewById<Button>(R.id.newitem_color)
+        bt_color.setOnClickListener { editColor() }
+
+        val bt_material = view.findViewById<Button>(R.id.newitem_material)
+        bt_material.setOnClickListener { editMaterial() }
+
 
         bt_dmg = view.findViewById(R.id.newitem_weapon)
         bt_dmg.setOnClickListener { editDamage() }
@@ -213,6 +221,20 @@ class CharInventoryNewFragment : Fragment(),
         dialog.show(fm, null)
     }
 
+    fun editColor() {
+        val fm = this.parentFragmentManager
+        val dialog = ItemColorDialog()
+        dialog.setTargetFragment(this, 301)
+        dialog.show(fm, null)
+    }
+
+    fun editMaterial() {
+        val fm = this.parentFragmentManager
+        val dialog = ItemMaterialDialog()
+        dialog.setTargetFragment(this, 301)
+        dialog.show(fm, null)
+    }
+
     /**
      * switches weight units between g and kg - updates the input field
      */
@@ -301,52 +323,60 @@ class CharInventoryNewFragment : Fragment(),
      */
     override fun onDialogPositiveClick(dialog: DialogFragment) {
         if (dialog is ItemContainerDialog) {
-            item_cap = dialog.capacity
-            var cont_name = dialog.item_cont_name
-            cont_name = cont_name.replace(":", "")
-            cont_name = cont_name.replace(",", "")
-            cont_name = cont_name.replace("'", "\u2019")
-            item_cont_name = cont_name
-            Log.d("info", item_cont_name)
+            setContainer(dialog.capacity, dialog.item_cont_name)
         }
         if (dialog is ItemDamageDialog) {
-            val s = dialog.s.toString()
-            val d = dialog.d.toString()
-            var e = dialog.e
-            var dmg = ""
+            val mod = dialog.cb_mod.isChecked
+            setDamage(dialog.s, dialog.d, dialog.t, mod)
+        }
+        if (dialog is ItemColorDialog) {
 
-            if (dialog.cb_mod.isChecked) {
-                if (s.startsWith("0")) {
-                    dmg += "±"
-                } else if (!s.startsWith("-")) {
-                    dmg += "+"
-                }
-            }
-            dmg += s + "/"
-            if (dialog.cb_mod.isChecked) {
-                if (d.startsWith("0")) {
-                    dmg += "±"
-                } else if (!d.startsWith("-")) {
-                    dmg += "+"
-                }
-            }
-            dmg += d
-            e = e.replace("'", "\u2019")
-            if (!e.isBlank()) {
-                dmg += "/" + e
-            }
-
-            if (dmg == "0/0") {
-                dmg = ""
-                bt_dmg.text = resources.getString(R.string.cinv_damage)
-            } else {
-                bt_dmg.text = dmg
-            }
-
-            item_dmg = dmg
+        }
+        if (dialog is ItemMaterialDialog) {
 
         }
     }
 
+    fun setContainer(capacity: Int, name: String) {
+        item_cap = capacity
+        var cont_name = name
+        cont_name = cont_name.replace(":", "")
+        cont_name = cont_name.replace(",", "")
+        cont_name = cont_name.replace("'", "\u2019")
+        item_cont_name = cont_name
+    }
 
+    /**
+     * construct the 'damage code' as string
+     * set the variable and update the button
+     * @param s: 'Schaden' number of damage dice
+     * @param d: 'Durchschlag' [EWT] table column -7 .. 7
+     * @param t: 'Typ' damage type P, E, M (empty = P)
+     * @param mod: true if a damage modifier
+     */
+    fun setDamage(s: Int, d: Int, t: String="", mod: Boolean=false) {
+        var dmg = ""
+        if (mod) {
+            if (s == 0) dmg += "±"
+            if (s > 0) dmg += "+"
+        }
+        dmg += s.toString()
+        dmg += "/"
+        if (mod) {
+            if (d == 0) dmg += "±"
+            if (d > 0) dmg += "+"
+        }
+        dmg += d.toString()
+        if (!t.isBlank()) {
+            dmg += "/"
+            dmg += t.toUpperCase()
+        }
+        if (s == 0 && d == 0) {
+            dmg = ""
+            bt_dmg.text = resources.getString(R.string.cinv_damage)
+        } else {
+            bt_dmg.text = dmg
+        }
+        item_dmg = dmg
+    }
 }

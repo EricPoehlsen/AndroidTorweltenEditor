@@ -215,4 +215,20 @@
         android:text="@string/cinv_damage"
         app:layout_constraintBottom_toTopOf="@+id/newitem_container"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/newitem_color"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/cinv_color"
+        app:layout_constraintBottom_toTopOf="@+id/newitem_weapon"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/newitem_material"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/cinv_material"
+        app:layout_constraintBottom_toTopOf="@+id/newitem_color"
+        app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
