@@ -17,12 +17,15 @@ class ColorSelectorView @JvmOverloads constructor(
     set(value) {
         field = value
         rainbow = rainbow_gradient()
+        text_color.textSize = size/12
         invalidate()
     }
 
     private var h = 0f
     private var s = 0f
     private var v = 0f
+
+    var name = ""
 
     private var stroke_width = 0f
 
@@ -31,6 +34,7 @@ class ColorSelectorView @JvmOverloads constructor(
     private var rainbow = Paint()
 
     private val stroke = Paint()
+    private val text_color = Paint()
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
@@ -42,6 +46,7 @@ class ColorSelectorView @JvmOverloads constructor(
         selected_hue(canvas)
         selected_sv(canvas)
         result_rect(canvas)
+        color_name(canvas)
     }
 
     // the selector rect for value and saturation of the current hue
@@ -95,7 +100,6 @@ class ColorSelectorView @JvmOverloads constructor(
         val b = stroke_width
         canvas.drawRect(xa,ya,xb,yb,stroke)
         canvas.drawRect(xa+b,ya+b,xb-b,yb-b,rainbow)
-
     }
 
     // a marker showing the current selected saturation and value on the sv_rect
@@ -149,6 +153,23 @@ class ColorSelectorView @JvmOverloads constructor(
         canvas.drawRect(xa+b,ya+b,xb-b,yb-b,col)
     }
 
+    fun color_name(canvas: Canvas) {
+        val text_width = text_color.measureText(name)
+        val xa = x0 + (size/2) - (text_width/2)
+
+        val text_height = text_color.descent() - text_color.ascent()
+        val baseline = ((size / 6 - text_height) / 2) + (-text_color.ascent())
+        val y_top = (y0 + (size*.75) + size/4).toFloat()
+        val ya = (y_top + baseline)
+
+        if (v < 0.666) {
+            text_color.color = Color.WHITE
+        } else {
+            text_color.color = Color.BLACK
+        }
+        canvas.drawText(name, xa, ya, text_color)
+    }
+
 
     override fun onMeasure(w_spec: Int, h_spec: Int) {
         val min_width = paddingLeft + size + paddingRight
@@ -181,10 +202,11 @@ class ColorSelectorView @JvmOverloads constructor(
                 if (y in sv_start..sv_end) {
                     s = xf
                     v = 1 - yf
+                    colorLookup()
                 } else if (y in hue_start..hue_end) {
                     h = 360 * xf
+                    colorLookup()
                 }
-                Log.d("info", "H: $h S: $s V: $v")
                 invalidate()
             }
         }
@@ -223,6 +245,11 @@ class ColorSelectorView @JvmOverloads constructor(
         return paint
     }
 
+    fun colorLookup() {
+        val c = ColorLookup(resources)
+        name = c.getColor(h,s,v)
+    }
+
     // calculate px for dp value
     fun px(dp: Int): Float = dp * resources.displayMetrics.density
 
@@ -244,6 +271,11 @@ class ColorSelectorView @JvmOverloads constructor(
                 recycle()
             }
         }
+
+
+        text_color.setTypeface(Typeface.create("sans", Typeface.BOLD))
+        text_color.setAntiAlias(true)
+
         x0 = paddingLeft.toFloat()
         y0 = paddingTop.toFloat()
     }
