@@ -3,7 +3,6 @@ package de.aequinoktium.twedit
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 
@@ -13,17 +12,30 @@ class ColorSelectorView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
-    var size = 0f
-    set(value) {
-        field = value
-        rainbow = rainbow_gradient()
-        text_color.textSize = size/12
-        invalidate()
-    }
 
-    private var h = 0f
-    private var s = 0f
-    private var v = 0f
+    var size = 0f
+        set(value) {
+            field = value
+            invalidate()
+        }
+
+    var h = 0f
+        set(value) {
+            field = value
+            invalidate()
+        }
+
+    var s = 0f
+        set(value) {
+            field = value
+            invalidate()
+        }
+
+    var v = 0f
+        set(value) {
+            field = value
+            invalidate()
+        }
 
     var name = ""
 
@@ -31,7 +43,6 @@ class ColorSelectorView @JvmOverloads constructor(
 
     private var x0 = 0f
     private var y0 = 0f
-    private var rainbow = Paint()
 
     private val stroke = Paint()
     private val text_color = Paint()
@@ -39,18 +50,18 @@ class ColorSelectorView @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
 
-        canvas as Canvas
-
-        col_rect(canvas)
-        hue_select(canvas)
-        selected_hue(canvas)
-        selected_sv(canvas)
-        result_rect(canvas)
-        color_name(canvas)
+        if (canvas is Canvas) {
+            drawColorRect(canvas)
+            drawHueSelector(canvas)
+            drawHueMarker(canvas)
+            drawCrosshairs(canvas)
+            drawResultRect(canvas)
+            drawColorName(canvas)
+        }
     }
 
     // the selector rect for value and saturation of the current hue
-    fun col_rect(canvas: Canvas) {
+    fun drawColorRect(canvas: Canvas) {
         val width = size
         val height = (size * .75).toFloat()
 
@@ -92,82 +103,158 @@ class ColorSelectorView @JvmOverloads constructor(
     }
 
     // the hue selector
-    fun hue_select(canvas: Canvas) {
-        val xa = x0
-        val ya = (y0 + size*.75 + size/16).toFloat()
-        val xb = xa + size
-        val yb = ya + size/8
-        val b = stroke_width
-        canvas.drawRect(xa,ya,xb,yb,stroke)
-        canvas.drawRect(xa+b,ya+b,xb-b,yb-b,rainbow)
+    fun drawHueSelector(canvas: Canvas) {
+        val x = x0
+        val y = (y0 + size*.75 + size/16).toFloat()
+        val width = size
+        val height = size/8
+        val border = stroke_width
+
+        //draw border
+        canvas.drawRect(
+            x,
+            y,
+            x+width,
+            y+height,
+            stroke
+        )
+
+        //draw rainbow
+        canvas.drawRect(
+            x+border,
+            y+border,
+            x+width-border,
+            y+height-border,
+            rainbow_gradient()
+        )
     }
 
-    // a marker showing the current selected saturation and value on the sv_rect
-    fun selected_sv(canvas: Canvas) {
-        val b = stroke_width
-        val xa = x0 + b + size * s
-        val ya = (y0 + b + (size*.75) * (1-v)).toFloat()
-        val p = Paint()
-        p.color = Color.BLACK
-        p.strokeWidth = px(2)
+    // Crosshairs to mark the selected saturation/value
+    fun drawCrosshairs(canvas: Canvas) {
+        val saturation = s
+        val value = 1-v // inverted as we want black down
 
-        val dirs = arrayOf(
+        val border = stroke_width
+        val top =  y0 + border
+        val left = x0 + border
+
+        val width = size
+        val height = (size*.75).toFloat()
+
+        val x = width * saturation + left
+        val y = height * value + top
+
+        val paint = Paint().apply{
+            color = Color.BLACK
+            strokeWidth = px(2)
+        }
+
+        val hairs = arrayOf(
             arrayOf(1,0,4,0),
             arrayOf(-1,0,-4,0),
             arrayOf(0,1,0,4),
             arrayOf(0,-1,0,-4)
         )
 
-        for (d in dirs) {
+        for (hair in hairs) {
             canvas.drawLine(
-                xa + px(d[0]),
-                ya + px(d[1]),
-                xa + px(d[2]),
-                ya + px(d[3]),
-                p
+                x + px(hair[0]),
+                y + px(hair[1]),
+                x + px(hair[2]),
+                y + px(hair[3]),
+                paint
             )
         }
     }
 
     // a marker to display the selected hue on the rainbow
-    fun selected_hue(canvas: Canvas) {
-        val b = stroke_width
-        val xa = x0 + b + (h/360 * (size-2*b))
-        val ya = (y0 + (size*.75) + size/16).toFloat()
-        val yb = ya + size/8
-        val p = Paint()
-        p.strokeWidth = px(2)
-        p.color = Color.BLACK
-        canvas.drawLine(xa,ya,xa,yb,p)
+    fun drawHueMarker(canvas: Canvas) {
+        val border = stroke_width
+        val hue_width = size - 2*border
+        val left = x0 + border
+        val top = (y0 + (size*.75) + size/16).toFloat()
+        val height = size/8
+        val hue = h/360
+
+        val x = hue * hue_width + left
+        val y = top
+
+        val paint = Paint().apply{
+            strokeWidth = px(2)
+            color = Color.BLACK
+        }
+
+        canvas.drawLine(
+            x,
+            y,
+            x,
+            y+height,
+            paint
+        )
     }
 
     // display the current selected color
-    fun result_rect(canvas: Canvas) {
-        val b = stroke_width
-        val xa = x0
-        val ya = (y0 + (size*.75) + size/4).toFloat()
-        val xb = xa + size
-        val yb = ya + size/6
-        canvas.drawRect(xa,ya,xb,yb,stroke)
-        val col = Paint().apply {color=Color.HSVToColor(arrayOf(h,s,v).toFloatArray())}
-        canvas.drawRect(xa+b,ya+b,xb-b,yb-b,col)
+    fun drawResultRect(canvas: Canvas) {
+        val border = stroke_width
+        val left = x0
+        val top = (y0 + (size*.75) + size/4).toFloat()
+
+        val width = size
+        val height = size/6
+
+        val x = left
+        val y = top
+
+        // border
+        canvas.drawRect(
+            x,
+            y,
+            x + width,
+            y + height,
+            stroke
+        )
+
+        val current_color = Paint().apply {
+            color = Color.HSVToColor(arrayOf(h,s,v).toFloatArray())
+        }
+
+        // result rect
+        canvas.drawRect(
+            x + border,
+            y + border,
+            x + width - border,
+            y + height - border,
+            current_color
+        )
     }
 
-    fun color_name(canvas: Canvas) {
-        val text_width = text_color.measureText(name)
-        val xa = x0 + (size/2) - (text_width/2)
+    // draw the color name centered inside the result rect
+    fun drawColorName(canvas: Canvas) {
+        val top = (y0 + (size*.75) + size/4).toFloat()
+        val left = x0
+        val box_width = size
+        val box_height = size/6
 
+        setTextColorAndSize()
+        val ascent_height = -text_color.ascent()
         val text_height = text_color.descent() - text_color.ascent()
-        val baseline = ((size / 6 - text_height) / 2) + (-text_color.ascent())
-        val y_top = (y0 + (size*.75) + size/4).toFloat()
-        val ya = (y_top + baseline)
+        val text_width = text_color.measureText(name)
+        val baseline = (box_height - text_height)/2 + ascent_height
 
+        val x = left + box_width/2 - text_width/2
+        val y = top + baseline
+
+        canvas.drawText(name, x, y, text_color)
+    }
+
+    // sets the text color based on the current value
+    fun setTextColorAndSize() {
+        text_color.textSize = size/12
         if (v < 0.666) {
             text_color.color = Color.WHITE
         } else {
             text_color.color = Color.BLACK
         }
-        canvas.drawText(name, xa, ya, text_color)
     }
 
 
@@ -182,32 +269,43 @@ class ColorSelectorView @JvmOverloads constructor(
 
     }
 
+    // set hue, saturation and value based on users touch input
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (event is MotionEvent) {
+            val border = stroke_width
+            val width = size - 2 * border
+            val sv_height = (size * 0.75) - 2 * border
+            val hue_height = (size / 8) - 2 * border
+            val padding = size / 16 + 2 * border
 
-            val b = stroke_width
+            // those are the boundaries that concern us ..
+            val left = (x0 + border).toInt()
+            val right = (left + width).toInt()
+
+            val sv_start = (y0 + border).toInt()
+            val sv_end = (sv_start + sv_height).toInt()
+
+            val hue_start = (sv_end + padding).toInt()
+            val hue_end = (hue_start + hue_height).toInt()
+
+            // event coordinates
             val x = event.x.toInt()
             val y = event.y.toInt()
-            val min_x = (paddingLeft + b).toInt()
-            val max_x = (min_x + size - 2*b).toInt()
-            val sv_start = (paddingTop + b).toInt()
-            val sv_end = (sv_start - 2*b + (size*0.75)).toInt()
-            val hue_start = (sv_end + size/16).toInt()
-            val hue_end = (hue_start + size/8).toInt()
 
-            val xf = ((x-min_x) / size).toFloat()
-            val yf = ((y-sv_start) / ((size*.75) -2*b )).toFloat()
+            // check coordinates set values
+            if (x in left..right) {
+                 val width_percent = (x-left) / width
 
-            if (x in min_x..max_x) {
-                if (y in sv_start..sv_end) {
-                    s = xf
-                    v = 1 - yf
-                    colorLookup()
+                 if (y in sv_start..sv_end) {
+                     val height_percent = ((y-sv_start) / sv_height).toFloat()
+
+                    s = width_percent
+                    v = 1 - height_percent
+                    name = colorLookup()
                 } else if (y in hue_start..hue_end) {
-                    h = 360 * xf
-                    colorLookup()
+                    h = 360 * width_percent
+                    name = colorLookup()
                 }
-                invalidate()
             }
         }
         performClick()
@@ -216,38 +314,35 @@ class ColorSelectorView @JvmOverloads constructor(
 
     // creates the rainbow gradient for the hue selector
     fun rainbow_gradient(): Paint {
-        val paint = Paint()
+        val x = x0 + stroke_width
+        val y = y0 + stroke_width
+        val width = size - 2 * stroke_width
 
+        // the rainbow array
+        var colors = arrayOf<Int>().toIntArray()
+        for (i in 0..12) {
+            val hue = i * 30f //0-360 in 30° steps
+            val color = Color.HSVToColor(arrayOf(hue, 1f, 1f).toFloatArray())
+            colors += color
+        }
+
+        // create the gradient
         val gradient = LinearGradient(
-            x0 + stroke_width,
-            y0,
-            x0 + size - stroke_width,
-            y0,
-            arrayOf(
-                Color.HSVToColor(arrayOf(0f, 1f, 1f).toFloatArray()),
-                Color.HSVToColor(arrayOf(30f, 1f, 1f).toFloatArray()),
-                Color.HSVToColor(arrayOf(60f, 1f, 1f).toFloatArray()),
-                Color.HSVToColor(arrayOf(90f, 1f, 1f).toFloatArray()),
-                Color.HSVToColor(arrayOf(120f, 1f, 1f).toFloatArray()),
-                Color.HSVToColor(arrayOf(150f, 1f, 1f).toFloatArray()),
-                Color.HSVToColor(arrayOf(180f, 1f, 1f).toFloatArray()),
-                Color.HSVToColor(arrayOf(210f, 1f, 1f).toFloatArray()),
-                Color.HSVToColor(arrayOf(240f, 1f, 1f).toFloatArray()),
-                Color.HSVToColor(arrayOf(270f, 1f, 1f).toFloatArray()),
-                Color.HSVToColor(arrayOf(300f, 1f, 1f).toFloatArray()),
-                Color.HSVToColor(arrayOf(330f, 1f, 1f).toFloatArray()),
-                Color.HSVToColor(arrayOf(360f, 1f, 1f).toFloatArray())
-            ).toIntArray(),
+            x,
+            y,
+            x + width,
+            y,
+            colors,
             null,
             Shader.TileMode.REPEAT
         )
-        paint.shader = gradient
-        return paint
+
+        return Paint().apply{shader = gradient}
     }
 
-    fun colorLookup() {
+    fun colorLookup():String {
         val c = ColorLookup(resources)
-        name = c.getColor(h,s,v)
+        return c.getColor(h,s,v)
     }
 
     // calculate px for dp value
@@ -271,7 +366,6 @@ class ColorSelectorView @JvmOverloads constructor(
                 recycle()
             }
         }
-
 
         text_color.setTypeface(Typeface.create("sans", Typeface.BOLD))
         text_color.setAntiAlias(true)
