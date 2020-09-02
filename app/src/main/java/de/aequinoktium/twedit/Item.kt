@@ -18,8 +18,9 @@ class Item() {
     var dmg_mod = ""
     var chambers = 0
     var caliber = ""
-    val color = ""
+    var color = ""
     var material = ""
+    var cls = ""
 
 
     fun copy(): Item {

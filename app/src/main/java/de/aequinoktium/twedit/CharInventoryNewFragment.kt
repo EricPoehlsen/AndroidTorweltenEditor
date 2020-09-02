@@ -1,5 +1,7 @@
 package de.aequinoktium.twedit
 
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -11,8 +13,10 @@ import android.widget.*
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.viewModelScope
+import kotlinx.android.synthetic.main.fragment_character.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.*
 import kotlin.math.roundToInt
 
 
@@ -26,20 +30,13 @@ class CharInventoryNewFragment : Fragment(),
 
     private val c: CharacterViewModel by activityViewModels()
 
-    private lateinit var et_name: EditText
-    private lateinit var et_desc: EditText
-    private lateinit var et_weight: EditText
-    private lateinit var et_price: EditText
-    private lateinit var et_quality: EditText
-    private lateinit var et_quantity: EditText
+    private val item = Item()
+
     private lateinit var tv_weight_unit: TextView
     private lateinit var sp_cls: Spinner
     private lateinit var bt_dmg: Button
-
-    private var item_cls = "generic"
-    private var item_cap = 0
-    private var item_cont_name = ""
-    private var item_dmg = ""
+    private lateinit var bt_color: Button
+    private lateinit var et_weight: EditText
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,14 +69,22 @@ class CharInventoryNewFragment : Fragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        et_name = view.findViewById(R.id.newitem_name)
-        et_desc = view.findViewById(R.id.newitem_desc)
-        et_quantity = view.findViewById(R.id.newitem_quantity)
-        et_quantity.addTextChangedListener(TextChanged(et_quantity))
-        et_quality = view.findViewById(R.id.newitem_quality)
-        et_quality.addTextChangedListener(TextChanged(et_quality))
-        et_price = view.findViewById(R.id.newitem_price)
+        val view_ids = arrayOf(
+            R.id.newitem_name,
+            R.id.newitem_desc,
+            R.id.newitem_quantity,
+            R.id.newitem_quality,
+            R.id.newitem_price,
+            R.id.newitem_weight
+        )
+        for (id in view_ids) {
+            val et: EditText = view.findViewById(id)
+            et.addTextChangedListener(TextChanged(et, this))
+        }
+
         et_weight = view.findViewById(R.id.newitem_weight)
+
+
         tv_weight_unit = view.findViewById(R.id.newitem_weight_unit)
         tv_weight_unit.setOnClickListener{switchWeightUnit()}
 
@@ -115,7 +120,7 @@ class CharInventoryNewFragment : Fragment(),
         val bt_cont = view.findViewById<Button>(R.id.newitem_container)
         bt_cont.setOnClickListener { editContainer() }
 
-        val bt_color = view.findViewById<Button>(R.id.newitem_color)
+        bt_color = view.findViewById(R.id.newitem_color)
         bt_color.setOnClickListener { editColor() }
 
         val bt_material = view.findViewById<Button>(R.id.newitem_material)
@@ -127,69 +132,87 @@ class CharInventoryNewFragment : Fragment(),
 
     }
 
-    /**
-     * prepares the item to be added to the character and
-     * hands over item storage to [CharacterViewModel]
-     */
-    fun addItem(pay: Boolean = false) {
-        val item = Item()
-
-        // name
-        var name = et_name.text.toString()
+    // set item name (just strip ' due to sql)
+    fun setName(et: EditText) {
+        var name = et.text.toString()
         name = name.replace("'", "\u2019")
-        if (name.length > 0) item.name = name
+        item.name = name
+    }
 
-        // description
-        var desc = et_desc.text.toString()
+    // set item description (just strip ' due to sql)
+    fun setDescription(et: EditText) {
+        var desc = et.text.toString()
         desc = desc.replace("'", "\u2019")
-        if (desc.length > 0) item.desc = desc
+        item.desc = desc
+    }
 
-        // quality
-        var s_quality = et_quality.text.toString()
+    // set item quality valid values int 1-12
+    fun setQuality(et: EditText) {
+        var s_quality = et.text.toString()
         if (s_quality.isBlank()) s_quality = "0"
-        val quality = Integer.valueOf(s_quality)
-        if (quality > 0) {
-            item.cur_qual = quality
-            item.orig_qual = quality
+        var quality = s_quality.toInt()
+        if (quality < 1) {
+            quality = 1
+            et.setText(quality.toString())
+        } else if (quality > 12) {
+            quality = 12
+            et.setText(quality.toString())
         }
+        item.cur_qual = quality
+        item.orig_qual = quality
+    }
 
-        // quantity
-        var s_quantity = et_quantity.text.toString()
-        if (s_quantity.isBlank()) s_quantity = "1"
-        val qty = s_quantity.toInt()
-        if (qty > 0) item.qty = qty
+    // set item quantity valid value int >= 1
+    fun setQuantity(et: EditText) {
+        var s_quantity = et.text.toString()
+        if (s_quantity.isBlank()) s_quantity = "0"
+        var quantity = s_quantity.toInt()
+        if (quantity < 1) {
+            quantity = 1
+            et.setText(quantity.toString())
+        }
+        item.qty = quantity
+    }
 
-        // weight
-        var s_weight = et_weight.text.toString()
+    // set item weight in grams valid units int >= 0
+    fun setWeight(et: EditText) {
+        var s_weight = et.text.toString()
         if (s_weight.isBlank()) s_weight = "0"
         var f_weight = s_weight.toFloat()
         if (tv_weight_unit.text.toString() == "kg") {
             f_weight *= 1000
         }
         item.weight = Integer.valueOf(f_weight.roundToInt())
+    }
 
-        // price
-        var s_price = et_price.text.toString()
+    // set item price in rand as float >= 0f
+    fun setPrice(et: EditText) {
+        var s_price = et.text.toString()
         if (s_price.isBlank()) s_price = "0"
         item.price = s_price.toFloat()
+    }
 
-        // container:
-        if (item_cap > 0) {
-            item.weight_limit = item_cap
-            item.container_name = item_cont_name
-        }
+    // set container data
+    fun setContainer(capacity: Int, name: String) {
+        item.weight_limit = capacity
+        var cont_name = name
+        cont_name = cont_name.replace(":", "")
+        cont_name = cont_name.replace(",", "")
+        cont_name = cont_name.replace("'", "\u2019")
+        item.container_name = cont_name
+    }
 
-        // damage
-        if (!item_dmg.isBlank()) {
-            if (item_dmg.startsWith("-") ||
-                item_dmg.startsWith("±") ||
-                item_dmg.startsWith("+")) {
-                item.dmg_mod = item_dmg
-            } else {
-                item.dmg = item_dmg
-            }
-        }
+    // set the color
+    fun setColor(color: Int, color_name: String) {
+        item.color = "$color.$color_name"
+        bt_color.getBackground().setTint(color)
+    }
 
+    /**
+     * prepares the item to be added to the character and
+     * hands over item storage to [CharacterViewModel]
+     */
+    fun addItem(pay: Boolean = false) {
         if (!item.name.isBlank()) {
             c.viewModelScope.launch(Dispatchers.IO) {
                 c.addToInventory(item)
@@ -209,7 +232,7 @@ class CharInventoryNewFragment : Fragment(),
 
     fun editContainer() {
         val fm = this.parentFragmentManager
-        val dialog = ItemContainerDialog(item_cap, item_cont_name)
+        val dialog = ItemContainerDialog(item.weight_limit, item.container_name)
         dialog.setTargetFragment(this, 301)
         dialog.show(fm, null)
     }
@@ -236,14 +259,13 @@ class CharInventoryNewFragment : Fragment(),
     }
 
     /**
-     * switches weight units between g and kg - updates the input field
+     * switches weight units between g and kg - updates the weight
      */
     fun switchWeightUnit() {
         val cur_unit = tv_weight_unit.text.toString()
         var cur_weight = 0f
         var s_weight = et_weight.text.toString()
         var unit = ""
-
 
         if (s_weight.isBlank()) s_weight = "0"
         when (cur_unit) {
@@ -274,49 +296,17 @@ class CharInventoryNewFragment : Fragment(),
      */
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
         when (p2) {
-            0 -> item_cls = "generic"
-            1 -> item_cls = "clothing"
-            2 -> item_cls = "container"
-            3 -> item_cls = "tool"
-            4 -> item_cls = "weapon"
-            5 -> item_cls = "ammo"
-            6 -> item_cls = "implant"
+            0 -> item.cls = "generic"
+            1 -> item.cls = "clothing"
+            2 -> item.cls = "container"
+            3 -> item.cls = "tool"
+            4 -> item.cls = "weapon"
+            5 -> item.cls = "ammo"
+            6 -> item.cls = "implant"
         }
     }
 
 
-    /**
-     * Implements a [TextWatcher] to monitor the quality field
-     */
-    class TextChanged: TextWatcher {
-        constructor(et: EditText) {
-            this.et = et
-        }
-        private var et: EditText
-
-        override fun afterTextChanged(p0: Editable?) {
-            when (et.id) {
-                R.id.newitem_quality -> {
-                    var s_quality = et.text.toString()
-                    if (s_quality.isBlank()) s_quality = "0"
-                    var qual = s_quality.toInt()
-                    if (qual < 1) qual = 1
-                    if (qual > 12) qual = 12
-                    et.setText(qual.toString())
-                }
-                R.id.newitem_quantity -> {
-                    var s_quantity = et.text.toString()
-                    if (s_quantity.isBlank()) s_quantity = "0"
-                    val qty = s_quantity.toInt()
-                    if (qty < 1) et.setText("1")
-                }
-            }
-        }
-
-        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-
-        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-    }
 
     /**
      * Handle the return of various dialogs
@@ -327,23 +317,54 @@ class CharInventoryNewFragment : Fragment(),
         }
         if (dialog is ItemDamageDialog) {
             val mod = dialog.cb_mod.isChecked
-            setDamage(dialog.s, dialog.d, dialog.t, mod)
+            if (mod) {
+                setDamageModifier(dialog.s, dialog.d, dialog.t)
+            } else {
+                setDamage(dialog.s, dialog.d, dialog.t)
+            }
+
         }
         if (dialog is ItemColorDialog) {
-
+            val col_array = arrayOf(dialog.cv.h,dialog.cv.s,dialog.cv.v).toFloatArray()
+            val color = Color.HSVToColor(col_array)
+            val color_name = dialog.cv.name
+            setColor(color, color_name)
         }
         if (dialog is ItemMaterialDialog) {
 
         }
     }
 
-    fun setContainer(capacity: Int, name: String) {
-        item_cap = capacity
-        var cont_name = name
-        cont_name = cont_name.replace(":", "")
-        cont_name = cont_name.replace(",", "")
-        cont_name = cont_name.replace("'", "\u2019")
-        item_cont_name = cont_name
+    /** construct damage modifier string, set value and update button
+     * @param s: 'Schaden' number of damage dice
+     * @param d: 'Durchschlag' [EWT] table column -7 .. 7
+     * @param t: 'Typ' damage type P, E, M (empty = P)
+     */
+    fun setDamageModifier(s: Int, d: Int, t: String="") {
+        var dmg = ""
+
+        var s_val = ""
+        if (s == 0) s_val = "±"
+        if (s > 0) s_val = "+"
+        s_val += s.toString()
+
+        var d_val = ""
+        if (d == 0) d_val = "±"
+        if (d > 0) d_val = "+"
+        d_val += d.toString()
+
+        var type = ""
+        if (!t.isBlank()) {
+            type += "/" + t.toUpperCase(Locale.getDefault())
+        }
+
+        if (s == 0 && d == 0) { // no value
+            bt_dmg.text = resources.getString(R.string.cinv_damage)
+        } else {
+            dmg = "${s_val}/${d_val}${type}"
+            bt_dmg.text = dmg
+        }
+        item.dmg_mod = dmg
     }
 
     /**
@@ -352,31 +373,42 @@ class CharInventoryNewFragment : Fragment(),
      * @param s: 'Schaden' number of damage dice
      * @param d: 'Durchschlag' [EWT] table column -7 .. 7
      * @param t: 'Typ' damage type P, E, M (empty = P)
-     * @param mod: true if a damage modifier
      */
-    fun setDamage(s: Int, d: Int, t: String="", mod: Boolean=false) {
+    fun setDamage(s: Int, d: Int, t: String="") {
         var dmg = ""
-        if (mod) {
-            if (s == 0) dmg += "±"
-            if (s > 0) dmg += "+"
-        }
-        dmg += s.toString()
-        dmg += "/"
-        if (mod) {
-            if (d == 0) dmg += "±"
-            if (d > 0) dmg += "+"
-        }
-        dmg += d.toString()
-        if (!t.isBlank()) {
-            dmg += "/"
-            dmg += t.toUpperCase()
-        }
-        if (s == 0 && d == 0) {
-            dmg = ""
+
+        val d_val = if (d > 0) "+$d" else "$d"
+        val type = if (t.isBlank()) "" else "/${t.toUpperCase(Locale.getDefault())}"
+
+        if (s == 0 && d == 0) { // no value
             bt_dmg.text = resources.getString(R.string.cinv_damage)
         } else {
+            dmg = "${s}/${d_val}${type}"
             bt_dmg.text = dmg
         }
-        item_dmg = dmg
+       item.dmg = dmg
     }
+
+    /**
+     * Implements a [TextWatcher] to monitor the various EditTexts
+     */
+    class TextChanged(val et: EditText, val item: CharInventoryNewFragment): TextWatcher {
+        override fun afterTextChanged(p0: Editable?) {
+            when (et.id) {
+                R.id.newitem_name -> item.setName(et)
+                R.id.newitem_desc -> item.setDescription(et)
+                R.id.newitem_quality -> item.setQuality(et)
+                R.id.newitem_quantity -> item.setQuantity(et)
+                R.id.newitem_price -> item.setPrice(et)
+                R.id.newitem_weight -> item.setWeight(et)
+            }
+        }
+
+        // unused ... necessary for implementation
+        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+    }
+
+
+
 }

@@ -23,7 +23,7 @@ import kotlin.math.roundToInt
 class ItemColorDialog(var q: Int = 0): DialogFragment()
 {
     internal lateinit var listener: DialogListener
-    private lateinit var cv: ColorSelectorView
+    lateinit var cv: ColorSelectorView
 
     /* The activity that creates an instance of this dialog fragment must
      * implement this interface in order to receive event callbacks.

@@ -258,11 +258,13 @@ class CharacterViewModel: ViewModel() {
         if (item.container_name.length > 0) extra_data += "cnt:${item.container_name},"
         if (!item.dmg.isBlank()) extra_data += "dmg:${item.dmg},"
         if (!item.dmg_mod.isBlank()) extra_data += "dmg_mod:${item.dmg_mod},"
+        if (!item.color.isBlank()) extra_data += "col:${item.color},"
 
 
         val cv = ContentValues()
         cv.put("name", item.name)
         cv.put("qty", item.qty)
+        cv.put("cls", item.cls)
         cv.put("desc", item.desc)
         cv.put("current_quality", item.cur_qual)
         cv.put("original_quality", item.orig_qual)
