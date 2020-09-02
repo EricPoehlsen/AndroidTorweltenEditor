@@ -3,6 +3,7 @@ package de.aequinoktium.twedit
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 
@@ -138,8 +139,8 @@ class ColorSelectorView @JvmOverloads constructor(
         val top =  y0 + border
         val left = x0 + border
 
-        val width = size
-        val height = (size*.75).toFloat()
+        val width = size - 2 * border
+        val height = (size * .75 - 2 * border).toFloat()
 
         val x = width * saturation + left
         val y = height * value + top
@@ -257,18 +258,6 @@ class ColorSelectorView @JvmOverloads constructor(
         }
     }
 
-
-    override fun onMeasure(w_spec: Int, h_spec: Int) {
-        val min_width = paddingLeft + size + paddingRight
-        val min_height = paddingTop + size + size/4 + size/8 + paddingBottom
-
-        val w = Math.max(w_spec, min_width.toInt())
-        val h = Math.max(h_spec, min_height.toInt())
-
-        setMeasuredDimension(w, h)
-
-    }
-
     // set hue, saturation and value based on users touch input
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (event is MotionEvent) {
@@ -347,6 +336,42 @@ class ColorSelectorView @JvmOverloads constructor(
 
     // calculate px for dp value
     fun px(dp: Int): Float = dp * resources.displayMetrics.density
+
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val spec_width = MeasureSpec.getSize(widthMeasureSpec)
+        val spec_height = MeasureSpec.getSize(heightMeasureSpec)
+        val mode_width = MeasureSpec.getMode(widthMeasureSpec)
+        val mode_height = MeasureSpec.getMode(heightMeasureSpec)
+
+        if (size == 0f) {
+            size = (spec_width - paddingLeft - paddingRight).toFloat()
+        }
+
+        Log.d("info", "spec_width: $spec_width")
+
+        val sv_height = (size * .75).toFloat()
+        val padding = (size/16)
+        val hue_height = (size/8)
+        val result_height = (size/6)
+
+        val min_width = paddingLeft + size + paddingRight
+        val min_height = (
+            paddingTop
+            + sv_height
+            + padding
+            + hue_height
+            + padding
+            + result_height
+            + paddingBottom
+        )
+
+        val w = min_width.toInt()
+        val h = min_height.toInt()
+
+        setMeasuredDimension(w, h)
+
+    }
 
 
     init {

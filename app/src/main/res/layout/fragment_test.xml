@@ -10,22 +10,13 @@
     tools:context=".TestFragment">
 
  <de.aequinoktium.twedit.ColorSelectorView
-     android:layout_width="wrap_content"
-     android:layout_height="wrap_content"
+     android:layout_width="fill_parent"
+     android:layout_height="0dp"
      android:padding="10dp"
+     app:layout_constraintEnd_toEndOf="parent"
      app:layout_constraintStart_toStartOf="parent"
      app:layout_constraintTop_toTopOf="parent"
-     app:size="300dp"
      app:stroke_color="#ffffff"
      app:stroke_width="2dp" />
-
- <Button
-     android:id="@+id/test_bt"
-     android:layout_width="wrap_content"
-     android:layout_height="wrap_content"
-     android:text="Button"
-     app:layout_constraintBottom_toBottomOf="parent"
-     app:layout_constraintEnd_toEndOf="parent"
-     app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

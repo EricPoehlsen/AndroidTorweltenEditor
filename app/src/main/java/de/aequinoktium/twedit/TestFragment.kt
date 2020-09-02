@@ -29,8 +29,6 @@ class TestFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val b = view.findViewById<Button>(R.id.test_bt)
-        b.setOnClickListener{clicked(b)}
 
     }
 

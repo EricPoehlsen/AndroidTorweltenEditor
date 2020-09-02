@@ -23,7 +23,7 @@ import kotlin.math.roundToInt
 class ItemColorDialog(var q: Int = 0): DialogFragment()
 {
     internal lateinit var listener: DialogListener
-    private lateinit var tv_q: TextView
+    private lateinit var cv: ColorSelectorView
 
     /* The activity that creates an instance of this dialog fragment must
      * implement this interface in order to receive event callbacks.
@@ -57,11 +57,9 @@ class ItemColorDialog(var q: Int = 0): DialogFragment()
             val inflater: LayoutInflater = this.layoutInflater
             val content: View = inflater.inflate(R.layout.dialog_item_color, null)
 
+            cv = content.findViewById(R.id.dia_color_select)
+
             builder.setView(content)
-
-            val title = getString(R.string.dialog_item_color_title)
-
-            builder.setTitle(title)
 
             builder.setPositiveButton(R.string.dialog_ok) { dialog, id ->
                 listener.onDialogPositiveClick(this)

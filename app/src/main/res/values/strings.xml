@@ -62,7 +62,7 @@
     <string name="dialog_item_qty_part">aufteilen</string>
     <string name="dialog_item_qty_join">vereinen</string>
     <string name="dialog_item_qty_all">Alle</string>
-    <string name="dialog_item_color_title">Farbe festlegen:</string>
+    <string name="dialog_item_color_title">Farbe festlegen</string>
     <string name="dialog_item_material_title">Material:</string>
     <string name="dialog_item_qual_title">Qualität ändern:</string>
     <string name="dialog_item_qual_inc">verbessern / reparieren</string>
