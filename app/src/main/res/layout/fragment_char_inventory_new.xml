@@ -19,10 +19,12 @@
     <EditText
         android:id="@+id/newitem_desc"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:ems="10"
+        android:gravity="top"
         android:hint="@string/ci_desc"
         android:inputType="textPersonName"
+        app:layout_constraintBottom_toTopOf="@+id/newitem_cls"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView10" />
@@ -129,11 +131,10 @@
 
     <Spinner
         android:id="@+id/newitem_cls"
-        android:layout_width="0dp"
+        android:layout_width="366dp"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/newitem_clslabel"
-        app:layout_constraintTop_toBottomOf="@+id/newitem_desc" />
+        app:layout_constraintBottom_toTopOf="@+id/newitem_buy"
+        app:layout_constraintStart_toEndOf="@+id/newitem_clslabel" />
 
     <TextView
         android:id="@+id/newitem_clslabel"
@@ -196,39 +197,48 @@
         android:id="@+id/textView10"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
         android:text="@string/cinv_desc"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/newitem_container" />
+
+    <Button
+        android:id="@+id/newitem_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Container"
+        app:layout_constraintEnd_toStartOf="@+id/newitem_weapon"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/newitem_color" />
+
+    <Button
+        android:id="@+id/newitem_weapon"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/cinv_damage"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/newitem_container"
+        app:layout_constraintTop_toBottomOf="@+id/newitem_color" />
+
+    <Button
+        android:id="@+id/newitem_color"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/cinv_color"
+        app:layout_constraintEnd_toStartOf="@+id/newitem_material"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/newitem_quantity" />
 
     <Button
-        android:id="@+id/newitem_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Container"
-        app:layout_constraintBottom_toTopOf="@+id/newitem_take"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <Button
-        android:id="@+id/newitem_weapon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/cinv_damage"
-        app:layout_constraintBottom_toTopOf="@+id/newitem_container"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <Button
-        android:id="@+id/newitem_color"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/cinv_color"
-        app:layout_constraintBottom_toTopOf="@+id/newitem_weapon"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <Button
         android:id="@+id/newitem_material"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/cinv_material"
-        app:layout_constraintBottom_toTopOf="@+id/newitem_color"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/newitem_color"
+        app:layout_constraintTop_toBottomOf="@+id/newitem_quantity" />
 </androidx.constraintlayout.widget.ConstraintLayout>
