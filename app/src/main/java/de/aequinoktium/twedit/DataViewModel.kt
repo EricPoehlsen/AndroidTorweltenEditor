@@ -270,7 +270,9 @@ class DataViewModel: ViewModel() {
         for (variant in variants) {
             val item_variant = CatalogItem.Variant()
             val elements = variant.split(".")
-            item_variant.name = elements[0]
+            if (elements[0].contains("##")) item_variant.override_name = true
+            if (elements[0].contains("#")) item_variant.edit_name = true
+            item_variant.name = elements[0].replace("#", "")
             for (e in elements) {
                 if (e.matches("w\\d+".toRegex())) {
                     val weight = e.replace("w", "")
