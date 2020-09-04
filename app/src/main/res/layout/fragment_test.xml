@@ -9,12 +9,5 @@
     android:layout_height="match_parent"
     tools:context=".TestFragment">
 
- <ImageView
-     android:id="@+id/imageView3"
-     android:layout_width="64dp"
-     android:layout_height="64dp"
-     android:src="@drawable/item_clothing_coverall"
-     android:tintMode="multiply"
-     tools:layout_editor_absoluteX="0dp"
-     tools:layout_editor_absoluteY="85dp" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

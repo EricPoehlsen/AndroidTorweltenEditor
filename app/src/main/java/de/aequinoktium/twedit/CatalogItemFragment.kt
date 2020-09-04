@@ -13,17 +13,20 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class CatalogItemFragment : Fragment() {
     private val c: CharacterViewModel by activityViewModels()
     private val d: DataViewModel by activityViewModels()
     private lateinit var catalog_item: CatalogItem
-
+    private var item = Item()
 
     private var view_ids = arrayOf<Int>()
 
     private lateinit var layout: ConstraintLayout
+    private lateinit var tv_name: TextView
     private lateinit var tv_price: TextView
     private lateinit var tv_weight: TextView
 
@@ -52,11 +55,11 @@ class CatalogItemFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         layout = view as ConstraintLayout
 
-        val tv_title = view.findViewById<TextView>(R.id.catalog_item_name)
-        tv_title.text = catalog_item.name
+        tv_name = view.findViewById<TextView>(R.id.catalog_item_name)
+        tv_name.text = catalog_item.name
 
         tv_weight = view.findViewById(R.id.catalog_item_weight)
-        tv_weight.text = weightText()
+        tv_weight.text = weightText(calcWeight())
         tv_price = view.findViewById(R.id.catalog_item_price)
 
         for (name in catalog_item.variants.keys) {
@@ -64,10 +67,6 @@ class CatalogItemFragment : Fragment() {
         }
 
         updateLayout()
-
-
-
-
     }
 
 
@@ -122,30 +121,60 @@ class CatalogItemFragment : Fragment() {
         layout.setConstraintSet(constraint_set)
     }
 
-    fun weightText(): String {
+    fun weightText(weight: Int): String {
+        var result = 0f
         val label = getString(R.string.cinv_weight)
-        var weight = calcWeight().toFloat()
         var unit = "g"
         if (weight > 1000) {
-            weight = weight/1000
+            result = (weight/1000).toFloat()
             unit = "kg"
+        } else {
+            result = weight.toFloat()
         }
 
-        return "${label} ${weight}${unit}"
+        return "${label} ${result}${unit}"
     }
 
 
     fun calcWeight(): Int {
         var weight = catalog_item.weight
-        for (all in catalog_item.variants.values)
+        for (all in catalog_item.variants.values) {
             for (variant in all) {
                 if (variant.selected) weight = (weight * variant.weight_factor).toInt()
             }
+        }
         return weight
     }
 
+    /**
+     * construct the item name based on the selected variants
+     */
+    fun buildName(): String {
+        var name = catalog_item.name
+        for (all in catalog_item.variants.values) {
+            for (variant in all) {
+                if (variant.selected) {
+                    if (variant.edit_name) {
+                        if (variant.name.endsWith(" ")){
+                            name = variant.name + name
+                        } else {
+                            name = variant.name + name.toLowerCase(Locale.getDefault())
+                        }
+                    }
+                    if (variant.override_name) {
+                        name = variant.name
+                    }
+                }
+            }
+        }
+        return name
+    }
+
     fun update() {
-        tv_weight.text = weightText()
+        item.weight = calcWeight()
+        tv_weight.text = weightText(item.weight)
+        item.name = buildName()
+        tv_name.text = item.name
     }
 
 
