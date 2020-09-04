@@ -18,6 +18,9 @@
         <action
             android:id="@+id/action_menu_to_ts"
             app:destination="@id/traitSelectFragment" />
+        <action
+            android:id="@+id/action_menu_to_cat"
+            app:destination="@id/itemCatalogFragment" />
     </fragment>
     <fragment
         android:id="@+id/charSelectFragment"
@@ -133,4 +136,16 @@
             android:id="@+id/action_cinvequip_to_citem"
             app:destination="@id/charItemFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/itemCatalogFragment"
+        android:name="de.aequinoktium.twedit.CatalogFragment"
+        android:label="ItemCatalogFragment" >
+        <action
+            android:id="@+id/action_cat_to_item"
+            app:destination="@id/catalogItemFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/catalogItemFragment"
+        android:name="de.aequinoktium.twedit.CatalogItemFragment"
+        android:label="CatalogItemFragment" />
 </navigation>

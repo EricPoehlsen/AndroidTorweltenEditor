@@ -223,7 +223,7 @@ class CharacterViewModel: ViewModel() {
             item.packed_into = data.getInt(data.getColumnIndex("packed_into"))
 
             val extra_data = data.getString(data.getColumnIndex("extra_data"))
-            val datasets = extra_data.split(",")
+            val datasets = extra_data.split("|")
             for (value in datasets) {
                 if (value.startsWith("cnt:")) {
                     item.container_name = value.split(":")[1]
@@ -255,10 +255,10 @@ class CharacterViewModel: ViewModel() {
 
     fun prepareItem(item: Item): ContentValues {
         var extra_data = ""
-        if (item.container_name.length > 0) extra_data += "cnt:${item.container_name},"
-        if (!item.dmg.isBlank()) extra_data += "dmg:${item.dmg},"
-        if (!item.dmg_mod.isBlank()) extra_data += "dmg_mod:${item.dmg_mod},"
-        if (!item.color.isBlank()) extra_data += "col:${item.color},"
+        if (item.container_name.length > 0) extra_data += "cnt:${item.container_name}|"
+        if (!item.dmg.isBlank()) extra_data += "dmg:${item.dmg}|"
+        if (!item.dmg_mod.isBlank()) extra_data += "dmg_mod:${item.dmg_mod}|"
+        if (!item.color.isBlank()) extra_data += "col:${item.color}|"
 
 
         val cv = ContentValues()
@@ -271,6 +271,7 @@ class CharacterViewModel: ViewModel() {
         cv.put("weight", item.weight)
         cv.put("price", item.price)
         cv.put("weight_limit", item.weight_limit)
+        cv.put("equip_loc", item.equip_loc.joinToString("."))
         cv.put("extra_data", extra_data)
 
         cv.put("char_id", char_id)

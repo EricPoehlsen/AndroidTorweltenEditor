@@ -5,10 +5,6 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import java.util.*
 
 /**
  * A ViewModel to handle data that is not directly character related.
@@ -16,6 +12,9 @@ import java.util.*
 
 class DataViewModel: ViewModel() {
     private lateinit var db: SQLiteDatabase
+
+    var current_catalog = arrayOf<CatalogItem>()
+    var current_catalog_item = CatalogItem()
 
     fun setDatabase(db: SQLiteDatabase) {
         this.db = db
@@ -221,6 +220,73 @@ class DataViewModel: ViewModel() {
     }
 
 
+    suspend fun loadCatalog(cls: String) {
+        val sql = "SELECT * FROM items WHERE cls = '$cls'"
+        val data = db.rawQuery(sql, null)
+        while (data.moveToNext()) {
+            val item = CatalogItem()
+
+            item.name = data.getString(data.getColumnIndex("name"))
+            item.weight = data.getInt(data.getColumnIndex("weight"))
+            item.price = data.getFloat(data.getColumnIndex("price"))
+            item.desc = data.getString(data.getColumnIndex("desc"))
+            item.avail = data.getInt(data.getColumnIndex("avail"))
+
+            val extra_data = data.getString(data.getColumnIndex("extra_data"))
+            readExtraData(extra_data, item)
+            Log.d("info", "Item: ${item.name}")
+            current_catalog += item
+        }
+        data.close()
+    }
+
+    fun readExtraData(data: String, item: CatalogItem) {
+        val arr = data.split("|")
+        for (entry in arr) {
+            if (entry.startsWith("cnt:")) {
+                item.container_name = entry.replace("cnt:", "")
+            }
+            if (entry.startsWith("var.")) {
+                readVariants(entry, item)
+            }
+        }
+
+
+    }
+
+    /**
+     * reads variant data from the extra_data. Parses data in the following format:
+     * @param input: var.Name:Some Name.p120.w100,Another Name,Yet Another.wl200
+     * p000 price modifier in percent
+     * w000 weight modifier in percent
+     * wl000 weight limit modifier in gram
+     *
+     */
+    fun readVariants(input: String, item: CatalogItem) {
+        var vars = arrayOf<CatalogItem.Variant>()
+        var split_info = input.split(":")
+        val name = split_info[0].replace("var.", "")
+        val variants = split_info[1].split(",")
+        for (variant in variants) {
+            val item_variant = CatalogItem.Variant()
+            val elements = variant.split(".")
+            item_variant.name = elements[0]
+            for (e in elements) {
+                if (e.matches("w\\d+".toRegex())) {
+                    val weight = e.replace("w", "")
+                    item_variant.weight_factor = weight.toFloat()/100
+                } else if (e.matches("w\\d+".toRegex())) {
+                    val price = e.replace("p", "")
+                    item_variant.price_factor = price.toFloat()/100
+                } else if (e.matches("wl-?\\d+".toRegex())) {
+                    val weight_limit = e.replace("wl", "").toInt()
+                    item_variant.weight_limit = weight_limit
+                }
+            }
+            vars += item_variant
+        }
+        item.variants[name] = vars
+    }
 
     /**
      * View Model is destroyed. Clean up the database connection.

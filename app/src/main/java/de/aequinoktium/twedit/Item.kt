@@ -12,6 +12,7 @@ class Item() {
     var orig_qual = 6
     var weight_limit = 0
     var equipped = 0
+    var equip_loc = emptyArray<String>()
     var price = 0f
     var container_name = ""
     var dmg = ""
@@ -21,7 +22,6 @@ class Item() {
     var color = ""
     var material = ""
     var cls = ""
-
 
     fun copy(): Item {
         val new = Item()
@@ -38,6 +38,12 @@ class Item() {
         new.container_name = this.container_name
         new.dmg = this.dmg
         new.dmg_mod = this.dmg_mod
+        new.chambers = 0
+        new.caliber = this.caliber
+        new.color = this.color
+        new.material = this.material
+        new.cls = this.cls
+        new.equip_loc = this.equip_loc
 
         return new
     }
@@ -61,7 +67,39 @@ class Item() {
             item.price == this.price &&
             item.container_name == this.container_name &&
             item.dmg == this.dmg &&
-            item.dmg_mod == this.dmg_mod
+            item.dmg_mod == this.dmg_mod &&
+            item.chambers == 0 &&
+            item.caliber == this.caliber &&
+            item.color == this.color &&
+            item.material == this.material &&
+            item.cls == this.cls
         )
+    }
+}
+
+class CatalogItem() {
+    var name = ""
+    var desc = ""
+    var weight = 0
+    var avail = 0
+    var weight_limit = 0
+    var price = 0f
+    var container_name = ""
+    var dmg = ""
+    var dmg_mod = ""
+    var chambers = 0
+    var caliber = ""
+    var color = ""
+    var material = ""
+    var variants = mutableMapOf<String,Array<Variant>>()
+    var cls = ""
+    var grp = emptyArray<String>()
+    var equip_loc = emptyArray<String>()
+
+    class Variant(){
+        var name = ""
+        var price_factor = 1f
+        var weight_factor = 1f
+        var weight_limit = 0
     }
 }
