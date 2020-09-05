@@ -1,14 +1,10 @@
 package de.aequinoktium.twedit
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Spinner
-import android.widget.TextView
+import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.fragment.app.Fragment
@@ -23,9 +19,7 @@ class CatalogItemFragment : Fragment() {
     private lateinit var catalog_item: CatalogItem
     private var item = Item()
 
-    private var view_ids = arrayOf<Int>()
-
-    private lateinit var layout: ConstraintLayout
+    private lateinit var ll_variants: LinearLayout
     private lateinit var tv_name: TextView
     private lateinit var tv_price: TextView
     private lateinit var tv_weight: TextView
@@ -51,7 +45,7 @@ class CatalogItemFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        layout = view as ConstraintLayout
+        ll_variants = view.findViewById(R.id.catalog_item_variants)
 
         tv_name = view.findViewById<TextView>(R.id.catalog_item_name)
         tv_name.text = catalog_item.name
@@ -64,17 +58,34 @@ class CatalogItemFragment : Fragment() {
             addVariant(name)
         }
 
-        updateLayout()
+        setupQualitySpinner(view)
+
+
     }
 
+    fun setupQualitySpinner(parent: View) {
+        val sp = parent.findViewById<Spinner>(R.id.catalog_item_quality)
+
+        val quality_names = resources.getStringArray(R.array.cinv_qualities)
+        var buyable_qualities = ArrayList<String>()
+        for (i in 3..9) {
+            buyable_qualities.add(quality_names[i])
+        }
+        val adapter = ArrayAdapter<String>(
+            requireContext(),
+            android.R.layout.simple_spinner_dropdown_item,
+            buyable_qualities
+        )
+        sp.adapter = adapter
+        sp.onItemSelectedListener = QualityListener(this)
+        sp.setSelection(3)
+    }
 
     fun addVariant(name: String) {
         val tv = TextView(context)
         tv.text = name
         tv.id = View.generateViewId()
-        layout.addView(tv)
-        view_ids += tv.id
-
+        ll_variants.addView(tv)
 
         val sp = Spinner(context)
 
@@ -92,47 +103,12 @@ class CatalogItemFragment : Fragment() {
         sp.onItemSelectedListener = SelectListener(name,this)
 
         sp.id = View.generateViewId()
-        layout.addView(sp)
-        view_ids += sp.id
+        ll_variants.addView(sp)
     }
 
-    fun updateLayout() {
-        val constraint_set = ConstraintSet()
-        constraint_set.clone(layout)
-        view_ids += R.id.catalog_item_buy
-
-        var first = true
-        for (i in 0..view_ids.size - 2) {
-            constraint_set.connect(
-                view_ids[i],
-                ConstraintSet.BOTTOM,
-                view_ids[i+1],
-                ConstraintSet.TOP
-            )
-            constraint_set.connect(
-                view_ids[i],
-                ConstraintSet.LEFT,
-                layout.id,
-                ConstraintSet.LEFT
-            )
-        }
-        layout.setConstraintSet(constraint_set)
-    }
-
-    fun weightText(weight: Int): String {
-        var result = 0f
-        val label = getString(R.string.cinv_weight)
-        var unit = "g"
-        if (weight > 1000) {
-            result = (weight/1000).toFloat()
-            unit = "kg"
-        } else {
-            result = weight.toFloat()
-        }
-
-        return "${label} ${result}${unit}"
-    }
-
+    /**
+     * calculate the item weight based on base weight and chosen variants
+     */
     fun calcWeight(): Int {
         var weight = catalog_item.weight
         for (all in catalog_item.variants.values) {
@@ -143,20 +119,57 @@ class CatalogItemFragment : Fragment() {
         return weight
     }
 
+    /**
+     * construct the display text for the item weight
+     */
+    fun weightText(weight: Int): String {
+        var result = 0f
+        val label = getString(R.string.cinv_weight)
+        var unit = "g"
+        if (weight > 1000) {
+            result = (weight/1000).toFloat()
+            unit = "kg"
+        } else {
+            result = weight.toFloat()
+        }
+        return "${label} ${result}${unit}"
+    }
+
+    /**
+     * calculate price from base price, selected variants and quality
+     */
     fun calcPrice(): Float {
         var price = catalog_item.price
+        // account for variants
         for (all in catalog_item.variants.values) {
             for (variant in all) {
                 if (variant.selected) price *= variant.price_factor
             }
         }
+        // account for quality
+        val quality_price_factor = arrayOf(.1f,.25f,.5f,1f,1.5f,2.5f,5f)
+        if (item.cur_qual in 3..9) {
+            price *= quality_price_factor[item.cur_qual-3]
+        }
         return price
     }
 
+    /**
+     * construct the string that is displayed for the price
+     */
     fun priceText(price: Float):String {
         val label = getString(R.string.cinv_price)
         val amount = getString(R.string.cinv_money, price)
         return "$label $amount"
+    }
+
+    /**
+     * set the quality of an item
+     */
+    fun setQuality(qual: Int) {
+        item.orig_qual = qual
+        item.cur_qual = qual
+        update()
     }
 
     /**
@@ -200,6 +213,15 @@ class CatalogItemFragment : Fragment() {
             }
             variants[selected].selected = true
             frgm.update()
+        }
+
+        // unused - necessary for implementation
+        override fun onNothingSelected(p0: AdapterView<*>?) {}
+    }
+
+    class QualityListener(val frgm: CatalogItemFragment): AdapterView.OnItemSelectedListener {
+        override fun onItemSelected(p0: AdapterView<*>?, p1: View?, pos: Int, p3: Long) {
+            frgm.setQuality(pos + 3)
         }
 
         // unused - necessary for implementation
