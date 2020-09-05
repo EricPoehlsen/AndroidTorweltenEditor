@@ -10,6 +10,9 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -65,6 +68,11 @@ class CatalogItemFragment : Fragment() {
 
         et_quantity = view.findViewById(R.id.catalog_item_quantity)
         et_quantity.addTextChangedListener(QuantityListener(et_quantity, this))
+
+        val bt_take = view.findViewById<Button>(R.id.catalog_item_take)
+        bt_take.setOnClickListener{ addItem(false) }
+        val bt_buy = view.findViewById<Button>(R.id.catalog_item_buy)
+        bt_buy.setOnClickListener{ addItem(true) }
     }
 
     fun setupQualitySpinner(parent: View) {
@@ -222,6 +230,20 @@ class CatalogItemFragment : Fragment() {
         tv_weight.text = weightText(item.weight)
         item.price = calcPrice()
         tv_price.text = priceText(item.price)
+    }
+
+    fun addItem(pay: Boolean) {
+        c.viewModelScope.launch(Dispatchers.IO) {
+            c.addToInventory(item)
+            if (pay) {
+                c.moneyTransaction(
+                    c.primaryAccount().nr,
+                    0,
+                    item.price * item.qty,
+                    getString(R.string.cinv_bought, item.qty, item.name)
+                )
+            }
+        }
     }
 
     class SelectListener(val name:String, val frgm: CatalogItemFragment): AdapterView.OnItemSelectedListener {

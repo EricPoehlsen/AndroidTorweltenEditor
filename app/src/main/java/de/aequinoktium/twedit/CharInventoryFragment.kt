@@ -73,7 +73,7 @@ class CharInventoryFragment : Fragment(){
         // button: switch to inventory
         val b_inv = view.findViewById<Button>(R.id.cinv_new_item)
         b_inv.setOnClickListener {
-            this.findNavController().navigate(R.id.action_cinv_to_cinvnew)
+            this.findNavController().navigate(R.id.action_cinv_to_cat)
         }
 
     }

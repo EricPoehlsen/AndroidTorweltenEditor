@@ -108,6 +108,9 @@
         <action
             android:id="@+id/action_cinv_to_cinvequip"
             app:destination="@id/charInventoryEquippedFragment" />
+        <action
+            android:id="@+id/action_cinv_to_cat"
+            app:destination="@id/itemCatalogFragment" />
     </fragment>
     <fragment
         android:id="@+id/charInventoryNewFragment"
@@ -143,6 +146,9 @@
         <action
             android:id="@+id/action_cat_to_item"
             app:destination="@id/catalogItemFragment" />
+        <action
+            android:id="@+id/action_cat_to_cinvnew"
+            app:destination="@id/charInventoryEquippedFragment" />
     </fragment>
     <fragment
         android:id="@+id/catalogItemFragment"
