@@ -1120,30 +1120,28 @@ class DatabaseConnect(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
 
         sql = """
             INSERT INTO items (name, price,weight,avail,desc,cls,grp,equip_loc,weight_limit,extra_data) VALUES 
-            ('Einwegunterhemd', 2, 75, -5, '', 'clothing', 'casual', 'torso', 0, 'var.Material:Synthetik|col:*'),
-            ('Einwegunterhose', 2, 75, -5, '', 'clothing', 'casual', 'hips', 0, 'var.Material:Synthetik|col:*'),
-            ('Unterhose', 10, 100, -5, '', 'clothing', 'casual', 'hips', 0, 'var.Design: ,Spitzen#.p200|var.Material:Synthetik,Baumwolle.p150,Wolle.p200.w200,Seide.p250.w50|col:*'),
-            ('Boxershorts', 10, 100, -5, '', 'clothing', 'casual', 'hips', 0, 'var.Material:Synthetik,Baumwolle.p150,Wolle.p200.w200,Seide.p250.w50|col:*'),
-            ('Unterhemd', 10, 100, -5, '', 'clothing', 'casual', 'torso', 0, 'var.Design: ,Spitzen.p200|var.Material:Synthetik,Baumwolle.p150,Wolle.p200.w200,Seide.p250.w50|col:*'),
-            ('Hose', 40, 400, -5, '', 'clothing', 'casual.formal.work.sports', 'hips.legs', 200, 'var.Länge: ,#Kurze |var.Variante: ,Cargo.p150.wl500,Anzug.p200,Sport|var.Material:Synthetik,Baumwolle.p150,Wolle.p200.w200,Seide.p250.w50,Jeans,Leder.p500.w250|col:*|cnt:Hosentaschen'),
+            ('Unterhose', 10, 100, -5, '', 'clothing', 'casual', 'hips', 0, 'var.Ausführung: ,#Einweg|var.Design: ,#Spitzen.p200|var.Material:Synthetik,Baumwolle.p120,Wolle.p200.w150,Seide.p250.w75|col:*'),
+            ('Boxershorts', 10, 100, -5, '', 'clothing', 'casual', 'hips', 0, 'var.Material:Synthetik,Baumwolle.p120,Wolle.p200.w150,Seide.p250.w75|col:*'),
+            ('Unterhemd', 10, 100, -5, '', 'clothing', 'casual', 'torso', 0, 'var.Design: ,Spitzen.p200|var.Material:Synthetik,Baumwolle.p120,Wolle.p200.w150,Seide.p250.w75|col:*'),
+            ('Hose', 40, 400, -5, '', 'clothing', 'casual.formal.work.sports', 'hips.legs', 200, 'var.Länge: ,#Kurze |var.Variante: ,Cargo.p150.wl500,Anzug.p200,Sport|var.Material:Synthetik,Baumwolle.p120,Wolle.p200.w150,Seide.p250.w75,Jeans,Leder.p500.w250|col:*|cnt:Hosentaschen'),
             ('Leggins', 20, 200, -5, '', 'clothing', 'casual.sports', 'hips.legs', 0, 'var.Material:Synthetik|col:*'),
-            ('Rock', 30, 300, -5, '', 'clothing', 'casual.formal', 'hips.legs', 0, 'var.Länge: ,#Mini,#Kurzer ,#Midi,#Maxi,#Langer |var.Schnitt: ,#Falten,#Bleistift,#Wickel,#Ballon|var.Material:Synthetik,Baumwolle.p150,Wolle.p200.w200,Seide.p250.w50,Jeans,Leder.p500.w250|col:*'),
-            ('T-Shirt', 15, 300, -5, '', 'clothing', 'casual.sports', 'torso', 0, 'var.Material:Synthetik,Baumwolle.p150|col:*'),
-            ('Hemd', 40, 300, -5, '', 'clothing', 'casual.work.formal', 'torso.arms', 100, 'var.Ärmel: ,Kurzarm|var.Material:Synthetik,Baumwolle.p150,Wolle.p200.w200,Seide.p250.w50|col:*|cnt:Hemdtasche'),
-            ('Bluse', 40, 300, -5, '', 'clothing', 'casual.work.formal', 'torso.arms', 0, 'var.Material:Synthetik,Baumwolle.p150,Wolle.p200.w200,Seide.p250.w50|col:*'),
+            ('Rock', 30, 300, -5, '', 'clothing', 'casual.formal', 'hips.legs', 0, 'var.Länge: ,#Mini,#Kurzer ,#Midi,#Maxi,#Langer |var.Schnitt: ,#Falten,#Bleistift,#Wickel,#Ballon|var.Material:Synthetik,Baumwolle.p120,Wolle.p200.w150,Seide.p250.w75,Jeans,Leder.p500.w250|col:*'),
+            ('T-Shirt', 15, 300, -5, '', 'clothing', 'casual.sports', 'torso', 0, 'var.Material:Synthetik,Baumwolle.p120|col:*'),
+            ('Hemd', 40, 300, -5, '', 'clothing', 'casual.work.formal', 'torso.arms', 100, 'var.Ärmel: ,Kurzarm|var.Material:Synthetik,Baumwolle.p120,Wolle.p200.w150,Seide.p250.w75|col:*|cnt:Hemdtasche'),
+            ('Bluse', 40, 300, -5, '', 'clothing', 'casual.work.formal', 'torso.arms', 0, 'var.Material:Synthetik,Baumwolle.p120,Wolle.p200.w150,Seide.p250.w75|col:*'),
             ('Pullover', 50, 500, -5, '', 'clothing', 'casual.work', 'torso.arms', 0, 'var: ,#Rollkragen,#Kaputzen|col:*'),
-            ('Overall', 75, 1000, -5, '', 'clothing', 'casual.work', 'torso.arms.legs', 750, 'var.Ärmel: ,#Kurzarm ,#Ärmelloser |var.Material:Synthetik,Baumwolle.p150|col:*|cnt:Overalltaschen'),
-            ('Kleid', 50, 500, -5, '', 'clothing', 'casual.work.formal', 'torso.legs', 0, 'var.Länge: ,#Kurzes ,#Langes |var.Variante: ,#Abend.p500,#Gala.p1000|var.Material:Synthetik,Baumwolle.p150,Wolle.p200.w200,Seide.p250.w50,Jeans,Leder.p500.w250|col:*'),
-            ('Jacke', 50, 500, -5, '', 'clothing', 'casual.work.sports', 'torso.arms', 500, 'var.Variante: ,#Anzug.p200,#Sport,#Outdoor.p200.w200,#Thermo.p300.w300|var.Material:Synthetik,Baumwolle.p150,Wolle.p200.w200,Seide.p250.w50,Jeans,Leder.p500.w250|col:*|cnt:Jackentaschen'),
-            ('Mantel', 50, 750, -5, '', 'clothing', 'casual.work.sports', 'torso.arms', 500, 'var.Länge: ,#Kurzer ,#Langer .p150.w150|var.Material:Synthetik,Baumwolle.p150,Wolle.p200.w200,Seide.p250.w50,Jeans,Leder.p500.w250|col:*|cnt:Manteltaschen'),
-            ('Fliege/Krawatte', 20, 50, -5, '', 'clothing', 'work.formal', 'neck', 0, 'var.Variante:##Fliege,##Krawatte|var.Material:Synthetik,Baumwolle.p150,Wolle.p200.w200,Seide.p250.w50,Jeans,Leder.p500.w250|col:*'),
+            ('Overall', 75, 1000, -5, '', 'clothing', 'casual.work', 'torso.arms.legs', 750, 'var.Ärmel: ,#Kurzarm ,#Ärmelloser |var.Material:Synthetik,Baumwolle.p120|col:*|cnt:Overalltaschen'),
+            ('Kleid', 50, 500, -5, '', 'clothing', 'casual.work.formal', 'torso.legs', 0, 'var.Länge: ,#Kurzes ,#Langes |var.Variante: ,#Abend.p500,#Gala.p1000|var.Material:Synthetik,Baumwolle.p120,Wolle.p200.w150,Seide.p250.w75,Jeans,Leder.p500.w250|col:*'),
+            ('Jacke', 50, 500, -5, '', 'clothing', 'casual.work.sports', 'torso.arms', 500, 'var.Variante: ,#Anzug.p200,#Sport,#Outdoor.p200.w200,#Thermo.p300.w300|var.Material:Synthetik,Baumwolle.p120,Wolle.p200.w150,Seide.p250.w75,Jeans,Leder.p500.w250|col:*|cnt:Jackentaschen'),
+            ('Mantel', 50, 750, -5, '', 'clothing', 'casual.work.sports', 'torso.arms', 500, 'var.Länge: ,#Kurzer ,#Langer .p150.w150|var.Material:Synthetik,Baumwolle.p120,Wolle.p200.w150,Seide.p250.w75,Jeans,Leder.p500.w250|col:*|cnt:Manteltaschen'),
+            ('Krawatte', 20, 50, -5, '', 'clothing', 'work.formal', 'neck', 0, 'var.Material:Synthetik,Baumwolle.p120,Wolle.p200.w150,Seide.p250.w75,Jeans,Leder.p500.w250|col:*'),
+            ('Fliege', 20, 50, -5, '', 'clothing', 'work.formal', 'neck', 0, 'var.Material:Synthetik,Baumwolle.p120,Wolle.p200.w150,Seide.p250.w75,Jeans,Leder.p500.w250|col:*'),
             ('Kleidung, komplett', 150, 2000, -5, '', 'clothing', 'casual', 'torso.arms.legs.feet', 200, 'cnt:Hosentaschen'),
             ('Anzug, komplett', 350, 3000, -4, '', 'clothing', 'work.formal', 'torso.arms.legs.feet', 200, 'cnt:Hosentaschen'),
             ('Sandalen', 20, 200, -5, '', 'clothing', '', '', 0, ''),
             ('Schuhe', 50, 500, -5, '', 'clothing', 'casual.formal.work.sports', 'feet', 0, 'var.Variante: ,#Arbeits.p200.w150,#Sicherheits.p200.w200,#Sport,#Lauf.w75,'),
             ('High-Heels', 50, 400, 0, '', 'clothing', 'casual.formal.work.sports', '', 0, ''),
-            ('Stiefel', 100, 1000, 0, '', 'clothing', 'casual.work.sports', 'feet', 0, 'var.Variante: ,#Arbeits.w120,#Outdoor.p150.w120,#Gummi.p50.w150,#Kampf.p200.w150,#Bord.p250.w150,#High-Heel-|var.Höhe: ,#Niedrige ,#Hohe |var.Material:Synthetik,Leder.p150,Gummi|col:*')
-        """.trimIndent()
+            ('Stiefel', 100, 1000, 0, '', 'clothing', 'casual.work.sports', 'feet', 0, 'var.Höhe: ,#Niedrige ,#Hohe |var.Variante: ,#Arbeits.w120,#Outdoor.p150.w120,#Gummi.p50.w150,#Kampf.p200.w150,#Bord.p250.w150,#High-Heel-|var.Material:Synthetik,Leder.p150,Gummi|col:*')        """.trimIndent()
         db.execSQL(sql)
 
 
