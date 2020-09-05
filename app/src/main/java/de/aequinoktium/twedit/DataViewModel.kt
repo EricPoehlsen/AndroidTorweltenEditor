@@ -221,6 +221,7 @@ class DataViewModel: ViewModel() {
 
 
     suspend fun loadCatalog(cls: String) {
+        current_catalog = arrayOf<CatalogItem>()
         val sql = "SELECT * FROM items WHERE cls = '$cls'"
         val data = db.rawQuery(sql, null)
         while (data.moveToNext()) {
