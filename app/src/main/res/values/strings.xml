@@ -162,7 +162,8 @@
     <string name="cinv_damage">Schaden</string>
     <string name="cinv_color">Farbe</string>
     <string name="cinv_material">Material</string>
-    <string name="cinv_cash">Barvermögen %1$.2f R</string>
+    <string name="cinv_cash">Barvermögen %1$.2f IR</string>
+    <string name="cinv_money">%1$.2f IR</string>
     <string name="cinv_weight">Gewicht: </string>
     <string name="cinv_cls">Klasse: </string>
     <string name="cinv_cls_generic">generischer Gegenstand</string>

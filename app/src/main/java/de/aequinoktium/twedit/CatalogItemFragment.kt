@@ -30,8 +30,6 @@ class CatalogItemFragment : Fragment() {
     private lateinit var tv_price: TextView
     private lateinit var tv_weight: TextView
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         catalog_item = d.current_catalog_item
@@ -135,7 +133,6 @@ class CatalogItemFragment : Fragment() {
         return "${label} ${result}${unit}"
     }
 
-
     fun calcWeight(): Int {
         var weight = catalog_item.weight
         for (all in catalog_item.variants.values) {
@@ -144,6 +141,22 @@ class CatalogItemFragment : Fragment() {
             }
         }
         return weight
+    }
+
+    fun calcPrice(): Float {
+        var price = catalog_item.price
+        for (all in catalog_item.variants.values) {
+            for (variant in all) {
+                if (variant.selected) price *= variant.price_factor
+            }
+        }
+        return price
+    }
+
+    fun priceText(price: Float):String {
+        val label = getString(R.string.cinv_price)
+        val amount = getString(R.string.cinv_money, price)
+        return "$label $amount"
     }
 
     /**
@@ -171,12 +184,13 @@ class CatalogItemFragment : Fragment() {
     }
 
     fun update() {
-        item.weight = calcWeight()
-        tv_weight.text = weightText(item.weight)
         item.name = buildName()
         tv_name.text = item.name
+        item.weight = calcWeight()
+        tv_weight.text = weightText(item.weight)
+        item.price = calcPrice()
+        tv_price.text = priceText(item.price)
     }
-
 
     class SelectListener(val name:String, val frgm: CatalogItemFragment): AdapterView.OnItemSelectedListener {
         override fun onItemSelected(p0: AdapterView<*>?, p1: View?, selected: Int, p3: Long) {
@@ -190,9 +204,5 @@ class CatalogItemFragment : Fragment() {
 
         // unused - necessary for implementation
         override fun onNothingSelected(p0: AdapterView<*>?) {}
-
-
     }
-
-
 }
