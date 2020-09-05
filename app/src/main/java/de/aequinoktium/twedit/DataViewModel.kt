@@ -281,7 +281,7 @@ class DataViewModel: ViewModel() {
                 if (e.matches("w\\d+".toRegex())) {
                     val weight = e.replace("w", "")
                     item_variant.weight_factor = weight.toFloat()/100
-                } else if (e.matches("w\\d+".toRegex())) {
+                } else if (e.matches("p\\d+".toRegex())) {
                     val price = e.replace("p", "")
                     item_variant.price_factor = price.toFloat()/100
                 } else if (e.matches("wl-?\\d+".toRegex())) {
