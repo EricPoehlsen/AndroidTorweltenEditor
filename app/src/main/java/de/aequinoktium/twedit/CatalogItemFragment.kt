@@ -1,12 +1,13 @@
 package de.aequinoktium.twedit
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import java.util.*
@@ -23,6 +24,7 @@ class CatalogItemFragment : Fragment() {
     private lateinit var tv_name: TextView
     private lateinit var tv_price: TextView
     private lateinit var tv_weight: TextView
+    private lateinit var et_quantity: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,20 +49,22 @@ class CatalogItemFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         ll_variants = view.findViewById(R.id.catalog_item_variants)
 
-        tv_name = view.findViewById<TextView>(R.id.catalog_item_name)
-        tv_name.text = catalog_item.name
-
-        tv_weight = view.findViewById(R.id.catalog_item_weight)
-        tv_weight.text = weightText(calcWeight())
-        tv_price = view.findViewById(R.id.catalog_item_price)
-
+        // add variants
         for (name in catalog_item.variants.keys) {
             addVariant(name)
         }
 
         setupQualitySpinner(view)
 
+        tv_name = view.findViewById<TextView>(R.id.catalog_item_name)
+        tv_name.text = catalog_item.name
+        tv_weight = view.findViewById(R.id.catalog_item_weight)
+        tv_weight.text = weightText(calcWeight())
+        tv_price = view.findViewById(R.id.catalog_item_price)
+        tv_price.text = priceText(calcPrice())
 
+        et_quantity = view.findViewById(R.id.catalog_item_quantity)
+        et_quantity.addTextChangedListener(QuantityListener(et_quantity, this))
     }
 
     fun setupQualitySpinner(parent: View) {
@@ -143,7 +147,10 @@ class CatalogItemFragment : Fragment() {
         // account for variants
         for (all in catalog_item.variants.values) {
             for (variant in all) {
-                if (variant.selected) price *= variant.price_factor
+
+                if (variant.selected){
+                    price *= variant.price_factor
+                }
             }
         }
         // account for quality
@@ -160,7 +167,14 @@ class CatalogItemFragment : Fragment() {
     fun priceText(price: Float):String {
         val label = getString(R.string.cinv_price)
         val amount = getString(R.string.cinv_money, price)
-        return "$label $amount"
+        var qty_amount = ""
+        var qty = ""
+        if (item.qty > 1) {
+            qty = "${item.qty} x "
+            val total = getString(R.string.cinv_money, price * item.qty)
+            qty_amount = "\n= $total"
+        }
+        return "$label $qty$amount$qty_amount"
     }
 
     /**
@@ -169,6 +183,11 @@ class CatalogItemFragment : Fragment() {
     fun setQuality(qual: Int) {
         item.orig_qual = qual
         item.cur_qual = qual
+        update()
+    }
+
+    fun setQuantity(qty: Int) {
+        item.qty = qty
         update()
     }
 
@@ -207,6 +226,7 @@ class CatalogItemFragment : Fragment() {
 
     class SelectListener(val name:String, val frgm: CatalogItemFragment): AdapterView.OnItemSelectedListener {
         override fun onItemSelected(p0: AdapterView<*>?, p1: View?, selected: Int, p3: Long) {
+            Log.d("info", name)
             val variants = frgm.catalog_item.variants[name]
             for (variant in variants!!) {
                 variant.selected = false
@@ -226,5 +246,26 @@ class CatalogItemFragment : Fragment() {
 
         // unused - necessary for implementation
         override fun onNothingSelected(p0: AdapterView<*>?) {}
+    }
+
+    class QuantityListener(val et: EditText, val frgm: CatalogItemFragment): TextWatcher {
+        override fun afterTextChanged(p0: Editable?) {
+            val input = p0.toString()
+            if (!input.isBlank() && input.matches("\\d+".toRegex())) {
+                var quantity = input.toInt()
+                if (quantity == 0) {
+                    et.setText("1")
+                    quantity = 1
+                }
+                frgm.setQuantity(quantity)
+            } else {
+                frgm.setQuantity(1)
+            }
+
+        }
+
+        // unused - necessary for class implementation
+        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
     }
 }
