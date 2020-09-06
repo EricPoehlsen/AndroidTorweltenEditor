@@ -78,9 +78,21 @@
         android:id="@+id/catalog_item_quantity_label"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:paddingStart="3dp"
         android:text="@string/cinv_quantity"
         app:layout_constraintBottom_toTopOf="@+id/catalog_item_quantity"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/catalog_item_quantity" />
+
+    <TextView
+        android:id="@+id/catalog_item_color_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="3dp"
+        android:text="@string/cinv_color"
+        app:layout_constraintBottom_toTopOf="@+id/catalog_item_color"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/catalog_item_quantity" />
 
     <LinearLayout
@@ -120,4 +132,12 @@
         android:text="@string/cinv_weight_limit"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/catalog_item_dmg" />
+
+    <Button
+        android:id="@+id/catalog_item_color"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/catalog_item_quantity_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/catalog_item_quantity_label" />
 </androidx.constraintlayout.widget.ConstraintLayout>

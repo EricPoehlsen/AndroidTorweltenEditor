@@ -348,8 +348,6 @@ class ColorSelectorView @JvmOverloads constructor(
             size = (spec_width - paddingLeft - paddingRight).toFloat()
         }
 
-        Log.d("info", "spec_width: $spec_width")
-
         val sv_height = (size * .75).toFloat()
         val padding = (size/16)
         val hue_height = (size/8)

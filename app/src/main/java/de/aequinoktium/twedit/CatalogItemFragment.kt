@@ -1,5 +1,6 @@
 package de.aequinoktium.twedit
 
+import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -8,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.viewModelScope
@@ -17,7 +19,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-class CatalogItemFragment : Fragment() {
+class CatalogItemFragment : Fragment(), ItemColorDialog.DialogListener {
     private val c: CharacterViewModel by activityViewModels()
     private val d: DataViewModel by activityViewModels()
     private lateinit var catalog_item: CatalogItem
@@ -30,6 +32,7 @@ class CatalogItemFragment : Fragment() {
     private lateinit var tv_damage: TextView
     private lateinit var tv_weight_limit: TextView
     private lateinit var et_quantity: EditText
+    private lateinit var bt_color: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,6 +74,9 @@ class CatalogItemFragment : Fragment() {
         displayDamage()
         tv_weight_limit = view.findViewById(R.id.catalog_item_weight_limit)
         displayWeightLimit()
+        bt_color = view.findViewById(R.id.catalog_item_color)
+        bt_color.setOnClickListener{ editColor() }
+
 
         et_quantity = view.findViewById(R.id.catalog_item_quantity)
         et_quantity.addTextChangedListener(QuantityListener(et_quantity, this))
@@ -276,6 +282,13 @@ class CatalogItemFragment : Fragment() {
         return damage
     }
 
+    fun editColor() {
+        val fm = this.parentFragmentManager
+        val dialog = ItemColorDialog()
+        dialog.setTargetFragment(this, 301)
+        dialog.show(fm, null)
+    }
+
 
 
     /**
@@ -299,12 +312,12 @@ class CatalogItemFragment : Fragment() {
         item.material = mat
     }
 
-    fun setDamage() {
-        item.dmg = calcDamage()
-    }
-
     fun setWeightLimit() {
         item.weight_limit = calcWeightLimit()
+    }
+
+    fun setDamage() {
+        item.dmg = calcDamage()
     }
 
     fun displayDamage() {
@@ -314,6 +327,18 @@ class CatalogItemFragment : Fragment() {
             val text = "${getString(R.string.cinv_damage)}: ${item.dmg}"
             tv_damage.visibility = View.VISIBLE
             tv_damage.text = text
+        }
+    }
+
+    fun setColor(color: Int, color_name: String) {
+        item.color = "$color.$color_name"
+    }
+
+    fun displayColor() {
+        val color_data = item.color.split(".")
+        if (color_data.size == 2) {
+            val color = color_data[0].toInt()
+            bt_color.background.setTint(color)
         }
     }
 
@@ -453,5 +478,18 @@ class CatalogItemFragment : Fragment() {
         // unused - necessary for class implementation
         override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
         override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+    }
+
+    // implements the DialogListener
+    override fun onDialogPositiveClick(dialog: DialogFragment) {
+        if (dialog is ItemColorDialog) {
+            val h = dialog.cv.h
+            val s = dialog.cv.s
+            val v = dialog.cv.v
+            val color_name = dialog.cv.name
+            val color = Color.HSVToColor(arrayOf(h,s,v).toFloatArray())
+            setColor(color,color_name)
+            displayColor()
+        }
     }
 }
