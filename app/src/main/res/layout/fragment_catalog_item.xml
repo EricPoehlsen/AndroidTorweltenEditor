@@ -103,4 +103,12 @@
         app:layout_constraintBottom_toTopOf="@+id/catalog_item_quality_label"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/catalog_item_quality_label" />
+
+    <TextView
+        android:id="@+id/catalog_item_dmg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/cinv_damage"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/catalog_item_weight" />
 </androidx.constraintlayout.widget.ConstraintLayout>
