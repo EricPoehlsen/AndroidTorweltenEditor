@@ -27,6 +27,7 @@ class CatalogItemFragment : Fragment() {
     private lateinit var tv_name: TextView
     private lateinit var tv_price: TextView
     private lateinit var tv_weight: TextView
+    private lateinit var tv_damage: TextView
     private lateinit var et_quantity: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,6 +66,8 @@ class CatalogItemFragment : Fragment() {
         tv_weight.text = weightText(calcWeight())
         tv_price = view.findViewById(R.id.catalog_item_price)
         tv_price.text = priceText(calcPrice())
+        tv_damage = view.findViewById(R.id.catalog_item_dmg)
+        displayDamage()
 
         et_quantity = view.findViewById(R.id.catalog_item_quantity)
         et_quantity.addTextChangedListener(QuantityListener(et_quantity, this))
@@ -79,7 +82,7 @@ class CatalogItemFragment : Fragment() {
         val sp = parent.findViewById<Spinner>(R.id.catalog_item_quality)
 
         val quality_names = resources.getStringArray(R.array.cinv_qualities)
-        var buyable_qualities = ArrayList<String>()
+        val buyable_qualities = ArrayList<String>()
         for (i in 3..9) {
             buyable_qualities.add(quality_names[i])
         }
@@ -90,9 +93,12 @@ class CatalogItemFragment : Fragment() {
         )
         sp.adapter = adapter
         sp.onItemSelectedListener = QualityListener(this)
-        sp.setSelection(3)
+        sp.setSelection(3) // normal quality
     }
 
+    /**
+     * adds label and spinner for item variants.
+     */
     fun addVariant(name: String) {
         val tv = TextView(context)
         tv.text = name
@@ -120,6 +126,7 @@ class CatalogItemFragment : Fragment() {
 
     /**
      * calculate the item weight based on base weight and chosen variants
+     * @return item weight in grams
      */
     fun calcWeight(): Int {
         var weight = catalog_item.weight
@@ -133,6 +140,7 @@ class CatalogItemFragment : Fragment() {
 
     /**
      * construct the display text for the item weight
+     * @return the text to be displayed on a TextView
      */
     fun weightText(weight: Int): String {
         var result = 0f
@@ -149,6 +157,7 @@ class CatalogItemFragment : Fragment() {
 
     /**
      * calculate price from base price, selected variants and quality
+     * @return the item price (per piece)
      */
     fun calcPrice(): Float {
         var price = catalog_item.price
@@ -171,6 +180,8 @@ class CatalogItemFragment : Fragment() {
 
     /**
      * construct the string that is displayed for the price
+     * also adds total price if quantity > 1
+     * @return the text to be displayed on a TextView
      */
     fun priceText(price: Float):String {
         val label = getString(R.string.cinv_price)
@@ -187,6 +198,7 @@ class CatalogItemFragment : Fragment() {
 
     /**
      * set the quality of an item
+     * @param qual is item quality level (valid is 0..12 but we only use 3..9 in the catalog)
      */
     fun setQuality(qual: Int) {
         item.orig_qual = qual
@@ -194,9 +206,32 @@ class CatalogItemFragment : Fragment() {
         update()
     }
 
+    /**
+     * set the item quantity
+     * @param qty the quantity ... this should be a positiv integer value
+     */
     fun setQuantity(qty: Int) {
         item.qty = qty
         update()
+    }
+
+    fun setMaterial(mat: String) {
+        item.material = mat
+    }
+
+    fun setDamage(dmg: String, dmg_mod: String) {
+        item.dmg = dmg
+        item.dmg_mod = dmg_mod
+    }
+
+    fun displayDamage() {
+        if (item.dmg_mod.isBlank() && item.dmg.isBlank()) {
+            tv_damage.visibility = View.GONE
+        } else {
+            val text = "${getString(R.string.cinv_damage)}: ${item.dmg}${item.dmg_mod}"
+            tv_damage.visibility = View.VISIBLE
+            tv_damage.text = text
+        }
     }
 
     /**
@@ -207,14 +242,21 @@ class CatalogItemFragment : Fragment() {
         for (all in catalog_item.variants.values) {
             for (variant in all) {
                 if (variant.selected) {
-                    if (variant.edit_name) {
+                    if (variant.prefix) {
                         if (variant.name.endsWith(" ")){
                             name = variant.name + name
                         } else {
                             name = variant.name + name.toLowerCase(Locale.getDefault())
                         }
                     }
-                    if (variant.override_name) {
+                    if (variant.suffix) {
+                        if (variant.name.startsWith(" ")){
+                            name = name + variant.name
+                        } else {
+                            name = name + variant.name.toLowerCase(Locale.getDefault())
+                        }
+                    }
+                    if (variant.rename) {
                         name = variant.name
                     }
                 }
@@ -223,6 +265,11 @@ class CatalogItemFragment : Fragment() {
         return name
     }
 
+
+
+    /**
+     * recalculate price an weight and display results
+     */
     fun update() {
         item.name = buildName()
         tv_name.text = item.name
@@ -230,8 +277,14 @@ class CatalogItemFragment : Fragment() {
         tv_weight.text = weightText(item.weight)
         item.price = calcPrice()
         tv_price.text = priceText(item.price)
+        displayDamage()
     }
 
+    /**
+     * add the item to the characters inventory
+     * if the character has to pay for the item, the money transaction is also initiated
+     * @param pay true if character has to pay.
+     */
     fun addItem(pay: Boolean) {
         c.viewModelScope.launch(Dispatchers.IO) {
             c.addToInventory(item)
@@ -246,14 +299,30 @@ class CatalogItemFragment : Fragment() {
         }
     }
 
+    /**
+     * Implements an [AdapterView.OnItemSelectedListener] to track the
+     * users selection of a item variant. Updates the selection in the
+     * [CatalogItem.variants] and calls .update() on the fragment
+     *
+     */
     class SelectListener(val name:String, val frgm: CatalogItemFragment): AdapterView.OnItemSelectedListener {
         override fun onItemSelected(p0: AdapterView<*>?, p1: View?, selected: Int, p3: Long) {
-            Log.d("info", name)
             val variants = frgm.catalog_item.variants[name]
             for (variant in variants!!) {
                 variant.selected = false
             }
             variants[selected].selected = true
+
+            // handle specific data
+            if (name == frgm.resources.getString(R.string.cinv_material)) {
+                Log.d("Info", "Material: ${variants[selected].name}")
+                frgm.setMaterial(variants[selected].name)
+            }
+
+            frgm.setDamage(variants[selected].dmg, variants[selected].dmg)
+
+
+
             frgm.update()
         }
 
@@ -261,6 +330,10 @@ class CatalogItemFragment : Fragment() {
         override fun onNothingSelected(p0: AdapterView<*>?) {}
     }
 
+    /**
+     * Implements an [AdapterView.OnItemSelectedListener] to track the
+     * users quality selection and calls .setQuality on the fragment
+     */
     class QualityListener(val frgm: CatalogItemFragment): AdapterView.OnItemSelectedListener {
         override fun onItemSelected(p0: AdapterView<*>?, p1: View?, pos: Int, p3: Long) {
             frgm.setQuality(pos + 3)
@@ -270,6 +343,10 @@ class CatalogItemFragment : Fragment() {
         override fun onNothingSelected(p0: AdapterView<*>?) {}
     }
 
+    /**
+     * Implements an [TextWatcher] to read the quantity entry and
+     * update the fragment accordingly
+     */
     class QuantityListener(val et: EditText, val frgm: CatalogItemFragment): TextWatcher {
         override fun afterTextChanged(p0: Editable?) {
             val input = p0.toString()

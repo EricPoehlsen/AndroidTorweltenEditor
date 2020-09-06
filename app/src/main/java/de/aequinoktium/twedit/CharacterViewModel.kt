@@ -53,6 +53,8 @@ class CharacterViewModel: ViewModel() {
 
     private var deleted = false
 
+    var string_values = mutableMapOf<String, String>()
+
     fun setDatabase(db: SQLiteDatabase) {
         this.db = db
     }
@@ -234,10 +236,12 @@ class CharacterViewModel: ViewModel() {
                 if (value.startsWith("dmg_mod:")) {
                     item.dmg_mod = value.split(":")[1]
                 }
-
+                if (value.startsWith("var.")) {
+                    val split = value.split(":")
+                    val var_name = split[0].replace("var.","")
+                    if (var_name == string_values["mat"]) item.material = split[1]
+                }
             }
-
-
             items.add(item)
         }
 
@@ -259,6 +263,10 @@ class CharacterViewModel: ViewModel() {
         if (!item.dmg.isBlank()) extra_data += "dmg:${item.dmg}|"
         if (!item.dmg_mod.isBlank()) extra_data += "dmg_mod:${item.dmg_mod}|"
         if (!item.color.isBlank()) extra_data += "col:${item.color}|"
+        if (!item.material.isBlank()) {
+            val mat_name = string_values["mat"]
+            extra_data += "var.$mat_name:${item.material}"
+        }
 
 
         val cv = ContentValues()

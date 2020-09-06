@@ -272,9 +272,11 @@ class DataViewModel: ViewModel() {
             val item_variant = CatalogItem.Variant()
             val elements = variant.split(".")
             if (elements[0].contains("##")) {
-                item_variant.override_name = true
-            } else if (elements[0].contains("#")) {
-                item_variant.edit_name = true
+                item_variant.rename = true
+            } else if (elements[0].startsWith("#")) {
+                item_variant.suffix = true
+            } else if (elements[0].endsWith("#")) {
+                item_variant.prefix = true
             }
             item_variant.name = elements[0].replace("#", "")
             for (e in elements) {
@@ -287,6 +289,13 @@ class DataViewModel: ViewModel() {
                 } else if (e.matches("wl-?\\d+".toRegex())) {
                     val weight_limit = e.replace("wl", "").toInt()
                     item_variant.weight_limit = weight_limit
+                } else if (e.startsWith("d")) {
+                    val dmg_value = e.replace("d","")
+                    if (dmg_value.first() in "±+-") {
+                        item_variant.dmg_mod = dmg_value
+                    } else {
+                        item_variant.dmg = dmg_value
+                    }
                 }
             }
             vars += item_variant

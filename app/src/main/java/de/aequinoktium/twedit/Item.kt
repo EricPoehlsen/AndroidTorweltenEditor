@@ -101,8 +101,11 @@ class CatalogItem() {
         var price_factor = 1f
         var weight_factor = 1f
         var weight_limit = 0
+        var dmg_mod = ""
+        var dmg = ""
         var selected = false
-        var edit_name = false
-        var override_name = false
+        var prefix = false
+        var suffix = false
+        var rename = false
     }
 }
