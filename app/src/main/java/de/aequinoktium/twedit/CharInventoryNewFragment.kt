@@ -93,6 +93,7 @@ class CharInventoryNewFragment : Fragment(),
 
         val item_cls = arrayOf(
             getString(R.string.cinv_cls_generic),
+            getString(R.string.cinv_cls_valuable),
             getString(R.string.cinv_cls_clothing),
             getString(R.string.cinv_cls_container),
             getString(R.string.cinv_cls_tool),
@@ -297,12 +298,13 @@ class CharInventoryNewFragment : Fragment(),
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
         when (p2) {
             0 -> item.cls = "generic"
-            1 -> item.cls = "clothing"
-            2 -> item.cls = "container"
-            3 -> item.cls = "tool"
-            4 -> item.cls = "weapon"
-            5 -> item.cls = "ammo"
-            6 -> item.cls = "implant"
+            1 -> item.cls = "valuable"
+            2 -> item.cls = "clothing"
+            3 -> item.cls = "container"
+            4 -> item.cls = "tool"
+            5 -> item.cls = "weapon"
+            6 -> item.cls = "ammo"
+            7 -> item.cls = "implant"
         }
     }
 
