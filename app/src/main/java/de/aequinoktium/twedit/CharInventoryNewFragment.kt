@@ -318,13 +318,7 @@ class CharInventoryNewFragment : Fragment(),
             setContainer(dialog.capacity, dialog.item_cont_name)
         }
         if (dialog is ItemDamageDialog) {
-            val mod = dialog.cb_mod.isChecked
-            if (mod) {
-                setDamageModifier(dialog.s, dialog.d, dialog.t)
-            } else {
-                setDamage(dialog.s, dialog.d, dialog.t)
-            }
-
+            setDamage(dialog.s, dialog.d, dialog.t, dialog.cb_mod.isChecked)
         }
         if (dialog is ItemColorDialog) {
             val col_array = arrayOf(dialog.cv.h,dialog.cv.s,dialog.cv.v).toFloatArray()
@@ -337,58 +331,19 @@ class CharInventoryNewFragment : Fragment(),
         }
     }
 
-    /** construct damage modifier string, set value and update button
+    /** set damage and update button
      * @param s: 'Schaden' number of damage dice
      * @param d: 'Durchschlag' [EWT] table column -7 .. 7
      * @param t: 'Typ' damage type P, E, M (empty = P)
      */
-    fun setDamageModifier(s: Int, d: Int, t: String="") {
-        var dmg = ""
-
-        var s_val = ""
-        if (s == 0) s_val = "±"
-        if (s > 0) s_val = "+"
-        s_val += s.toString()
-
-        var d_val = ""
-        if (d == 0) d_val = "±"
-        if (d > 0) d_val = "+"
-        d_val += d.toString()
-
-        var type = ""
-        if (!t.isBlank()) {
-            type += "/" + t.toUpperCase(Locale.getDefault())
-        }
-
+    fun setDamage(s: Int, d: Int, t: String="", mod: Boolean) {
+        val dmg = Damage(s,d,t,mod)
         if (s == 0 && d == 0) { // no value
             bt_dmg.text = resources.getString(R.string.cinv_damage)
         } else {
-            dmg = "${s_val}/${d_val}${type}"
-            bt_dmg.text = dmg
+            bt_dmg.text = dmg.toString()
         }
         item.dmg = dmg
-    }
-
-    /**
-     * construct the 'damage code' as string
-     * set the variable and update the button
-     * @param s: 'Schaden' number of damage dice
-     * @param d: 'Durchschlag' [EWT] table column -7 .. 7
-     * @param t: 'Typ' damage type P, E, M (empty = P)
-     */
-    fun setDamage(s: Int, d: Int, t: String="") {
-        var dmg = ""
-
-        val d_val = if (d > 0) "+$d" else "$d"
-        val type = if (t.isBlank()) "" else "/${t.toUpperCase(Locale.getDefault())}"
-
-        if (s == 0 && d == 0) { // no value
-            bt_dmg.text = resources.getString(R.string.cinv_damage)
-        } else {
-            dmg = "${s}/${d_val}${type}"
-            bt_dmg.text = dmg
-        }
-       item.dmg = dmg
     }
 
     /**

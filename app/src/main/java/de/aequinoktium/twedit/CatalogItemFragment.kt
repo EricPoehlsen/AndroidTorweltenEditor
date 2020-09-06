@@ -257,17 +257,23 @@ class CatalogItemFragment : Fragment() {
         }
     }
 
-    fun calcDamage(): String {
-        var is_dmg_mod = false
-
-        var dmg = catalog_item.dmg
-
-        val dmg_elements = dmg.split("/")
-        var d = 0
-        var s = 0
-        var t = ""
-        return ""
+    fun calcDamage(): Damage {
+        var damage = catalog_item.dmg
+        for (all in catalog_item.variants.values) {
+            for (variant in all) {
+                if (variant.selected){
+                    if (variant.dmg.mod) {
+                        damage += variant.dmg
+                    } else {
+                        damage = variant.dmg
+                    }
+                }
+            }
+        }
+        return damage
     }
+
+
 
     /**
      * set the quality of an item
@@ -299,7 +305,7 @@ class CatalogItemFragment : Fragment() {
     }
 
     fun displayDamage() {
-        if (item.dmg.isBlank()) {
+        if (item.dmg.s == 0) {
             tv_damage.visibility = View.GONE
         } else {
             val text = "${getString(R.string.cinv_damage)}: ${item.dmg}"

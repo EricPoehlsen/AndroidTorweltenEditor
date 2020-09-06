@@ -1,5 +1,7 @@
 package de.aequinoktium.twedit
 
+import java.util.*
+
 
 class Item() {
     var id = 0
@@ -15,7 +17,7 @@ class Item() {
     var equip_loc = emptyArray<String>()
     var price = 0f
     var container_name = ""
-    var dmg = ""
+    var dmg = Damage()
     var chambers = 0
     var caliber = ""
     var color = ""
@@ -82,7 +84,7 @@ class CatalogItem() {
     var weight_limit = 0
     var price = 0f
     var container_name = ""
-    var dmg = ""
+    var dmg = Damage()
     var chambers = 0
     var caliber = ""
     var color = ""
@@ -98,10 +100,87 @@ class CatalogItem() {
         var weight_factor = 1f
         var weight_limit = 0
         var dmg_mod = ""
-        var dmg = ""
+        var dmg = Damage()
         var selected = false
         var prefix = false
         var suffix = false
         var rename = false
+    }
+}
+
+class Damage {
+    constructor(dmg_string: String="") {
+        init(dmg_string)
+    }
+    constructor(s:Int, d:Int, t:String, mod:Boolean=false) {
+        init(s,d,t,mod)
+    }
+
+    var s: Int = 0
+    var d: Int = 0
+    var t: String = ""
+    var mod: Boolean = false
+    val none: Boolean
+        get() = s == 0 && d == 0
+
+
+
+    /**
+     * some kind of integer representation of the damage value
+     * @return 0 for no damage or the sum of s and d
+     */
+    fun toInt():Int = Math.abs(s) + Math.abs(d)
+
+    override fun toString():String {
+        var s_mod = ""
+        var d_mod = ""
+        var type = ""
+        if (mod) {
+            if (s == 0) s_mod = "±"
+            if (s > 0) s_mod = "+"
+            if (d == 0) d_mod = "±"
+            if (d > 0) d_mod = "+"
+        }
+        if (t.length == 1) {
+            type = "/$t"
+        }
+
+        return "$s_mod$s/$d_mod$d$type"
+    }
+
+    operator fun plus(b: Damage):Damage {
+        s += b.s
+        d += b.d
+        t = b.t
+        return this
+    }
+
+    fun init(input: String) {
+        val dmg_elements = input.split("/")
+        if (dmg_elements.size >= 2) {
+            if(dmg_elements[0].length > 1) {
+                var d_s = dmg_elements[0]
+                if (d_s.first() in "±+-") {
+                    mod = true
+                    d_s = d_s.replace("±", "")
+                }
+                d = d_s.toInt()
+            }
+            if(dmg_elements[1].matches("-?\\d+".toRegex())) {
+                s = dmg_elements[1].toInt()
+            }
+        }
+        if (dmg_elements.size == 3) {
+            if(dmg_elements[2].matches("[pPeEmM]".toRegex())) {
+                t = dmg_elements[2].toUpperCase(Locale.getDefault())
+            }
+        }
+    }
+
+    fun init(s:Int, d:Int, t:String, mod:Boolean) {
+        this.s = s
+        this.d = d
+        this.t = t
+        this.mod = mod
     }
 }

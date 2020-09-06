@@ -98,10 +98,9 @@ class CharItemFragment : Fragment(),
         tv_weight.text = weight_text
 
         tv_dmg = view.findViewById(R.id.char_item_dmg)
-        var dmg = item.dmg
         val dmg_label = resources.getString(R.string.cinv_damage)
-        val dmg_text = "$dmg_label: $dmg"
-        if (dmg.isBlank()) {
+        val dmg_text = "$dmg_label: ${item.dmg}"
+        if (item.dmg.none) {
             tv_dmg.visibility = View.GONE
         } else {
             tv_dmg.text = dmg_text

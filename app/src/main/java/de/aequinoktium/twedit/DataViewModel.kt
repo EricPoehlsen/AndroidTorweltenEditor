@@ -252,7 +252,7 @@ class DataViewModel: ViewModel() {
                 readVariants(entry, item)
             }
             if (entry.startsWith("dmg:")) {
-                item.dmg = entry.replace("dmg:","")
+                item.dmg = Damage(entry.replace("dmg:",""))
             }
         }
 
@@ -295,11 +295,7 @@ class DataViewModel: ViewModel() {
                     item_variant.weight_limit = weight_limit
                 } else if (e.startsWith("d")) {
                     val dmg_value = e.replace("d","")
-                    if (dmg_value.first() in "±+-") {
-                        item_variant.dmg_mod = dmg_value
-                    } else {
-                        item_variant.dmg = dmg_value
-                    }
+                    item_variant.dmg = Damage(dmg_value)
                 }
             }
             vars += item_variant
