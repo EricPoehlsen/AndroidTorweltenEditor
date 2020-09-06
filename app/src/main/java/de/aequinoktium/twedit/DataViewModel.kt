@@ -236,7 +236,6 @@ class DataViewModel: ViewModel() {
 
             val extra_data = data.getString(data.getColumnIndex("extra_data"))
             readExtraData(extra_data, item)
-            Log.d("info", "Item: ${item.name}")
             current_catalog += item
         }
         data.close()
