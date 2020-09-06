@@ -28,6 +28,7 @@ class CatalogItemFragment : Fragment() {
     private lateinit var tv_price: TextView
     private lateinit var tv_weight: TextView
     private lateinit var tv_damage: TextView
+    private lateinit var tv_weight_limit: TextView
     private lateinit var et_quantity: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,6 +69,8 @@ class CatalogItemFragment : Fragment() {
         tv_price.text = priceText(calcPrice())
         tv_damage = view.findViewById(R.id.catalog_item_dmg)
         displayDamage()
+        tv_weight_limit = view.findViewById(R.id.catalog_item_weight_limit)
+        displayWeightLimit()
 
         et_quantity = view.findViewById(R.id.catalog_item_quantity)
         et_quantity.addTextChangedListener(QuantityListener(et_quantity, this))
@@ -164,7 +167,6 @@ class CatalogItemFragment : Fragment() {
         // account for variants
         for (all in catalog_item.variants.values) {
             for (variant in all) {
-
                 if (variant.selected){
                     price *= variant.price_factor
                 }
@@ -196,6 +198,40 @@ class CatalogItemFragment : Fragment() {
         return "$label $qty$amount$qty_amount"
     }
 
+    fun calcWeightLimit(): Int {
+        var weight_limit = catalog_item.weight_limit
+        // account for variants
+        for (all in catalog_item.variants.values) {
+            for (variant in all) {
+                if (variant.selected){
+                    weight_limit += variant.weight_limit
+                }
+            }
+        }
+        return weight_limit
+    }
+
+    fun weightLimitText(weight_limit: Int): String {
+        val label = getString(R.string.cinv_weight_limit)
+        var capacity = weight_limit.toString()
+        var unit = "g"
+        if (weight_limit >= 1000) {
+            capacity = (weight_limit / 1000).toString()
+            unit = "kg"
+        }
+        return "$label $capacity $unit"
+    }
+
+    fun displayWeightLimit() {
+        setWeightLimit()
+        if (item.weight_limit > 0) {
+            tv_weight_limit.visibility = View.VISIBLE
+            tv_weight_limit.text = weightLimitText(item.weight_limit)
+        } else {
+            tv_weight_limit.visibility = View.GONE
+        }
+    }
+
     /**
      * set the quality of an item
      * @param qual is item quality level (valid is 0..12 but we only use 3..9 in the catalog)
@@ -203,7 +239,6 @@ class CatalogItemFragment : Fragment() {
     fun setQuality(qual: Int) {
         item.orig_qual = qual
         item.cur_qual = qual
-        update()
     }
 
     /**
@@ -212,7 +247,6 @@ class CatalogItemFragment : Fragment() {
      */
     fun setQuantity(qty: Int) {
         item.qty = qty
-        update()
     }
 
     fun setMaterial(mat: String) {
@@ -222,6 +256,10 @@ class CatalogItemFragment : Fragment() {
     fun setDamage(dmg: String, dmg_mod: String) {
         item.dmg = dmg
         item.dmg_mod = dmg_mod
+    }
+
+    fun setWeightLimit() {
+        item.weight_limit = calcWeightLimit()
     }
 
     fun displayDamage() {
@@ -278,6 +316,7 @@ class CatalogItemFragment : Fragment() {
         item.price = calcPrice()
         tv_price.text = priceText(item.price)
         displayDamage()
+        displayWeightLimit()
     }
 
     /**
@@ -320,6 +359,7 @@ class CatalogItemFragment : Fragment() {
             }
 
             frgm.setDamage(variants[selected].dmg, variants[selected].dmg)
+            frgm.setWeightLimit()
 
 
 
@@ -337,6 +377,7 @@ class CatalogItemFragment : Fragment() {
     class QualityListener(val frgm: CatalogItemFragment): AdapterView.OnItemSelectedListener {
         override fun onItemSelected(p0: AdapterView<*>?, p1: View?, pos: Int, p3: Long) {
             frgm.setQuality(pos + 3)
+            frgm.update()
         }
 
         // unused - necessary for implementation
@@ -360,6 +401,7 @@ class CatalogItemFragment : Fragment() {
             } else {
                 frgm.setQuantity(1)
             }
+            frgm.update()
 
         }
 

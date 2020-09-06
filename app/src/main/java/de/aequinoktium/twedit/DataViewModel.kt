@@ -232,6 +232,7 @@ class DataViewModel: ViewModel() {
             item.price = data.getFloat(data.getColumnIndex("price"))
             item.desc = data.getString(data.getColumnIndex("desc"))
             item.avail = data.getInt(data.getColumnIndex("avail"))
+            item.weight_limit = data.getInt(data.getColumnIndex("weight_limit"))
 
             val extra_data = data.getString(data.getColumnIndex("extra_data"))
             readExtraData(extra_data, item)
