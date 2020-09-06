@@ -257,13 +257,12 @@ class CharacterViewModel: ViewModel() {
     fun prepareItem(item: Item): ContentValues {
         var extra_data = ""
         if (item.container_name.length > 0) extra_data += "cnt:${item.container_name}|"
-        if (!item.dmg.none) extra_data += "dmg:${item.dmg}|"
+        if (!item.dmg.isEmpty()) extra_data += "dmg:${item.dmg}|"
         if (!item.color.isBlank()) extra_data += "col:${item.color}|"
         if (!item.material.isBlank()) {
             val mat_name = string_values["mat"]
             extra_data += "var.$mat_name:${item.material}"
         }
-
 
         val cv = ContentValues()
         cv.put("name", item.name)

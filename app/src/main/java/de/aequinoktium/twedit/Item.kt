@@ -109,6 +109,17 @@ class CatalogItem() {
     }
 }
 
+/**
+ * A class to store the damage value
+ * Damage is written as S/D(/T) in the rules
+ * @param s is "Schaden" (damage) as integer on a roll it defines the number of dice
+ * @param d is "Durchschlag" (penetration) an integer -7..+7
+ * @param t is damage type P=physical E=energy M=morale (empty = P)
+ * @param mod Boolean - if true the damage value is meant to modify another damage value
+ *
+ * @param dmg_string damage as string representation
+ *                   if the first char is '±', '+' or '-' it is damage modifier
+ */
 class Damage {
     constructor(){}
     constructor(dmg_string: String) {
@@ -122,15 +133,11 @@ class Damage {
     var d: Int = 0
     var t: String = ""
     var mod: Boolean = false
-    val none: Boolean
-        get() = s == 0 && d == 0
 
-    /**
-     * some kind of integer representation of the damage value
-     * @return 0 for no damage or the sum of s and d
-     */
-    fun toInt():Int = Math.abs(s) + Math.abs(d)
+    // returns true if this Damage is 'empty'
+    fun isEmpty(): Boolean = (s == 0 && d == 0)
 
+    // returns a string representation of the damage
     override fun toString():String {
         var s_mod = ""
         var d_mod = ""
@@ -148,6 +155,7 @@ class Damage {
         return "$s_mod$s/$d_mod$d$type"
     }
 
+    // allows adding two damage values
     operator fun plus(b: Damage):Damage {
         s += b.s
         d += b.d
@@ -155,8 +163,8 @@ class Damage {
         return this
     }
 
+    // init base on input string - parses the string
     fun init(input: String) {
-        Log.d("info", "Trying to parse $input")
         val dmg_elements = input.split("/")
         if (dmg_elements.size >= 2) {
             if(dmg_elements[0].length >= 1) {

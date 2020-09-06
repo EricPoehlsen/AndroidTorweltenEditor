@@ -135,6 +135,7 @@ class CatalogItemFragment : Fragment() {
         item.price = catalog_item.price
         item.weight = catalog_item.weight
         item.weight_limit = catalog_item.weight_limit
+        item.dmg = catalog_item.dmg
     }
 
 
@@ -263,10 +264,10 @@ class CatalogItemFragment : Fragment() {
             for (variant in all) {
                 if (variant.selected){
                     if (variant.dmg.mod) {
-                        if (damage.none) damage.mod = true
+                        if (damage.isEmpty()) damage.mod = true
                         damage += variant.dmg
                         Log.d("info", "damage: $damage")
-                    } else if (!variant.dmg.none) {
+                    } else if (!variant.dmg.isEmpty()) {
                         damage = variant.dmg
                     }
                 }
@@ -307,7 +308,7 @@ class CatalogItemFragment : Fragment() {
     }
 
     fun displayDamage() {
-        if (item.dmg.none) {
+        if (item.dmg.isEmpty()) {
             tv_damage.visibility = View.GONE
         } else {
             val text = "${getString(R.string.cinv_damage)}: ${item.dmg}"
