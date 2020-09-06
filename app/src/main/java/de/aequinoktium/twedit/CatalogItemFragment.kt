@@ -76,6 +76,7 @@ class CatalogItemFragment : Fragment(), ItemColorDialog.DialogListener {
         displayWeightLimit()
         bt_color = view.findViewById(R.id.catalog_item_color)
         bt_color.setOnClickListener{ editColor() }
+        displayColor()
 
 
         et_quantity = view.findViewById(R.id.catalog_item_quantity)
@@ -272,7 +273,6 @@ class CatalogItemFragment : Fragment(), ItemColorDialog.DialogListener {
                     if (variant.dmg.mod) {
                         if (damage.isEmpty()) damage.mod = true
                         damage += variant.dmg
-                        Log.d("info", "damage: $damage")
                     } else if (!variant.dmg.isEmpty()) {
                         damage = variant.dmg
                     }
@@ -335,10 +335,15 @@ class CatalogItemFragment : Fragment(), ItemColorDialog.DialogListener {
     }
 
     fun displayColor() {
-        val color_data = item.color.split(".")
-        if (color_data.size == 2) {
-            val color = color_data[0].toInt()
-            bt_color.background.setTint(color)
+        if (!item.color.isBlank()) {
+            bt_color.visibility = View.VISIBLE
+            val color_data = item.color.split(".")
+            if (color_data.size == 2) {
+                val color = color_data[0].toInt()
+                bt_color.background.setTint(color)
+            }
+        } else {
+            bt_color.visibility = View.GONE
         }
     }
 
@@ -424,7 +429,6 @@ class CatalogItemFragment : Fragment(), ItemColorDialog.DialogListener {
 
             // handle specific data
             if (name == frgm.resources.getString(R.string.cinv_material)) {
-                Log.d("Info", "Material: ${variants[selected].name}")
                 frgm.setMaterial(variants[selected].name)
             }
 
