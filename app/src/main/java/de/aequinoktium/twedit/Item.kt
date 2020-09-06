@@ -1,5 +1,6 @@
 package de.aequinoktium.twedit
 
+import android.util.Log
 import java.util.*
 
 
@@ -123,8 +124,6 @@ class Damage {
     val none: Boolean
         get() = s == 0 && d == 0
 
-
-
     /**
      * some kind of integer representation of the damage value
      * @return 0 for no damage or the sum of s and d
@@ -159,15 +158,15 @@ class Damage {
         val dmg_elements = input.split("/")
         if (dmg_elements.size >= 2) {
             if(dmg_elements[0].length > 1) {
-                var d_s = dmg_elements[0]
-                if (d_s.first() in "±+-") {
+                var s_string = dmg_elements[0]
+                if (s_string.first() in "±+-") {
                     mod = true
-                    d_s = d_s.replace("±", "")
+                    s_string = s_string.replace("±", "")
                 }
-                d = d_s.toInt()
+                s = s_string.toInt()
             }
-            if(dmg_elements[1].matches("-?\\d+".toRegex())) {
-                s = dmg_elements[1].toInt()
+            if(dmg_elements[1].matches("[+-]?\\d+".toRegex())) {
+                d = dmg_elements[1].toInt()
             }
         }
         if (dmg_elements.size == 3) {
