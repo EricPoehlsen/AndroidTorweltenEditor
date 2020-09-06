@@ -146,6 +146,7 @@
 
     <string name="cinv_name">Bezeichnung: </string>
     <string name="cinv_equipped">Ausgerüstete Gegenstände</string>
+    <string name="cinv_all">Alle Gegenstände</string>
     <string name="cinv_desc">Beschreibung: </string>
     <string name="cinv_equip">ausrüsten</string>
     <string name="cinv_pack">einpacken</string>

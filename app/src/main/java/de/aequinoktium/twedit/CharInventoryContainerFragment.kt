@@ -5,8 +5,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 
@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 class CharInventoryContainerFragment : Fragment(){
     private val c: CharacterViewModel by activityViewModels()
     private lateinit var cnt: Item
+    private lateinit var tv_title: TextView
     private lateinit var ll_container: LinearLayout
 
 
@@ -39,21 +40,25 @@ class CharInventoryContainerFragment : Fragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        ll_container = view.findViewById(R.id.inv_container)
-        if (c.current_item.id == 0) {
+        ll_container = view.findViewById(R.id.char_inv_container)
+        tv_title = view.findViewById(R.id.char_inv_cont_title)
 
+        if (c.current_item.id == 0) {
+            tv_title.text = getString(R.string.cinv_all)
             for (item in c.getInventory()) {
-                var tv = ItemView(context)
-                tv.text = item.name
-                tv.item = item
-                tv.setOnClickListener {v -> editItem(v)}
-                ll_container.addView(tv)
+                val iv = ItemView(context)
+                iv.text = item.name
+                iv.item = item
+                iv.setOnClickListener { v -> editItem(v)}
+                ll_container.addView(iv)
             }
         } else {
             cnt = c.current_item
+            tv_title.text = cnt.name
+
             for (item in c.getInventory()) {
                 if (item.packed_into == cnt.id) {
-                    var iv = ItemView(context)
+                    val iv = ItemView(context)
                     iv.text = item.name
                     iv.item = item
                     iv.setOnClickListener {v -> editItem(v)}
@@ -62,7 +67,7 @@ class CharInventoryContainerFragment : Fragment(){
             }
 
             // add self
-            var iv = ItemView(context)
+            val iv = ItemView(context)
             iv.text = cnt.name
             iv.item = cnt
             iv.setOnClickListener {v -> editItem(v)}
