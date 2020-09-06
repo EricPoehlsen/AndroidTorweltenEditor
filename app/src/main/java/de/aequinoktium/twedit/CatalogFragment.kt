@@ -21,7 +21,7 @@ class CatalogFragment : Fragment() {
     private lateinit var ll_list: LinearLayout
     private var cls = "clothing"
 
-    private var tab_icons = arrayOf<ImageView>()
+    private lateinit var tab_icons: Array<ImageView>
 
 
 
@@ -56,6 +56,7 @@ class CatalogFragment : Fragment() {
     }
 
     fun setupTabIcons(view: View) {
+        tab_icons = arrayOf<ImageView>()
         val view_ids = arrayOf(
             R.id.catalog_icon_clothing,
             R.id.catalog_icon_container,

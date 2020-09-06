@@ -200,7 +200,6 @@ class CatalogItemFragment : Fragment() {
 
     fun calcWeightLimit(): Int {
         var weight_limit = catalog_item.weight_limit
-        // account for variants
         for (all in catalog_item.variants.values) {
             for (variant in all) {
                 if (variant.selected){
