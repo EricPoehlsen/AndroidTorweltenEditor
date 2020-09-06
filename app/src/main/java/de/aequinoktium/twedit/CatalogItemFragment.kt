@@ -34,7 +34,7 @@ class CatalogItemFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         catalog_item = d.current_catalog_item
-
+        setInitialData()
     }
 
     override fun onCreateView(
@@ -126,6 +126,17 @@ class CatalogItemFragment : Fragment() {
         sp.id = View.generateViewId()
         ll_variants.addView(sp)
     }
+
+    // transfer some initial data
+    fun setInitialData() {
+        item.container_name = catalog_item.container_name
+        item.name = catalog_item.name
+        item.desc = catalog_item.desc
+        item.price = catalog_item.price
+        item.weight = catalog_item.weight
+        item.weight_limit = catalog_item.weight_limit
+    }
+
 
     /**
      * calculate the item weight based on base weight and chosen variants
