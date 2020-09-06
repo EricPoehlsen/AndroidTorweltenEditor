@@ -366,7 +366,7 @@ class CharInventoryNewFragment : Fragment(),
             dmg = "${s_val}/${d_val}${type}"
             bt_dmg.text = dmg
         }
-        item.dmg_mod = dmg
+        item.dmg = dmg
     }
 
     /**

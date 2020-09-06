@@ -233,9 +233,6 @@ class CharacterViewModel: ViewModel() {
                 if (value.startsWith("dmg:")) {
                     item.dmg = value.split(":")[1]
                 }
-                if (value.startsWith("dmg_mod:")) {
-                    item.dmg_mod = value.split(":")[1]
-                }
                 if (value.startsWith("var.")) {
                     val split = value.split(":")
                     val var_name = split[0].replace("var.","")
@@ -261,7 +258,6 @@ class CharacterViewModel: ViewModel() {
         var extra_data = ""
         if (item.container_name.length > 0) extra_data += "cnt:${item.container_name}|"
         if (!item.dmg.isBlank()) extra_data += "dmg:${item.dmg}|"
-        if (!item.dmg_mod.isBlank()) extra_data += "dmg_mod:${item.dmg_mod}|"
         if (!item.color.isBlank()) extra_data += "col:${item.color}|"
         if (!item.material.isBlank()) {
             val mat_name = string_values["mat"]

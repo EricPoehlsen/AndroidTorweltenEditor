@@ -16,7 +16,6 @@ class Item() {
     var price = 0f
     var container_name = ""
     var dmg = ""
-    var dmg_mod = ""
     var chambers = 0
     var caliber = ""
     var color = ""
@@ -37,7 +36,6 @@ class Item() {
         new.price = this.price
         new.container_name = this.container_name
         new.dmg = this.dmg
-        new.dmg_mod = this.dmg_mod
         new.chambers = 0
         new.caliber = this.caliber
         new.color = this.color
@@ -67,7 +65,6 @@ class Item() {
             item.price == this.price &&
             item.container_name == this.container_name &&
             item.dmg == this.dmg &&
-            item.dmg_mod == this.dmg_mod &&
             item.chambers == 0 &&
             item.caliber == this.caliber &&
             item.color == this.color &&
@@ -86,7 +83,6 @@ class CatalogItem() {
     var price = 0f
     var container_name = ""
     var dmg = ""
-    var dmg_mod = ""
     var chambers = 0
     var caliber = ""
     var color = ""

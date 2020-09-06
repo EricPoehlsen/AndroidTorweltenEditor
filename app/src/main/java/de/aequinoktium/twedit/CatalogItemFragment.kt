@@ -146,16 +146,18 @@ class CatalogItemFragment : Fragment() {
      * @return the text to be displayed on a TextView
      */
     fun weightText(weight: Int): String {
-        var result = 0f
+        var value = weight.toString()
         val label = getString(R.string.cinv_weight)
         var unit = "g"
-        if (weight > 1000) {
-            result = (weight/1000).toFloat()
+        if (weight >= 1000) {
+            if (weight % 1000 == 0) {
+                value = (weight / 1000).toString()
+            } else {
+                value = (weight / 1000).toFloat().toString()
+            }
             unit = "kg"
-        } else {
-            result = weight.toFloat()
         }
-        return "${label} ${result}${unit}"
+        return "${label} ${value} ${unit}"
     }
 
     /**
@@ -198,6 +200,10 @@ class CatalogItemFragment : Fragment() {
         return "$label $qty$amount$qty_amount"
     }
 
+    /**
+     * calculate the weight limit based on the selected variants
+     * @return weight limit in grams
+     */
     fun calcWeightLimit(): Int {
         var weight_limit = catalog_item.weight_limit
         for (all in catalog_item.variants.values) {
@@ -210,6 +216,11 @@ class CatalogItemFragment : Fragment() {
         return weight_limit
     }
 
+    /**
+     * construct the text to be displayed on the weight limit TextView
+     * @param weight_limit in grams
+     * @return the text
+     */
     fun weightLimitText(weight_limit: Int): String {
         val label = getString(R.string.cinv_weight_limit)
         var capacity = weight_limit.toString()
@@ -221,6 +232,10 @@ class CatalogItemFragment : Fragment() {
         return "$label $capacity $unit"
     }
 
+    /**
+     * displays the weight limit or hides the view
+     * calls setWeightLimit in the process
+     */
     fun displayWeightLimit() {
         setWeightLimit()
         if (item.weight_limit > 0) {
@@ -229,6 +244,18 @@ class CatalogItemFragment : Fragment() {
         } else {
             tv_weight_limit.visibility = View.GONE
         }
+    }
+
+    fun calcDamage(): String {
+        var is_dmg_mod = false
+
+        var dmg = catalog_item.dmg
+
+        val dmg_elements = dmg.split("/")
+        var d = 0
+        var s = 0
+        var t = ""
+        return ""
     }
 
     /**
@@ -252,9 +279,8 @@ class CatalogItemFragment : Fragment() {
         item.material = mat
     }
 
-    fun setDamage(dmg: String, dmg_mod: String) {
-        item.dmg = dmg
-        item.dmg_mod = dmg_mod
+    fun setDamage() {
+
     }
 
     fun setWeightLimit() {
@@ -262,10 +288,10 @@ class CatalogItemFragment : Fragment() {
     }
 
     fun displayDamage() {
-        if (item.dmg_mod.isBlank() && item.dmg.isBlank()) {
+        if (item.dmg.isBlank()) {
             tv_damage.visibility = View.GONE
         } else {
-            val text = "${getString(R.string.cinv_damage)}: ${item.dmg}${item.dmg_mod}"
+            val text = "${getString(R.string.cinv_damage)}: ${item.dmg}"
             tv_damage.visibility = View.VISIBLE
             tv_damage.text = text
         }
@@ -357,7 +383,7 @@ class CatalogItemFragment : Fragment() {
                 frgm.setMaterial(variants[selected].name)
             }
 
-            frgm.setDamage(variants[selected].dmg, variants[selected].dmg)
+            frgm.setDamage()
             frgm.setWeightLimit()
 
 

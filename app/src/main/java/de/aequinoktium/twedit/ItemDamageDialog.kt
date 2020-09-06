@@ -20,7 +20,9 @@ import androidx.fragment.app.DialogFragment
 class ItemDamageDialog(
     var s: Int = 0,
     var d: Int = 0,
-    var t: String = ""): DialogFragment()
+    var t: String = "",
+    var mod: Boolean = false
+    ): DialogFragment()
 {
     internal lateinit var listener: DialogListener
     private lateinit var et_s: EditText
@@ -69,6 +71,7 @@ class ItemDamageDialog(
             et_t = content.findViewById(R.id.dia_itemdmg_t)
             et_t.addTextChangedListener(TextChanged(et_t, this))
             cb_mod = content.findViewById(R.id.dia_itemdmg_mod)
+            cb_mod.isChecked = mod
 
             builder.setView(content)
 

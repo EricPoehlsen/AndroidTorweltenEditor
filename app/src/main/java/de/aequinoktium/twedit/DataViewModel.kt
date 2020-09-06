@@ -251,6 +251,9 @@ class DataViewModel: ViewModel() {
             if (entry.startsWith("var.")) {
                 readVariants(entry, item)
             }
+            if (entry.startsWith("dmg:")) {
+                item.dmg = entry.replace("dmg:","")
+            }
         }
 
 

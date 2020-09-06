@@ -99,7 +99,6 @@ class CharItemFragment : Fragment(),
 
         tv_dmg = view.findViewById(R.id.char_item_dmg)
         var dmg = item.dmg
-        if (dmg.isBlank()) dmg = item.dmg_mod
         val dmg_label = resources.getString(R.string.cinv_damage)
         val dmg_text = "$dmg_label: $dmg"
         if (dmg.isBlank()) {
