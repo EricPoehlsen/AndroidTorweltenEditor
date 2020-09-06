@@ -269,6 +269,8 @@ class CharacterViewModel: ViewModel() {
         cv.put("qty", item.qty)
         cv.put("cls", item.cls)
         cv.put("desc", item.desc)
+        cv.put("equipped", item.equipped)
+        cv.put("packed_into", item.packed_into)
         cv.put("current_quality", item.cur_qual)
         cv.put("original_quality", item.orig_qual)
         cv.put("weight", item.weight)
