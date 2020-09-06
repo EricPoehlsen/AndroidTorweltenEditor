@@ -110,7 +110,8 @@ class CatalogItem() {
 }
 
 class Damage {
-    constructor(dmg_string: String="") {
+    constructor(){}
+    constructor(dmg_string: String) {
         init(dmg_string)
     }
     constructor(s:Int, d:Int, t:String, mod:Boolean=false) {
@@ -155,9 +156,10 @@ class Damage {
     }
 
     fun init(input: String) {
+        Log.d("info", "Trying to parse $input")
         val dmg_elements = input.split("/")
         if (dmg_elements.size >= 2) {
-            if(dmg_elements[0].length > 1) {
+            if(dmg_elements[0].length >= 1) {
                 var s_string = dmg_elements[0]
                 if (s_string.first() in "±+-") {
                     mod = true
