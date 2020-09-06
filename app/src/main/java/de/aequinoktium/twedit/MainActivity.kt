@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
         val d: DataViewModel by viewModels()
         d.setDatabase(db)
 
-
+        setStringValues(c)
 
         // first run?
         val prefs = this.getSharedPreferences("base", 0)
@@ -31,6 +31,10 @@ class MainActivity : AppCompatActivity() {
         if (!installed) {
 
         }
+    }
+
+    fun setStringValues(c: CharacterViewModel) {
+        c.string_values["mat"] = getString(R.string.cinv_material)
     }
 
 
