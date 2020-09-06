@@ -1,7 +1,6 @@
 package de.aequinoktium.twedit
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -70,20 +69,23 @@ class CharItemFragment : Fragment(),
         tv_desc.text = item.desc
 
         tv_qty = view.findViewById(R.id.char_item_qty)
-        var text = resources.getString(R.string.cinv_quantity) + " " + item.qty.toString()
-        tv_qty.text = text
+        val qty_label = resources.getString(R.string.cinv_quantity)
+        val qty_text = "$qty_label ${item.qty}"
+        tv_qty.text = qty_text
         tv_qty.setOnClickListener {editQty()}
 
         tv_qual = view.findViewById(R.id.char_item_qual)
-        var q = resources.getStringArray(R.array.cinv_qualities)
-        text = resources.getString(R.string.cinv_quality) +
-               " " + q[item.cur_qual] + " (" + item.cur_qual.toString() + ")"
-        tv_qual.text = text
+        val qual_label = resources.getString(R.string.cinv_quality)
+        val qualities = resources.getStringArray(R.array.cinv_qualities)
+        val qual_text = "$qual_label ${qualities[item.cur_qual]} (${item.cur_qual})"
+        tv_qual.text = qual_text
         tv_qual.setOnClickListener {editQual()}
 
         tv_price = view.findViewById(R.id.char_item_price)
-        text = resources.getString(R.string.cinv_price) + " " + item.price.toString() + " IR"
-        tv_price.text = text
+        val price_label = resources.getString(R.string.cinv_price)
+        val price = resources.getString(R.string.cinv_money, item.price)
+        val price_text =  "$price_label $price"
+        tv_price.text = price_text
         tv_price.setOnClickListener {sellItem()}
 
         tv_weight = view.findViewById(R.id.char_item_weight)
@@ -91,17 +93,19 @@ class CharItemFragment : Fragment(),
         if (item.weight >= 1000) {
             s_wgt = " " + (item.weight.toFloat()/1000).toString() + " kg"
         }
-        text = resources.getString(R.string.cinv_weight) + s_wgt
-        tv_weight.text = text
+        val weight_label = resources.getString(R.string.cinv_weight)
+        val weight_text =  "$weight_label $s_wgt"
+        tv_weight.text = weight_text
 
         tv_dmg = view.findViewById(R.id.char_item_dmg)
         var dmg = item.dmg
         if (dmg.isBlank()) dmg = item.dmg_mod
-        text = resources.getString(R.string.cinv_damage) + ": " + dmg
+        val dmg_label = resources.getString(R.string.cinv_damage)
+        val dmg_text = "$dmg_label: $dmg"
         if (dmg.isBlank()) {
             tv_dmg.visibility = View.GONE
         } else {
-            tv_dmg.text = text
+            tv_dmg.text = dmg_text
         }
 
         bt_equip = view.findViewById(R.id.char_item_equip)
