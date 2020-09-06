@@ -166,14 +166,14 @@
     <string name="cinv_money">%1$.2f IR</string>
     <string name="cinv_weight">Gewicht: </string>
     <string name="cinv_cls">Klasse: </string>
-    <string name="cinv_cls_generic">generischer Gegenstand</string>
     <string name="cinv_cls_clothing">Kleidungsstück</string>
     <string name="cinv_cls_container">Behälter</string>
-    <string name="cinv_cls_weapon">Waffe</string>
     <string name="cinv_cls_tool">Werkzeug</string>
+    <string name="cinv_cls_weapon">Waffe</string>
     <string name="cinv_cls_ammo">Munition</string>
     <string name="cinv_cls_implant">Implantat</string>
     <string name="cinv_cls_valuable">Wertgegenstand</string>
+    <string name="cinv_cls_generic">Gegenstand</string>
     <string-array name="cinv_qualities">
         <item>zerstört</item>
         <item>kaputt</item>

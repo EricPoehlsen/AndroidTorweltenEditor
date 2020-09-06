@@ -1,23 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ScrollView
-        android:id="@+id/scrollView2"
-        android:layout_width="409dp"
-        android:layout_height="729dp"
+    <HorizontalScrollView
+        android:id="@+id/catalog_tab_scroll"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:id="@+id/icons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/catalog_icon_clothing"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/icon_tab"
+                app:srcCompat="@drawable/icon_clothing" />
+
+            <ImageView
+                android:id="@+id/catalog_icon_container"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/icon_tab_dark"
+                app:srcCompat="@drawable/icon_container" />
+
+            <ImageView
+                android:id="@+id/catalog_icon_tools"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/icon_tab_dark"
+                app:srcCompat="@drawable/icon_tools" />
+
+            <ImageView
+                android:id="@+id/catalog_icon_weapons"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/icon_tab_dark"
+                app:srcCompat="@drawable/icon_gun" />
+
+            <ImageView
+                android:id="@+id/catalog_icon_generic"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:background="@drawable/icon_tab_dark"
+                app:srcCompat="@drawable/icon_generic" />
+
+            <ImageView
+                android:id="@+id/catalog_icon_valuable"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:background="@drawable/icon_tab_dark"
+                app:srcCompat="@drawable/icon_valuable" />
+        </LinearLayout>
+    </HorizontalScrollView>
+
+
+    <ScrollView
+        android:id="@+id/scrollView2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/bg_line_xml"
+        android:padding="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/catalog_tab_scroll">
 
         <LinearLayout
             android:id="@+id/catalog_itemlist"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"></LinearLayout>
+            android:orientation="vertical" />
     </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

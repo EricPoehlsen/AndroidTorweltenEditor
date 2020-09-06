@@ -19,7 +19,11 @@ class CatalogFragment : Fragment() {
     private val d: DataViewModel by activityViewModels()
 
     private lateinit var ll_list: LinearLayout
-    private val cls = "clothing"
+    private var cls = "clothing"
+
+    private var tab_icons = arrayOf<ImageView>()
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,9 +47,34 @@ class CatalogFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         ll_list = view.findViewById(R.id.catalog_itemlist)
+
+
+
+        setupTabIcons(view)
+        loadCatalog()
+
+    }
+
+    fun setupTabIcons(view: View) {
+        val view_ids = arrayOf(
+            R.id.catalog_icon_clothing,
+            R.id.catalog_icon_container,
+            R.id.catalog_icon_tools,
+            R.id.catalog_icon_weapons,
+            R.id.catalog_icon_generic,
+            R.id.catalog_icon_valuable
+        )
+        for (id in view_ids) {
+            val icon = view.findViewById<ImageView>(id)
+            icon.setOnClickListener { v -> selectClass(tabClicked(v))}
+            tab_icons += icon
+        }
+    }
+
+    fun loadCatalog() {
         d.viewModelScope.launch(Dispatchers.IO) {
             d.loadCatalog(cls)
-            withContext(Dispatchers.Main){
+            withContext(Dispatchers.Main) {
                 displayItems()
             }
         }
@@ -59,11 +88,43 @@ class CatalogFragment : Fragment() {
             tv.setOnClickListener{ _ -> showItem(item) }
 
             ll_list.addView(tv)
+       }
+    }
 
-
+    /**
+     * Updates the tabs when one was clicked
+     * @param view the clicked tab
+     * @return the position of the tab
+     */
+    fun tabClicked(view: View): Int {
+        var i = 0
+        var pos = 0
+        for (icon in tab_icons) {
+            if (icon == view) {
+                icon.setBackgroundResource(R.drawable.icon_tab)
+                pos = i
+            } else {
+                icon.setBackgroundResource(R.drawable.icon_tab_dark)
+            }
+            i++
         }
+        return pos
+    }
 
-
+    /**
+     * select the item class based on tab position -> loads catalog
+     */
+    fun selectClass(pos: Int) {
+        val item_classes = arrayOf(
+            "clothing",
+            "container",
+            "tool",
+            "weapon",
+            "generic",
+            "valuable"
+        )
+        cls = item_classes[pos]
+        loadCatalog()
     }
 
     fun showItem(item: CatalogItem) {
