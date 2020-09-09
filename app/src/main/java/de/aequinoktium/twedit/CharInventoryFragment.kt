@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 
@@ -44,7 +45,7 @@ class CharInventoryFragment : Fragment(){
 
         rv_container = view.findViewById(R.id.cinv_container)
         rv_adapter = ItemAdapter(c.getInventory())
-        rv_manager = GridLayoutManager(view.context,3)
+        rv_manager = LinearLayoutManager(view.context)
 
         rv_container.layoutManager = rv_manager
         rv_container.adapter = rv_adapter
@@ -90,7 +91,8 @@ class CharInventoryFragment : Fragment(){
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val iv = ItemView(parent.context)
-            val lp = LinearLayout.LayoutParams(iv.px(96).toInt(),iv.px(96).toInt())
+            val lp = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,0)
+            lp.setMargins(6,6,6,6)
             iv.layoutParams = lp
             return ViewHolder(iv)
         }

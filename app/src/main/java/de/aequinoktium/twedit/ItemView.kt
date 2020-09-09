@@ -17,12 +17,8 @@ class ItemView @JvmOverloads constructor(
 ) : View(context, attrs, defStyleAttr) {
     var item: Item = Item()
 
-    var size = 0f
-        set(value) {
-            field = value
-            invalidate()
-        }
-
+    private var layout_width = 0f
+    private var layout_height = 0f
     private var top = 0f
     private var left = 0f
     private var right = 0f
@@ -80,18 +76,26 @@ class ItemView @JvmOverloads constructor(
 
     override fun onMeasure(width_measure_spec: Int, height_measure_spec: Int) {
         val measured_width = MeasureSpec.getSize(width_measure_spec)
+        val measured_height = MeasureSpec.getSize(height_measure_spec)
 
-        if (size == 0f) {
-            size = measured_width.toFloat()
+        val min_width = px(128)
+        val min_height = px(32)
+
+        if (layout_width == 0f) {
+            layout_width = measured_width.toFloat()
+            if (layout_width < min_width) layout_width = min_width
         }
-
+        if (layout_height == 0f) {
+            layout_height = measured_height.toFloat()
+            if (layout_height < min_height) layout_height = min_height
+        }
         top = paddingTop.toFloat()
         left = paddingLeft.toFloat()
-        right = size - paddingRight.toFloat()
-        bottom = size - paddingBottom.toFloat()
+        right = layout_width - paddingRight.toFloat()
+        bottom = layout_height - paddingBottom.toFloat()
 
-        val width = size.toInt()
-        val height = size.toInt()
+        val width = layout_width.toInt()
+        val height = layout_height.toInt()
 
         setMeasuredDimension(width, height)
     }
@@ -115,9 +119,8 @@ class ItemView @JvmOverloads constructor(
 
 
             try {
-                size = getDimension(R.styleable.ItemView_size,0f)
-                // stroke_width = getDimension(R.styleable.ColorSelectorView_stroke_width, 2f)
-                // stroke.color = getColor(R.styleable.ColorSelectorView_stroke_color, 0)
+                layout_width = getDimension(R.styleable.ItemView_android_layout_width,0f)
+                layout_height = getDimension(R.styleable.ItemView_android_layout_height,0f)
             } finally {
                 recycle()
             }

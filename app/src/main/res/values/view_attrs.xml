@@ -9,7 +9,6 @@
     </declare-styleable>
 
     <declare-styleable name="ItemView">
-        <attr name="size"/>
         <attr name="android:layout_width" />
         <attr name="android:layout_height" />
 
