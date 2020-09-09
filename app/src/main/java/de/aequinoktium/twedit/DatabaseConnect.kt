@@ -198,6 +198,7 @@ class DatabaseConnect(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
                 equipped BOOLEAN DEFAULT false,
                 equip_loc TEXT DEFAULT '',
                 packed_into INT DEFAULT 0,
+                sort_pos INT DEFAULT 0,
                 extra_data TEXT DEFAULT '',
                 FOREIGN KEY (char_id) REFERENCES char_core(id)
             );

@@ -18,9 +18,6 @@
         <action
             android:id="@+id/action_menu_to_ts"
             app:destination="@id/traitSelectFragment" />
-        <action
-            android:id="@+id/action_menu_to_cat"
-            app:destination="@id/itemCatalogFragment" />
     </fragment>
     <fragment
         android:id="@+id/charSelectFragment"
@@ -106,11 +103,11 @@
             android:id="@+id/action_cinv_to_cinvcont"
             app:destination="@id/charInventoryContainerFragment" />
         <action
-            android:id="@+id/action_cinv_to_cinvequip"
-            app:destination="@id/charInventoryEquippedFragment" />
-        <action
             android:id="@+id/action_cinv_to_cat"
             app:destination="@id/itemCatalogFragment" />
+        <action
+            android:id="@+id/action_cinv_to_citem"
+            app:destination="@id/charItemFragment" />
     </fragment>
     <fragment
         android:id="@+id/charInventoryNewFragment"
@@ -132,23 +129,12 @@
         android:name="de.aequinoktium.twedit.CharItemFragment"
         android:label="CharItemFragment" />
     <fragment
-        android:id="@+id/charInventoryEquippedFragment"
-        android:name="de.aequinoktium.twedit.CharInventoryEquippedFragment"
-        android:label="CharInventoryEquippedFragment" >
-        <action
-            android:id="@+id/action_cinvequip_to_citem"
-            app:destination="@id/charItemFragment" />
-    </fragment>
-    <fragment
         android:id="@+id/itemCatalogFragment"
         android:name="de.aequinoktium.twedit.CatalogFragment"
         android:label="ItemCatalogFragment" >
         <action
             android:id="@+id/action_cat_to_item"
             app:destination="@id/catalogItemFragment" />
-        <action
-            android:id="@+id/action_cat_to_cinvnew"
-            app:destination="@id/charInventoryEquippedFragment" />
     </fragment>
     <fragment
         android:id="@+id/catalogItemFragment"

@@ -10,7 +10,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -44,7 +43,7 @@ class CharInventoryFragment : Fragment(){
 
 
         rv_container = view.findViewById(R.id.cinv_container)
-        rv_adapter = ItemAdapter(c.getInventory())
+        rv_adapter = ItemAdapter(c.getInventory(), this)
         rv_manager = LinearLayoutManager(view.context)
 
         rv_container.layoutManager = rv_manager
@@ -71,7 +70,10 @@ class CharInventoryFragment : Fragment(){
 
 
 
-
+    fun showItem(iv: ItemView) {
+        c.current_item = iv.item
+        this.findNavController().navigate(R.id.action_cinv_to_citem)
+    }
 
     fun showContainer(view: View) {
         view as ItemView
@@ -81,8 +83,9 @@ class CharInventoryFragment : Fragment(){
 
 
 
-    class ItemAdapter(val full_inventory: Array<Item>):
-        RecyclerView.Adapter<ItemAdapter.ViewHolder>()
+    class ItemAdapter(val full_inventory: Array<Item>, val frgm: CharInventoryFragment):
+        RecyclerView.Adapter<ItemAdapter.ViewHolder>(),
+        View.OnClickListener
     {
         var inventory = arrayOf<Item>()
 
@@ -94,6 +97,7 @@ class CharInventoryFragment : Fragment(){
             val lp = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,0)
             lp.setMargins(6,6,6,6)
             iv.layoutParams = lp
+            iv.setOnClickListener(this)
             return ViewHolder(iv)
         }
 
@@ -103,10 +107,18 @@ class CharInventoryFragment : Fragment(){
 
         override fun getItemCount(): Int = inventory.size
 
+        override fun onClick(view: View?) {
+            if (view is ItemView) {
+                frgm.showItem(view)
+            }
+        }
+
         init {
             for (item in full_inventory) {
                 inventory += item
             }
         }
     }
+
+
 }
