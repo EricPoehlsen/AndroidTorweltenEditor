@@ -100,9 +100,6 @@
             android:id="@+id/action_cinv_to_cinvnew"
             app:destination="@id/charInventoryNewFragment" />
         <action
-            android:id="@+id/action_cinv_to_cinvcont"
-            app:destination="@id/charInventoryContainerFragment" />
-        <action
             android:id="@+id/action_cinv_to_cat"
             app:destination="@id/itemCatalogFragment" />
         <action
@@ -113,17 +110,6 @@
         android:id="@+id/charInventoryNewFragment"
         android:name="de.aequinoktium.twedit.CharInventoryNewFragment"
         android:label="CharInventoryNewFragment" />
-    <fragment
-        android:id="@+id/charInventoryContainerFragment"
-        android:name="de.aequinoktium.twedit.CharInventoryContainerFragment"
-        android:label="CharInventoryContainerFragment" >
-        <action
-            android:id="@+id/action_cinvcont_to_citem"
-            app:destination="@id/charItemFragment" />
-        <action
-            android:id="@+id/action_charInventoryContainerFragment_self"
-            app:destination="@id/charInventoryContainerFragment" />
-    </fragment>
     <fragment
         android:id="@+id/charItemFragment"
         android:name="de.aequinoktium.twedit.CharItemFragment"

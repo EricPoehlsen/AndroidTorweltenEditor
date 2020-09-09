@@ -1,6 +1,7 @@
 package de.aequinoktium.twedit
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -19,7 +20,7 @@ class CharInventoryFragment : Fragment(){
     private lateinit var tv_cash: TextView
 
     private lateinit var rv_container: RecyclerView
-    private lateinit var rv_adapter: RecyclerView.Adapter<*>
+    private lateinit var rv_adapter: ItemAdapter
     private lateinit var rv_manager: RecyclerView.LayoutManager
 
 
@@ -59,6 +60,9 @@ class CharInventoryFragment : Fragment(){
 
         /* this.findNavController().navigate(R.id.action_cinv_to_cinvequip)*/
 
+        val bt_all = view.findViewById<Button>(R.id.cinv_all)
+        bt_all.setOnClickListener{rv_adapter.showAll()}
+
 
         // button: Add Item
         val bt_new = view.findViewById<Button>(R.id.cinv_new_item)
@@ -85,7 +89,8 @@ class CharInventoryFragment : Fragment(){
 
     class ItemAdapter(val full_inventory: Array<Item>, val frgm: CharInventoryFragment):
         RecyclerView.Adapter<ItemAdapter.ViewHolder>(),
-        View.OnClickListener
+        View.OnClickListener,
+        View.OnLongClickListener
     {
         var inventory = arrayOf<Item>()
 
@@ -98,6 +103,7 @@ class CharInventoryFragment : Fragment(){
             lp.setMargins(6,6,6,6)
             iv.layoutParams = lp
             iv.setOnClickListener(this)
+            iv.setOnLongClickListener(this)
             return ViewHolder(iv)
         }
 
@@ -113,11 +119,36 @@ class CharInventoryFragment : Fragment(){
             }
         }
 
+        override fun onLongClick(view: View): Boolean {
+            if (view is ItemView) {
+                inventory = arrayOf(view.item)
+                for (item in full_inventory) {
+                    if (item.packed_into == view.item.id) {
+                        inventory += item
+                    }
+                }
+                notifyDataSetChanged()
+            }
+
+            Log.d("info", "LONG CLICK!")
+            return true
+        }
+
+        fun showAll() {
+            inventory = arrayOf()
+            for (item in full_inventory) {
+                inventory += item
+                notifyDataSetChanged()
+            }
+        }
+
         init {
             for (item in full_inventory) {
                 inventory += item
             }
         }
+
+
     }
 
 

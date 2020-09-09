@@ -23,7 +23,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/char_inv_all"></androidx.recyclerview.widget.RecyclerView>
+        app:layout_constraintTop_toBottomOf="@+id/cinv_all"></androidx.recyclerview.widget.RecyclerView>
 
     <TextView
         android:id="@+id/cinv_cash"
@@ -34,7 +34,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/char_inv_all"
+        android:id="@+id/cinv_all"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/cinv_all"
