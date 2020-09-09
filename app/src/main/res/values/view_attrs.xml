@@ -2,11 +2,17 @@
 <resources>
 
 
-
     <declare-styleable name="ColorSelectorView">
         <attr name="size" format="dimension" />
         <attr name="stroke_width" format="dimension" />
         <attr name="stroke_color" format="color"/>
+    </declare-styleable>
+
+    <declare-styleable name="ItemView">
+        <attr name="size"/>
+        <attr name="android:layout_width" />
+        <attr name="android:layout_height" />
+
     </declare-styleable>
 
     <declare-styleable name="VitalAttribView">

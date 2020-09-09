@@ -17,7 +17,7 @@ import java.util.*
 
 class CharacterViewModel: ViewModel() {
     var char_id = 0
-    val LOCALE = Locale.GERMAN
+    val LOCALE = Locale.getDefault()
     lateinit var db: SQLiteDatabase
     var name: String = ""
     var attribs = mutableMapOf(
@@ -208,7 +208,7 @@ class CharacterViewModel: ViewModel() {
         val data = db.rawQuery(sql, null)
 
         while (data.moveToNext()) {
-            var item = Item()
+            val item = Item()
 
             val cls = data.getString(data.getColumnIndex("cls"))
 

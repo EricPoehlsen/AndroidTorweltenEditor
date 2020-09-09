@@ -46,9 +46,8 @@ class CharInventoryEquippedFragment : Fragment(){
 
         for (item in c.getInventory()) {
             if (item.equipped == 1) {
-                val iv = ItemView(context)
+                val iv = ItemView(requireContext())
                 iv.item = item
-                iv.text = item.name
                 iv.setOnClickListener {v -> editItem(v)}
                 ll.addView(iv)
             }

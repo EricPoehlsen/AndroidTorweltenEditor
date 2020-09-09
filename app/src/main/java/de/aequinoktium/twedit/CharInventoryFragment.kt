@@ -10,18 +10,18 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 
 class CharInventoryFragment : Fragment(){
     private val c: CharacterViewModel by activityViewModels()
-    private lateinit var ll_containers: LinearLayout
     private lateinit var tv_cash: TextView
 
+    private lateinit var rv_container: RecyclerView
+    private lateinit var rv_adapter: RecyclerView.Adapter<*>
+    private lateinit var rv_manager: RecyclerView.LayoutManager
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,19 +41,24 @@ class CharInventoryFragment : Fragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        ll_containers = view.findViewById(R.id.cinv_containers)
+
+        rv_container = view.findViewById(R.id.cinv_container)
+        rv_adapter = ItemAdapter(c.getInventory())
+        rv_manager = GridLayoutManager(view.context,3)
+
+        rv_container.layoutManager = rv_manager
+        rv_container.adapter = rv_adapter
+
+
+
+
+
         tv_cash = view.findViewById(R.id.cinv_cash)
         tv_cash.setText(getString(R.string.cinv_cash, c.primaryAccount().balance))
 
-        val b_all = view.findViewById<ItemView>(R.id.cinv_other_items)
-        b_all.item = Item()
-        b_all.setOnClickListener { v -> showContainer(v) }
 
-        val b_equipped = view.findViewById<ItemView>(R.id.cinv_equipped)
-        b_equipped.setOnClickListener {
-            this.findNavController().navigate(R.id.action_cinv_to_cinvequip)
-        }
-        displayEquippedContainers()
+        /* this.findNavController().navigate(R.id.action_cinv_to_cinvequip)*/
+
 
         // button: Add Item
         val bt_new = view.findViewById<Button>(R.id.cinv_new_item)
@@ -63,25 +68,43 @@ class CharInventoryFragment : Fragment(){
 
     }
 
-    fun displayEquippedContainers() {
-        for (item in c.getInventory()) {
-            if (item.equipped == 1 && item.weight_limit > 0) {
-                val tv_cnt = ItemView(context)
-                if (!item.container_name.isBlank()) {
-                    tv_cnt.text = item.container_name
-                } else {
-                    tv_cnt.text = item.name
-                }
-                tv_cnt.item = item
-                tv_cnt.setOnClickListener {v -> showContainer(v)}
-                ll_containers.addView(tv_cnt)
-            }
-        }
-    }
+
+
+
 
     fun showContainer(view: View) {
         view as ItemView
         c.current_item = view.item
         this.findNavController().navigate(R.id.action_cinv_to_cinvcont)
+    }
+
+
+
+    class ItemAdapter(val full_inventory: Array<Item>):
+        RecyclerView.Adapter<ItemAdapter.ViewHolder>()
+    {
+        var inventory = arrayOf<Item>()
+
+
+        class ViewHolder(val iv: ItemView) : RecyclerView.ViewHolder(iv)
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+            val iv = ItemView(parent.context)
+            val lp = LinearLayout.LayoutParams(iv.px(96).toInt(),iv.px(96).toInt())
+            iv.layoutParams = lp
+            return ViewHolder(iv)
+        }
+
+        override fun onBindViewHolder(holder: ViewHolder, pos: Int) {
+            holder.iv.item = inventory[pos]
+        }
+
+        override fun getItemCount(): Int = inventory.size
+
+        init {
+            for (item in full_inventory) {
+                inventory += item
+            }
+        }
     }
 }

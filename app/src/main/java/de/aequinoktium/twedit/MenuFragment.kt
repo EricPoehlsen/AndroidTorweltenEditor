@@ -35,7 +35,7 @@ class MenuFragment : Fragment() {
         var m_test = act.findViewById<Button>(R.id.menu_test)
         m_test.setOnClickListener {
             val bundle: Bundle = bundleOf("char_id" to 1)
-            this.findNavController().navigate(R.id.action_menu_to_cat, bundle)
+            this.findNavController().navigate(R.id.action_menu_to_test, bundle)
         }
 
     }

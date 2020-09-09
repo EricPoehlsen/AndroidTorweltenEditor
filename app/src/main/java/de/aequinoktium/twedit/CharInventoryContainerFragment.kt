@@ -46,8 +46,7 @@ class CharInventoryContainerFragment : Fragment(){
         if (c.current_item.id == 0) {
             tv_title.text = getString(R.string.cinv_all)
             for (item in c.getInventory()) {
-                val iv = ItemView(context)
-                iv.text = item.name
+                val iv = ItemView(requireContext())
                 iv.item = item
                 iv.setOnClickListener { v -> editItem(v)}
                 ll_container.addView(iv)
@@ -58,8 +57,7 @@ class CharInventoryContainerFragment : Fragment(){
 
             for (item in c.getInventory()) {
                 if (item.packed_into == cnt.id) {
-                    val iv = ItemView(context)
-                    iv.text = item.name
+                    val iv = ItemView(requireContext())
                     iv.item = item
                     iv.setOnClickListener {v -> editItem(v)}
                     ll_container.addView(iv)
@@ -67,8 +65,7 @@ class CharInventoryContainerFragment : Fragment(){
             }
 
             // add self
-            val iv = ItemView(context)
-            iv.text = cnt.name
+            val iv = ItemView(requireContext())
             iv.item = cnt
             iv.setOnClickListener {v -> editItem(v)}
             ll_container.addView(iv)

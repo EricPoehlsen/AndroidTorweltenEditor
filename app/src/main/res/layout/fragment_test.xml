@@ -10,4 +10,43 @@
     tools:context=".TestFragment">
 
 
+    <de.aequinoktium.twedit.ItemView
+        android:id="@+id/test_item1"
+        android:layout_width="128dp"
+        android:layout_height="128dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <de.aequinoktium.twedit.ItemView
+        android:id="@+id/test_item2"
+        android:layout_width="128dp"
+        android:layout_height="128dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:size="128dp" />
+
+    <de.aequinoktium.twedit.ItemView
+        android:id="@+id/test_item3"
+        android:layout_width="96dp"
+        android:layout_height="128dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <de.aequinoktium.twedit.ItemView
+        android:id="@+id/test_item4"
+        android:layout_width="128dp"
+        android:layout_height="96dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/test_linear"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/test_item3"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/test_item1"></LinearLayout>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
