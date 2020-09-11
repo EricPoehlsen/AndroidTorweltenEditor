@@ -26,8 +26,6 @@ class CharInventoryFragment : Fragment(),
     private var show_packed = false
     private var show_equipped = false
 
-
-
     private lateinit var tv_cash: TextView
     private lateinit var rv_container: RecyclerView
     private lateinit var rv_adapter: ItemAdapter
@@ -103,6 +101,7 @@ class CharInventoryFragment : Fragment(),
 
             show_equipped = settings.update("inventory.show_equipped", dialog.equipped)
             show_packed = settings.update("inventory.show_packed", dialog.packed)
+            rv_adapter.showBasedOnSettings()
         }
     }
 
@@ -174,7 +173,7 @@ class CharInventoryFragment : Fragment(),
             notifyDataSetChanged()
         }
 
-        fun showUnpacked() {
+        fun showUnpackedItems() {
             inventory = arrayOf()
             for (item in full_inventory) {
                 if (item.packed_into == 0) {
@@ -184,8 +183,19 @@ class CharInventoryFragment : Fragment(),
             notifyDataSetChanged()
         }
 
+        fun showBasedOnSettings() {
+            if (frgm.show_packed) {
+                showAll()
+            } else if (frgm.show_equipped) {
+                showEquipped()
+            } else {
+                showUnpackedItems()
+            }
+        }
+
         init {
-            showUnpacked()
+            showBasedOnSettings()
+
         }
     }
 
