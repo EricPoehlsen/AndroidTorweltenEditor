@@ -7,7 +7,7 @@
     android:layout_height="match_parent">
 
     <CheckBox
-        android:id="@+id/dia_invset_showcontent"
+        android:id="@+id/dia_invset_packed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/dialog_invset_showcontent"
@@ -20,5 +20,5 @@
         android:layout_height="wrap_content"
         android:text="@string/dialog_invset_equipped"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dia_invset_showcontent" />
+        app:layout_constraintTop_toBottomOf="@+id/dia_invset_packed" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -83,7 +83,7 @@
     <string name="dialog_dmg_roll">Würfeln</string>
     <string name="dialog_dmg_hint">Wert</string>
     <string name="dialog_invset_title">Einstellungen</string>
-    <string name="dialog_invset_showcontent">Tascheninhalt zeigen</string>
+    <string name="dialog_invset_showcontent">Zeige eingepackte Gegenstände</string>
     <string name="dialog_invset_equipped">Zeige nur ausgerüstete Gegenstände</string>
     <string name="dialog_ok">OK</string>
     <string name="dialog_cancel">Abbrechen</string>

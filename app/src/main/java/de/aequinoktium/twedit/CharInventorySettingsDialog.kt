@@ -3,29 +3,23 @@ package de.aequinoktium.twedit
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.EditText
-import android.widget.TextView
+import android.widget.CheckBox
+import android.widget.CompoundButton
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import java.lang.Exception
-import kotlin.math.roundToInt
 
 /**
  * A DialogFrament that is used to change inventory settings
  */
-class CharInventorySettingsDialog(
-): DialogFragment() {
+class CharInventorySettingsDialog(var packed: Boolean, var equipped: Boolean):
+        DialogFragment(),
+        CompoundButton.OnCheckedChangeListener
+{
 
     internal lateinit var listener: DialogListener
+
 
     /* The activity that creates an instance of this dialog fragment must
      * implement this interface in order to receive event callbacks.
@@ -58,10 +52,15 @@ class CharInventorySettingsDialog(
 
             val inflater: LayoutInflater = this.layoutInflater
             val content: View = inflater.inflate(R.layout.dialog_inventory_settings, null)
-
+            val cb_packed = content.findViewById<CheckBox>(R.id.dia_invset_packed)
+            cb_packed.isChecked = packed
+            cb_packed.setOnCheckedChangeListener(this)
+            val cb_equipped = content.findViewById<CheckBox>(R.id.dia_invset_equipped)
+            cb_equipped.setOnCheckedChangeListener(this)
+            cb_equipped.isChecked = equipped
             builder.setView(content)
 
-            val title = getString(R.string.dialog_item_cont_title)
+            val title = getString(R.string.dialog_invset_title)
 
             builder.setTitle(title)
 
@@ -72,6 +71,15 @@ class CharInventorySettingsDialog(
             }
             builder.create()
         } ?: throw IllegalStateException("Activity cant't be null")
+    }
+
+    override fun onCheckedChanged(button: CompoundButton?, state: Boolean) {
+        if (button is CheckBox) {
+            when (button.id) {
+                R.id.dia_invset_equipped -> equipped = state
+                R.id.dia_invset_packed -> packed = state
+            }
+        }
     }
 
 }
