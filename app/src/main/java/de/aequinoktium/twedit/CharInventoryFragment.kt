@@ -79,14 +79,6 @@ class CharInventoryFragment : Fragment(){
         this.findNavController().navigate(R.id.action_cinv_to_citem)
     }
 
-    fun showContainer(view: View) {
-        view as ItemView
-        c.current_item = view.item
-        this.findNavController().navigate(R.id.action_cinv_to_cinvcont)
-    }
-
-
-
     class ItemAdapter(val full_inventory: Array<Item>, val frgm: CharInventoryFragment):
         RecyclerView.Adapter<ItemAdapter.ViewHolder>(),
         View.OnClickListener,
@@ -138,18 +130,36 @@ class CharInventoryFragment : Fragment(){
             inventory = arrayOf()
             for (item in full_inventory) {
                 inventory += item
-                notifyDataSetChanged()
             }
+            notifyDataSetChanged()
+        }
+
+        fun showEquipped() {
+            inventory = arrayOf()
+            for (item in full_inventory) {
+                if (item.equipped == 1) {
+                    inventory += item
+                }
+            }
+            notifyDataSetChanged()
+        }
+
+        fun showUnpacked() {
+            inventory = arrayOf()
+            for (item in full_inventory) {
+                if (item.packed_into == 0) {
+                    inventory += item
+                }
+            }
+            notifyDataSetChanged()
         }
 
         init {
-            for (item in full_inventory) {
-                inventory += item
-            }
+            showUnpacked()
         }
-
-
     }
 
 
+
+    
 }
