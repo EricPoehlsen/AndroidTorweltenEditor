@@ -226,6 +226,15 @@ class DatabaseConnect(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
         """.trimIndent()
         db.execSQL(sql)
 
+        sql = """
+            CREATE TABLE settings (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name VARCHAR(255) UNIQUE NOT NULL,
+                value VARCHAR(255)
+            );
+        """.trimIndent()
+        db.execSQL(sql)
+
         // add skill data ...
         sql = """
             INSERT INTO skills (id, name, parent_id, spec, is_active) VALUES 

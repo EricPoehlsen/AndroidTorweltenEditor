@@ -302,14 +302,6 @@ class DataViewModel: ViewModel() {
         item.variants[name] = vars
     }
 
-    /**
-     * View Model is destroyed. Clean up the database connection.
-     */
-    override fun onCleared() {
-        db.close()
-        super.onCleared()
-    }
-
     class CharInfo {
         var id = 0
         var name = ""

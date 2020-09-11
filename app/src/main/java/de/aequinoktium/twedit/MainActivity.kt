@@ -7,6 +7,7 @@ import androidx.activity.viewModels
 import androidx.fragment.app.FragmentManager
 
 class MainActivity : AppCompatActivity() {
+    lateinit var db: SQLiteDatabase
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -15,12 +16,16 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(findViewById(R.id.toolbar))
 
         val dbc = DatabaseConnect(this.applicationContext)
-        val db = dbc.writableDatabase
+        db = dbc.writableDatabase
 
         val c: CharacterViewModel by viewModels()
         c.setDatabase(db)
         val d: DataViewModel by viewModels()
         d.setDatabase(db)
+        val settings: SettingsViewModel by viewModels()
+        settings.setDatabase(db)
+
+
 
         setStringValues(c)
 
@@ -42,6 +47,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        db.close()
     }
 
     /**

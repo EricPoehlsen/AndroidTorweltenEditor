@@ -513,15 +513,6 @@ class CharacterViewModel: ViewModel() {
         db.execSQL(sql)
     }
 
-
-    /**
-     * View Model is destroyed. Clean up the database connection.
-     */
-    override fun onCleared() {
-        db.close()
-        super.onCleared()
-    }
-
     class Info() {
         var info_id = 0
         var name = ""
