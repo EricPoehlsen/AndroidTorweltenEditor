@@ -57,7 +57,7 @@ class CharInventorySettingsDialog(
             val builder = AlertDialog.Builder(it)
 
             val inflater: LayoutInflater = this.layoutInflater
-            val content: View = inflater.inflate(R.layout.dialog_item_container, null)
+            val content: View = inflater.inflate(R.layout.dialog_inventory_settings, null)
 
             builder.setView(content)
 
