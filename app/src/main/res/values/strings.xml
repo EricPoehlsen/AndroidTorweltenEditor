@@ -175,6 +175,7 @@
     <string name="cinv_cls_container">Behälter</string>
     <string name="cinv_cls_tool">Werkzeug</string>
     <string name="cinv_cls_weapon">Waffe</string>
+    <string name="cinv_cls_clipsnmore">Waffenzubehör</string>
     <string name="cinv_cls_ammo">Munition</string>
     <string name="cinv_cls_implant">Implantat</string>
     <string name="cinv_cls_valuable">Wertgegenstand</string>

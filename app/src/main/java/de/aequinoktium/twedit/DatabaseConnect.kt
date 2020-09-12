@@ -1217,7 +1217,9 @@ class DatabaseConnect(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
             ('Pulsgewehr SMI RC 2', 1200, 2800, -1, '', 'weapon', 'rifle.blaster', '', 0, 'dist:50.500|dmg:3/-2/E'),
             ('Laserpistole SMI Prism', 650, 1400, -1, '', 'weapon', 'gun.blaster', '', 0, 'dist:25.150|dmg:2/-1'),
             ('Lasergewehr ParaTec Lynx', 1300, 3500, 1, '', 'weapon', 'rifle.blaster', '', 0, 'dist:800|dmg:3/-2'),
-            ('Ko Punt Gun', 10000, 50000, -3, '', 'weapon', '', '', 0, 'dist:100.5000|dmg:5/-6')
+            ('Ko Punt Gun', 10000, 50000, -3, '', 'weapon', '', '', 0, 'dist:100.5000|dmg:5/-6'),
+            ('Magazin', 20, 50, -4, '', 'clipsnmore', 'clips', '', 200, 'var.Kaliber:Klein,Mittel,Groß|capacity:6')
+
         """.trimIndent()
         db.execSQL(sql)
 

@@ -62,8 +62,11 @@ class CatalogFragment : Fragment() {
             R.id.catalog_icon_container,
             R.id.catalog_icon_tools,
             R.id.catalog_icon_weapons,
+            R.id.catalog_icon_ammo,
+            R.id.catalog_icon_clipsnmore,
             R.id.catalog_icon_generic,
-            R.id.catalog_icon_valuable
+            R.id.catalog_icon_valuable,
+            R.id.catalog_icon_more
         )
         for (id in view_ids) {
             val icon = view.findViewById<ImageView>(id)
@@ -121,15 +124,27 @@ class CatalogFragment : Fragment() {
             "container",
             "tool",
             "weapon",
+            "weapon",
+            "clipsnmore",
             "generic",
-            "valuable"
+            "valuable",
+            "more"
         )
         cls = item_classes[pos]
-        loadCatalog()
+        if (cls != "more") {
+            loadCatalog()
+        } else {
+            newItem()
+        }
+
     }
 
     fun showItem(item: CatalogItem) {
         d.current_catalog_item = item
         this.findNavController().navigate(R.id.action_cat_to_item)
+    }
+
+    fun newItem() {
+        this.findNavController().navigate(R.id.action_cat_to_cinvnew)
     }
 }

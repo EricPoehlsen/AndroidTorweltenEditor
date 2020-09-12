@@ -121,6 +121,9 @@
         <action
             android:id="@+id/action_cat_to_item"
             app:destination="@id/catalogItemFragment" />
+        <action
+            android:id="@+id/action_cat_to_cinvnew"
+            app:destination="@id/charInventoryNewFragment" />
     </fragment>
     <fragment
         android:id="@+id/catalogItemFragment"

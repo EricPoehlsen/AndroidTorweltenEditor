@@ -98,6 +98,7 @@ class CharInventoryNewFragment : Fragment(),
             getString(R.string.cinv_cls_container),
             getString(R.string.cinv_cls_tool),
             getString(R.string.cinv_cls_weapon),
+            getString(R.string.cinv_cls_clipsnmore),
             getString(R.string.cinv_cls_ammo),
             getString(R.string.cinv_cls_implant)
         )
@@ -303,8 +304,9 @@ class CharInventoryNewFragment : Fragment(),
             3 -> item.cls = "container"
             4 -> item.cls = "tool"
             5 -> item.cls = "weapon"
-            6 -> item.cls = "ammo"
-            7 -> item.cls = "implant"
+            6 -> item.cls = "clipsnmore"
+            7 -> item.cls = "ammo"
+            8 -> item.cls = "implant"
         }
     }
 

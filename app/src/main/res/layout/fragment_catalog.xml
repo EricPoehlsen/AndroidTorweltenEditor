@@ -48,6 +48,22 @@
                 app:srcCompat="@drawable/icon_gun" />
 
             <ImageView
+                android:id="@+id/catalog_icon_ammo"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:background="@drawable/icon_tab_dark"
+                app:srcCompat="@drawable/icon_ammo" />
+
+            <ImageView
+                android:id="@+id/catalog_icon_clipsnmore"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:background="@drawable/icon_tab_dark"
+                app:srcCompat="@drawable/icon_clipsnmore" />
+
+            <ImageView
                 android:id="@+id/catalog_icon_generic"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -62,6 +78,14 @@
                 android:layout_weight="1"
                 android:background="@drawable/icon_tab_dark"
                 app:srcCompat="@drawable/icon_valuable" />
+
+            <ImageView
+                android:id="@+id/catalog_icon_more"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:background="@drawable/icon_tab_dark"
+                app:srcCompat="@drawable/icon_plus" />
         </LinearLayout>
     </HorizontalScrollView>
 
