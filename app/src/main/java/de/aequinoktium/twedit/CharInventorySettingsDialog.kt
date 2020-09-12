@@ -57,12 +57,11 @@ class CharInventorySettingsDialog(var packed: Boolean, var equipped: Boolean):
             val content: View = inflater.inflate(R.layout.dialog_inventory_settings, null)
             cb_packed = content.findViewById<CheckBox>(R.id.dia_invset_packed)
             cb_equipped = content.findViewById<CheckBox>(R.id.dia_invset_equipped)
-
-            cb_packed.isChecked = packed
             cb_packed.setOnCheckedChangeListener(this)
-
             cb_equipped.setOnCheckedChangeListener(this)
+            cb_packed.isChecked = packed
             cb_equipped.isChecked = equipped
+
             builder.setView(content)
 
             val title = getString(R.string.dialog_invset_title)

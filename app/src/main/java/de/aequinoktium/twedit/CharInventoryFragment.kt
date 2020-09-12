@@ -37,7 +37,7 @@ class CharInventoryFragment : Fragment(),
         savedInstanceState: Bundle?
     ): View? {
         show_packed = settings.find("inventory.show_packed") == "1"
-        show_equipped = settings.find("inventory.show_packed") == "1"
+        show_equipped = settings.find("inventory.show_equipped") == "1"
 
         val root: View
 
@@ -95,6 +95,10 @@ class CharInventoryFragment : Fragment(),
         dialog.show(fm, null)
     }
 
+    /**
+     * implements the DialogListener
+     * updates the show_packed and show_equipped settings
+     */
     override fun onDialogPositiveClick(dialog: DialogFragment) {
         if (dialog is CharInventorySettingsDialog) {
             Log.d("info", "equipped: ${dialog.equipped}, packed: ${dialog.packed}, ")
@@ -195,6 +199,9 @@ class CharInventoryFragment : Fragment(),
 
         init {
             showBasedOnSettings()
+            for (i in full_inventory) {
+                Log.d("info", "${i.name} is filled: ${i.is_filled}")
+            }
 
         }
     }

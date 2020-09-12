@@ -1,14 +1,10 @@
 package de.aequinoktium.twedit
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Typeface
+import android.graphics.*
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
-import kotlin.math.E
 
 class ItemView @JvmOverloads constructor(
     context: Context?,
@@ -24,10 +20,6 @@ class ItemView @JvmOverloads constructor(
     private var right = 0f
     private var bottom = 0f
 
-
-
-
-
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
 
@@ -35,14 +27,15 @@ class ItemView @JvmOverloads constructor(
 
         if (canvas is Canvas) {
             Log.d("info", "DRAW")
-            drawBackgrund(canvas)
+            drawBackground(canvas)
             drawName(canvas)
             drawDamage(canvas)
+            drawContainer(canvas)
         }
 
     }
 
-    fun drawBackgrund(canvas: Canvas) {
+    fun drawBackground(canvas: Canvas) {
         val paint = Paint().apply{
             color=Color.DKGRAY
         }
@@ -58,6 +51,26 @@ class ItemView @JvmOverloads constructor(
         }
         canvas.drawText(item.name, left,top+baseline(paint),paint)
     }
+
+    fun drawContainer(canvas: Canvas) {
+        if (item.weight_limit > 0) {
+            val icon = resources.getDrawable(R.drawable.itemview_container, null)
+            icon.setBounds(
+                right.toInt()-100,
+                top.toInt()+5,
+                right.toInt()-50,
+                bottom.toInt()-5
+            )
+            if (item.is_filled) {
+                icon.alpha = 255
+            } else {
+                icon.alpha = 50
+            }
+
+            icon.draw(canvas)
+        }
+    }
+
 
     fun drawDamage(canvas: Canvas) {
         if (!item.dmg.isEmpty()) {

@@ -243,7 +243,15 @@ class CharacterViewModel: ViewModel() {
         }
 
         data.close()
+
         this.inv = items
+
+
+        for (item in inv) {
+            item.is_filled = getItemContents(item,1).size != 0
+            Log.d("info", "${item.name} is filled: ${item.is_filled}")
+        }
+
     }
 
     /**
@@ -374,10 +382,12 @@ class CharacterViewModel: ViewModel() {
      * @return an array of [Item].
      */
     fun getItemContents(item: Item, levels: Int = 0): Array<Item> {
+
         var loop = 0
         var result = arrayOf<Item>()
         var look_into = arrayOf(item.id)
         while (look_into.size > 0) {
+
             var next_look = arrayOf<Int>()
             for (i in getInventory()) {
                 if (i.packed_into in look_into) {
