@@ -170,6 +170,14 @@
     <string name="cinv_money">%1$.2f IR</string>
     <string name="cinv_weight">Gewicht:</string>
     <string name="cinv_weight_limit">Kapazität:</string>
+    <string name="cinv_cal_caliber">Kaliber</string>
+    <string name="cinv_cal_weapontype">Waffentyp</string>
+    <string name="cinv_cal_light">leicht</string>
+    <string name="cinv_cal_medium">mittel</string>
+    <string name="cinv_cal_heavy">schwer</string>
+    <string name="cinv_cal_pistol">Faustfeuerwaffen</string>
+    <string name="cinv_cal_rifle">Langwaffen</string>
+    <string name="cinv_cal_shotgun">Schrotflinten</string>
     <string name="cinv_cls">Klasse: </string>
     <string name="cinv_cls_clothing">Kleidungsstück</string>
     <string name="cinv_cls_container">Behälter</string>

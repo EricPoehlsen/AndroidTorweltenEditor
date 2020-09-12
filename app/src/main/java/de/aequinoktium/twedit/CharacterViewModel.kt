@@ -238,6 +238,19 @@ class CharacterViewModel: ViewModel() {
                     val var_name = split[0].replace("var.","")
                     if (var_name == string_values["mat"]) item.material = split[1]
                 }
+                if (value.startsWith("chambers:")) {
+                    item.chambers = value.split(":")[1].toInt()
+                }
+                if (value.startsWith("chambered:")) {
+                    val chambered = value.replace("chambered:", "")
+                    val ammo_ids = chambered.split(".")
+                    for (ammo_id in ammo_ids) {item.chambered += ammo_id.toInt()}
+                }
+                if(value.startsWith("caliber:")) {
+                    val caliber = value.replace("caliber:", "")
+                    val caliber_data = caliber.split(".")
+                    if (caliber_data.size == 2) item.caliber = caliber_data.toTypedArray()
+                }
             }
             items.add(item)
         }
@@ -289,7 +302,16 @@ class CharacterViewModel: ViewModel() {
         if (!item.color.isBlank()) extra_data += "col:${item.color}|"
         if (!item.material.isBlank()) {
             val mat_name = string_values["mat"]
-            extra_data += "var.$mat_name:${item.material}"
+            extra_data += "var.$mat_name:${item.material}|"
+        }
+        if (item.chambers > 0) extra_data += "chambers:${item.chambers}|"
+        if (item.chambered.size > 0) {
+            var chambered_rounds = "chambered:"
+            for (id in item.chambered) chambered_rounds += "${id}."
+            extra_data = chambered_rounds.drop(1)  + "|"
+        }
+        if (!item.caliber[0].isEmpty()) {
+            extra_data += "caliber:${item.caliber[0]}.${item.caliber[1]}|"
         }
 
         val cv = ContentValues()

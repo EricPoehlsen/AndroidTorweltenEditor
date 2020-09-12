@@ -21,7 +21,8 @@ class Item() {
     var has_contents = false
     var dmg = Damage()
     var chambers = 0
-    var caliber = ""
+    var chambered = arrayOf<Int>() // item.id
+    var caliber = arrayOf("","")  // type, size
     var color = ""
     var material = ""
     var cls = ""
@@ -89,7 +90,7 @@ class CatalogItem() {
     var container_name = ""
     var dmg = Damage()
     var chambers = 0
-    var caliber = ""
+    var caliber = arrayOf("","")
     var color = ""
     var material = ""
     var variants = mutableMapOf<String,Array<Variant>>()

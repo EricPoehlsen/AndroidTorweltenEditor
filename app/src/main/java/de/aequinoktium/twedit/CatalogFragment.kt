@@ -63,7 +63,7 @@ class CatalogFragment : Fragment() {
     }
 
     /**
-     * Set
+     * Find the tab icons and assign on Click listener
      */
     fun setupTabIcons(view: View) {
         tab_icons = arrayOf()
@@ -85,6 +85,9 @@ class CatalogFragment : Fragment() {
         }
     }
 
+    /**
+     * Load the item catalog of a specific class
+     */
     fun loadCatalog() {
         d.viewModelScope.launch(Dispatchers.IO) {
             d.loadCatalog(cls)
@@ -94,6 +97,9 @@ class CatalogFragment : Fragment() {
         }
     }
 
+    /**
+     * Display the items
+     */
     fun displayItems() {
         ll_list.removeAllViews()
         for (item in d.current_catalog) {

@@ -254,9 +254,15 @@ class DataViewModel: ViewModel() {
             if (entry.startsWith("dmg:")) {
                 item.dmg = Damage(entry.replace("dmg:",""))
             }
+            if (entry.startsWith("chambers:")) {
+                item.chambers = entry.replace("chambers:","").toInt()
+            }
+            if (entry.startsWith("caliber:")) {
+                val caliber = entry.replace("chambers:","")
+                val caliber_data = caliber.split(".")
+                if (caliber_data.size == 2) item.caliber = caliber_data.toTypedArray()
+            }
         }
-
-
     }
 
     /**

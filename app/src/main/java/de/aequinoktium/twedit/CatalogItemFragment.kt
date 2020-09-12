@@ -143,6 +143,8 @@ class CatalogItemFragment : Fragment(), ItemColorDialog.DialogListener {
         item.weight = catalog_item.weight
         item.weight_limit = catalog_item.weight_limit
         item.dmg = catalog_item.dmg
+        item.chambers = catalog_item.chambers
+        item.caliber = catalog_item.caliber
     }
 
 
@@ -378,6 +380,27 @@ class CatalogItemFragment : Fragment(), ItemColorDialog.DialogListener {
         return name
     }
 
+    fun setCaliber(mode: String, data: String) {
+        Log.d("info", "CALIBER DATA: $mode - $data")
+        if (mode == "weapon_type") {
+            val types = mapOf(
+                getString(R.string.cinv_cal_pistol) to "pistol",
+                getString(R.string.cinv_cal_rifle) to "rifle",
+                getString(R.string.cinv_cal_shotgun) to "shotgun"
+            )
+            item.caliber[0] = types[data]!!
+        }
+
+        if (mode == "caliber") {
+            val calibers = mapOf(
+                getString(R.string.cinv_cal_light) to "light",
+                getString(R.string.cinv_cal_medium) to "medium",
+                getString(R.string.cinv_cal_heavy) to "heavy"
+            )
+            item.caliber[1] = calibers[data]!!
+        }
+    }
+
 
 
     /**
@@ -430,6 +453,12 @@ class CatalogItemFragment : Fragment(), ItemColorDialog.DialogListener {
             // handle specific data
             if (name == frgm.resources.getString(R.string.cinv_material)) {
                 frgm.setMaterial(variants[selected].name)
+            }
+            if (name == frgm.resources.getString(R.string.cinv_cal_weapontype)) {
+                frgm.setCaliber("weapon_type", variants[selected].name)
+            }
+            if (name == frgm.resources.getString(R.string.cinv_cal_caliber)) {
+                frgm.setCaliber("caliber", variants[selected].name)
             }
 
             frgm.setDamage()
