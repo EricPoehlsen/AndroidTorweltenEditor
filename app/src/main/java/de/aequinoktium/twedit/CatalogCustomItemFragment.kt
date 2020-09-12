@@ -1,7 +1,6 @@
 package de.aequinoktium.twedit
 
 import android.graphics.Color
-import android.graphics.PorterDuff
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -13,14 +12,12 @@ import android.widget.*
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.viewModelScope
-import kotlinx.android.synthetic.main.fragment_character.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.*
 import kotlin.math.roundToInt
 
 
-class CharInventoryNewFragment : Fragment(),
+class CatalogCustomItemFragment : Fragment(),
                                  AdapterView.OnItemSelectedListener,
                                  ItemContainerDialog.DialogListener,
                                  ItemDamageDialog.DialogListener,
@@ -351,7 +348,7 @@ class CharInventoryNewFragment : Fragment(),
     /**
      * Implements a [TextWatcher] to monitor the various EditTexts
      */
-    class TextChanged(val et: EditText, val item: CharInventoryNewFragment): TextWatcher {
+    class TextChanged(val et: EditText, val item: CatalogCustomItemFragment): TextWatcher {
         override fun afterTextChanged(p0: Editable?) {
             when (et.id) {
                 R.id.newitem_name -> item.setName(et)

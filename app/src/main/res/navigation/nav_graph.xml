@@ -108,7 +108,7 @@
     </fragment>
     <fragment
         android:id="@+id/charInventoryNewFragment"
-        android:name="de.aequinoktium.twedit.CharInventoryNewFragment"
+        android:name="de.aequinoktium.twedit.CatalogCustomItemFragment"
         android:label="CharInventoryNewFragment" />
     <fragment
         android:id="@+id/charItemFragment"

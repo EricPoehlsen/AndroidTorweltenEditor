@@ -15,6 +15,7 @@ class DataViewModel: ViewModel() {
 
     var current_catalog = arrayOf<CatalogItem>()
     var current_catalog_item = CatalogItem()
+    var current_catalog_class = "clothing"
 
     fun setDatabase(db: SQLiteDatabase) {
         this.db = db
@@ -221,7 +222,7 @@ class DataViewModel: ViewModel() {
 
 
     suspend fun loadCatalog(cls: String) {
-        current_catalog = arrayOf<CatalogItem>()
+        current_catalog = arrayOf()
         val sql = "SELECT * FROM items WHERE cls = '$cls'"
         val data = db.rawQuery(sql, null)
         while (data.moveToNext()) {

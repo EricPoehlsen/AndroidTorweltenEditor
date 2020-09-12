@@ -1,6 +1,7 @@
 package de.aequinoktium.twedit
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -18,17 +19,23 @@ class CatalogFragment : Fragment() {
     private val c: CharacterViewModel by activityViewModels()
     private val d: DataViewModel by activityViewModels()
 
+    private lateinit var sc_container: HorizontalScrollView
     private lateinit var ll_list: LinearLayout
-    private var cls = "clothing"
+    private var cls = ""
 
     private lateinit var tab_icons: Array<ImageView>
 
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
+    private val item_classes = arrayOf(
+        "clothing",
+        "container",
+        "tool",
+        "weapon",
+        "ammo",
+        "clipsnmore",
+        "generic",
+        "valuable",
+        "more"
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,23 +47,26 @@ class CatalogFragment : Fragment() {
             container,
             false
         )
+        ll_list = root.findViewById(R.id.catalog_itemlist)
+        sc_container = root.findViewById(R.id.catalog_tab_scroll)
+        sc_container.post { setScrollPosition() }
         return root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        ll_list = view.findViewById(R.id.catalog_itemlist)
-
-
-
+        cls = d.current_catalog_class
         setupTabIcons(view)
+        setTabStateFromClass()
         loadCatalog()
-
     }
 
+    /**
+     * Set
+     */
     fun setupTabIcons(view: View) {
-        tab_icons = arrayOf<ImageView>()
+        tab_icons = arrayOf()
         val view_ids = arrayOf(
             R.id.catalog_icon_clothing,
             R.id.catalog_icon_container,
@@ -115,26 +125,30 @@ class CatalogFragment : Fragment() {
         return pos
     }
 
+    fun setTabStateFromClass() {
+        val pos = item_classes.indexOf(cls)
+        var i = 0
+        for (icon in tab_icons) {
+            if (i == pos) {
+                icon.setBackgroundResource(R.drawable.icon_tab)
+            } else {
+                icon.setBackgroundResource(R.drawable.icon_tab_dark)
+            }
+            i++
+        }
+    }
+
     /**
      * select the item class based on tab position -> loads catalog
      */
     fun selectClass(pos: Int) {
-        val item_classes = arrayOf(
-            "clothing",
-            "container",
-            "tool",
-            "weapon",
-            "weapon",
-            "clipsnmore",
-            "generic",
-            "valuable",
-            "more"
-        )
         cls = item_classes[pos]
         if (cls != "more") {
             loadCatalog()
+            d.current_catalog_class = cls
         } else {
             newItem()
+            d.current_catalog_class = "clothing"
         }
 
     }
@@ -147,4 +161,13 @@ class CatalogFragment : Fragment() {
     fun newItem() {
         this.findNavController().navigate(R.id.action_cat_to_cinvnew)
     }
+
+    fun setScrollPosition() {
+        val x = px(48).toInt() * item_classes.indexOf(cls)
+        Log.d("info", "X: $x")
+        sc_container.smoothScrollTo(x,0)
+    }
+
+    // calculate px for dp value
+    fun px(dp: Int): Float = dp * resources.displayMetrics.density
 }
