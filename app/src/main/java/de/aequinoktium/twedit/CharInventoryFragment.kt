@@ -200,7 +200,7 @@ class CharInventoryFragment : Fragment(),
         init {
             showBasedOnSettings()
             for (i in full_inventory) {
-                Log.d("info", "${i.name} is filled: ${i.is_filled}")
+                Log.d("info", "${i.name} is filled: ${i.has_contents}")
             }
 
         }

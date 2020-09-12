@@ -248,8 +248,7 @@ class CharacterViewModel: ViewModel() {
 
 
         for (item in inv) {
-            item.is_filled = getItemContents(item,1).size != 0
-            Log.d("info", "${item.name} is filled: ${item.is_filled}")
+            item.has_contents = getItemContents(item,1).size != 0
         }
 
     }
@@ -262,6 +261,27 @@ class CharacterViewModel: ViewModel() {
         return inv.toTypedArray()
     }
 
+    /**
+     * Retrieves an item by its id
+     * @param id: Integer id
+     * @return an [Item] from the inventory (empty item with id=0 if none found)
+     */
+    fun getItemById(id: Int): Item {
+        var result = Item()
+        for (i in getInventory()) {
+            if (i.id == id) {
+                result = i
+                break
+            }
+        }
+        return result
+    }
+
+    /**
+     * Prepares an item for storage in the database
+     * @param item: [Item] to store
+     * @return [ContentValues] to write the the database
+     */
     fun prepareItem(item: Item): ContentValues {
         var extra_data = ""
         if (item.container_name.length > 0) extra_data += "cnt:${item.container_name}|"
@@ -309,6 +329,7 @@ class CharacterViewModel: ViewModel() {
     }
 
     suspend fun packItem(item: Item) {
+        updateItemHasContents(getItemById(item.packed_into))
         val sql = """
             UPDATE char_items 
             SET 
@@ -321,6 +342,7 @@ class CharacterViewModel: ViewModel() {
     }
 
     suspend fun unpackItem(item: Item) {
+        updateItemHasContents(getItemById(item.packed_into))
         val sql = """
             UPDATE char_items 
             SET 
@@ -329,6 +351,10 @@ class CharacterViewModel: ViewModel() {
                 id=${item.id}
         """.trimIndent()
         db.execSQL(sql)
+    }
+
+    fun updateItemHasContents(item: Item) {
+        item.has_contents = getItemContents(item,1).size != 0
     }
 
     suspend fun removeItem(item: Item) {

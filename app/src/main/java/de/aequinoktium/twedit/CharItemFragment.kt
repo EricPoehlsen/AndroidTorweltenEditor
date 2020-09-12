@@ -124,11 +124,14 @@ class CharItemFragment : Fragment(),
      */
     fun packItem() {
         if (item.packed_into > 0) { // unpack item
-            item.packed_into = 0
+
             bt_pack.setText(R.string.cinv_pack)
             c.viewModelScope.launch(Dispatchers.IO) {
                 c.unpackItem(item)
             }
+            // set 0 after! ViewModel has handled the item.
+            item.packed_into = 0
+
         } else { // display pack item dialog
             val fm = this.parentFragmentManager
             val dialog = ItemPackDialog(item, c)

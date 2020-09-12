@@ -61,7 +61,7 @@ class ItemView @JvmOverloads constructor(
                 right.toInt()-50,
                 bottom.toInt()-5
             )
-            if (item.is_filled) {
+            if (item.has_contents) {
                 icon.alpha = 255
             } else {
                 icon.alpha = 50
@@ -72,6 +72,9 @@ class ItemView @JvmOverloads constructor(
     }
 
 
+    /**
+     * Display the damage text
+     */
     fun drawDamage(canvas: Canvas) {
         if (!item.dmg.isEmpty()) {
             val paint = Paint().apply {
@@ -81,7 +84,7 @@ class ItemView @JvmOverloads constructor(
             }
             val dmg = item.dmg.toString()
             val text_width = paint.measureText(dmg)
-            val x = right - text_width
+            val x = right - text_width - 6
             val y = bottom - paint.descent()
             canvas.drawText(dmg, x, y, paint)
         }

@@ -18,7 +18,7 @@ class Item() {
     var equip_loc = emptyArray<String>()
     var price = 0f
     var container_name = ""
-    var is_filled = false
+    var has_contents = false
     var dmg = Damage()
     var chambers = 0
     var caliber = ""
