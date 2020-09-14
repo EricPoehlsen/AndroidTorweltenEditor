@@ -8,10 +8,11 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 
 /**
- * A DialogFrament that is used to modify a specific character information.
+ * A DialogFrament that to pack an [Item] into another [Item]
  * @param info_id is the database id for the information to modify
  * @param c is the [CharacterViewModel] for this app.
  * @param v is the [View] calling this dialog
@@ -57,14 +58,12 @@ class ItemPackDialog(val item: Item, val c: CharacterViewModel): DialogFragment(
             val content: View = inflater.inflate(R.layout.dialog_item_pack, null)
 
             ll_container = content.findViewById(R.id.dia_itempack_container)
+            val tv_title = content.findViewById<TextView>(R.id.dia_itempack_title)
+            val title = getString(R.string.dialog_item_pack_title, item.name)
+            tv_title.text = title
             findContainers()
 
             builder.setView(content)
-
-
-            val title = getString(R.string.dialog_item_cont_title)
-
-            builder.setTitle(title)
 
             builder.setPositiveButton(R.string.dialog_ok) { dialog, id ->
                 listener.onDialogPositiveClick(this)
@@ -76,6 +75,8 @@ class ItemPackDialog(val item: Item, val c: CharacterViewModel): DialogFragment(
     }
 
     fun findContainers() {
+        val green = ContextCompat.getColor(requireContext(), R.color.Green)
+        val red = ContextCompat.getColor(requireContext(), R.color.Red)
 
         fun selector(i: Item): Int = i.weight_limit
 
@@ -95,16 +96,22 @@ class ItemPackDialog(val item: Item, val c: CharacterViewModel): DialogFragment(
                 text = i.name
             }
 
+            // the item caliber == the container caliber
+            if (i.caliber contentEquals item.caliber) {
+                tv.setTextColor(green)
+                state = 1
+            }
+
             // the remaining capacity in the container is insufficient
             if (i.weight_limit < c.getItemTotalWeight(item) + c.getItemContentWeight(i)) {
                 text += " (!)"
-                state = 1
+                state = 2
             }
 
             // the item is just too big/heavy for this container
             if (i.weight_limit < item.weight) {
-                tv.setTextColor(resources.getColor(R.color.Red))
-                state = 2
+                tv.setTextColor(red)
+                state = 3
             }
 
             tv.text = text
@@ -116,19 +123,28 @@ class ItemPackDialog(val item: Item, val c: CharacterViewModel): DialogFragment(
     }
 
     fun select(view: View) {
+        val grey = ContextCompat.getColor(requireContext(), R.color.Grey)
+        val red = ContextCompat.getColor(requireContext(), R.color.Red)
+        val green = ContextCompat.getColor(requireContext(), R.color.Green)
+        val blue = ContextCompat.getColor(requireContext(), R.color.Blue)
+
         for (i in 0..ll_container.childCount-1) {
             var tv = ll_container.getChildAt(i)
             tv as TextView
+
+
+
             when (cont_state[i]) {
-                0 -> tv.setTextColor(resources.getColor(R.color.Grey))
-                1 -> tv.setTextColor(resources.getColor(R.color.Grey))
-                2 -> tv.setTextColor(resources.getColor(R.color.Red))
+                0 -> tv.setTextColor(grey)
+                1 -> tv.setTextColor(green)
+                2 -> tv.setTextColor(grey)
+                3 -> tv.setTextColor(red)
             }
             if (tv == view) selected = i
 
         }
         view as TextView
-        view.setTextColor(resources.getColor(R.color.Blue))
+        view.setTextColor(blue)
     }
 
 }

@@ -64,6 +64,7 @@
     <string name="dialog_item_qty_all">Alle</string>
     <string name="dialog_item_color_title">Farbe festlegen</string>
     <string name="dialog_item_material_title">Material:</string>
+    <string name="dialog_item_pack_title">%1$s einpacken:</string>
     <string name="dialog_item_qual_title">Qualität ändern:</string>
     <string name="dialog_item_qual_inc">verbessern / reparieren</string>
     <string name="dialog_item_qual_dec">verschlechtern / beschädigen</string>
