@@ -150,11 +150,11 @@ class DataViewModel: ViewModel() {
         return result
     }
 
-    suspend fun addCharacter(name: String) {
+    suspend fun addCharacter(name: String, xp: Int) {
         val checked_name = name.replace("'", "\u2019")
         var data = ContentValues()
         data.put("name", checked_name)
-        data.put("xp_total", 330)
+        data.put("xp_total", xp)
         db.insert("char_core", null, data)
     }
 

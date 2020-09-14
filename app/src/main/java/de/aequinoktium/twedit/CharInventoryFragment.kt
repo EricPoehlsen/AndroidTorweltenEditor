@@ -36,8 +36,8 @@ class CharInventoryFragment : Fragment(),
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        show_packed = settings.find("inventory.show_packed") == "1"
-        show_equipped = settings.find("inventory.show_equipped") == "1"
+        show_packed = settings.getString("inventory.show_packed") == "1"
+        show_equipped = settings.getString("inventory.show_equipped") == "1"
 
         val root: View
 

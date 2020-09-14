@@ -15,9 +15,14 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 
-class CharSelectFragment : Fragment(), CharDeleteDialog.DialogListener {
+class CharSelectFragment :
+        Fragment(),
+        CharDeleteDialog.DialogListener,
+        SettingsDialog.DialogListener
+{
     private val c: CharacterViewModel by activityViewModels()
     private val d: DataViewModel by activityViewModels()
+    private val settings: SettingsViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,15 +44,18 @@ class CharSelectFragment : Fragment(), CharDeleteDialog.DialogListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        var act = activity as MainActivity
-        var tb = act.supportActionBar
+        val act = activity as MainActivity
+        val tb = act.supportActionBar
         tb?.title = getString(R.string.charselect_title)
 
         // attach on click listeners ...
-        val bt_add = view.findViewById<View>(R.id.charselect_add) as Button
+        val bt_add = view.findViewById<Button>(R.id.charselect_add)
         bt_add.setOnClickListener { newChar() }
-        val bt_search = view.findViewById<View>(R.id.charselect_search) as Button
+        val bt_search = view.findViewById<Button>(R.id.charselect_search)
         bt_search.setOnClickListener { listChars() }
+        val iv_settings = view.findViewById<ImageView>(R.id.charselect_settings)
+        iv_settings.setOnClickListener { editSettings() }
+
 
         listChars()
     }
@@ -103,7 +111,7 @@ class CharSelectFragment : Fragment(), CharDeleteDialog.DialogListener {
         val name = act.findViewById<EditText>(R.id.charselect_name).text.toString()
         if (name.length > 1) {
             d.viewModelScope.launch(Dispatchers.IO) {
-                d.addCharacter(name)
+                d.addCharacter(name,settings.getInt("core.initial_xp"))
                 withContext(Dispatchers.Main) {
                     listChars()
                 }
@@ -129,12 +137,24 @@ class CharSelectFragment : Fragment(), CharDeleteDialog.DialogListener {
         return true
     }
 
-    override fun onDialogPositiveClick(dialog: CharDeleteDialog) {
-        d.viewModelScope.launch(Dispatchers.IO) {
-            d.deleteCharacter(dialog.char)
-            withContext(Dispatchers.Main) {
-                listChars()
+    fun editSettings() {
+        val fm = this.parentFragmentManager
+        val dialog = SettingsDialog(arrayOf("core.initial_xp:Int"))
+        dialog.setTargetFragment(this, 301)
+        dialog.show(fm, null)
+    }
+
+    override fun onDialogPositiveClick(dialog: DialogFragment) {
+        if (dialog is CharDeleteDialog) {
+            d.viewModelScope.launch(Dispatchers.IO) {
+                d.deleteCharacter(dialog.char)
+                withContext(Dispatchers.Main) {
+                    listChars()
+                }
             }
+        } else if (dialog is SettingsDialog) {
+            val new_xp = dialog.values[0] as Int
+            settings.update("core.initial_xp", new_xp)
         }
     }
 }

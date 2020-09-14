@@ -27,7 +27,7 @@ class CharDeleteDialog(val char: DataViewModel.CharInfo): DialogFragment()
      * implement this interface in order to receive event callbacks.
      * Each method passes the DialogFragment in case the host needs to query it. */
     interface DialogListener {
-        fun onDialogPositiveClick(dialog: CharDeleteDialog)
+        fun onDialogPositiveClick(dialog: DialogFragment)
     }
 
     override fun onAttach(context: Context) {

@@ -235,6 +235,13 @@ class DatabaseConnect(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
         """.trimIndent()
         db.execSQL(sql)
 
+        // add basic settings
+        sql = """
+            INSERT INTO settings (name, value) VALUES
+            ('core.initial_xp', '330')
+        """.trimIndent()
+        db.execSQL(sql)
+
         // add skill data ...
         sql = """
             INSERT INTO skills (id, name, parent_id, spec, is_active) VALUES 

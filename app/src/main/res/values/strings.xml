@@ -204,6 +204,7 @@
         <item>unvorstellbar</item>
     </string-array>
 
+    <string name="setting_core_initial_xp">Start-XP:</string>
     <string name="setting_inventory_show_packed">Zeige eingepackte Gegenstände</string>
     <string name="setting_inventory_show_equipped">Zeige nur ausgerüstete Gegenstände</string>
 
