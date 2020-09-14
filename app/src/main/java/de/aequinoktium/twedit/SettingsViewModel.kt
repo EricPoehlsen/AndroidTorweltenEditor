@@ -55,17 +55,35 @@ class SettingsViewModel: ViewModel() {
     }
 
     /**
+     * update or set a key value pair with an integer value
+     * @param key the setting name - a String
+     * @param value the setting value - an Integer
+     * @return the value
+     */
+    fun update(key: String, value: Int): Int {
+        val entry = value.toString()
+        this.viewModelScope.launch(Dispatchers.IO) {
+            update_setting(key,  entry)
+        }
+        return value
+    }
+
+    /**
      * retrieve the value of a key from [settings]
      * @param key - name of the setting as String
      * @return value of the setting as String "0" if not found
      */
-    fun find(key: String): String {
+    fun getString(key: String): String {
         var result = "0"
         if (settings[key] != null) {
             result = settings[key]!!
         }
         return result
     }
+
+    fun getInt(key: String) = getString(key).toInt()
+    fun getBoolean(key: String) = getString(key) == "1"
+
 
     /**
      * write a key, value pair to the database and update [settings]

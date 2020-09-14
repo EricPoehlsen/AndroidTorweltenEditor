@@ -3,14 +3,14 @@ package de.aequinoktium.twedit
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
+import android.text.Editable
+import android.text.InputType
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.CheckBox
-import android.widget.CompoundButton
-import android.widget.LinearLayout
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
-import androidx.core.view.children
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 
@@ -26,6 +26,7 @@ class SettingsDialog(val edit_settings: Array<String>):
     internal lateinit var listener: DialogListener
     private lateinit var container: LinearLayout
     var values = mutableMapOf<Int, Any>()
+    var fields = mutableListOf<View>()
 
 
 
@@ -93,24 +94,36 @@ class SettingsDialog(val edit_settings: Array<String>):
             val type = data[1]
 
             if (type == "Boolean") {
-                values[i] = settings.find(data[0]) == "1"
+                values[i] = settings.getBoolean(data[0])
                 val view = CheckBox(context)
                 view.isChecked = values[i] as Boolean
                 view.setOnCheckedChangeListener(this)
                 view.setText(text)
                 container.addView(view)
+                fields.add(view)
+            } else if (type == "Int") {
+                values[i] = settings.getInt(data[0])
+                val line = LinearLayout(context)
+                val tv = TextView(context)
+                tv.text = text
+                val et = EditText(context)
+                et.setText(values[i].toString())
+                et.addTextChangedListener(TextChanged(et,this))
+                et.setInputType(InputType.TYPE_CLASS_NUMBER)
+                line.addView(tv)
+                line.addView(et)
+                container.addView(line)
+                fields.add(et)
             }
 
 
             i++
         }
     }
-
     override fun onCheckedChanged(button: CompoundButton?, state: Boolean) {
         if (button is CheckBox) {
             var i = 0
-            for (view in container.children) {
-
+            for (view in fields) {
                 if (view == button) {
                     values[i] = button.isChecked
                     Log.d("info", "$i - ${button.isChecked}")
@@ -118,6 +131,40 @@ class SettingsDialog(val edit_settings: Array<String>):
                 i++
             }
         }
+    }
+
+
+    class TextChanged(val et: EditText, val dia: SettingsDialog): TextWatcher{
+        override fun afterTextChanged(p0: Editable?) {
+            val format_number = InputType.TYPE_CLASS_NUMBER
+            val format_text = InputType.TYPE_CLASS_TEXT
+
+            var i = 0
+            for (view in dia.fields) {
+                if (et == view) {
+                    val text = et.text.toString()
+                    if (text.isEmpty()) {
+                        if (et.inputType == format_number) {
+                            dia.values[i] = 0
+                        } else {
+                            dia.values[i] = "0"
+                        }
+
+                    } else {
+                        if (et.inputType == format_number) {
+                            dia.values[i] = text.toInt()
+                        } else {
+                            dia.values[i] = text
+                        }
+                    }
+                }
+                i++
+            }
+        }
+
+        // unused but needed for implementation
+        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
     }
 }
 
