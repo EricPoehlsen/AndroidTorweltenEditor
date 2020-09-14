@@ -7,21 +7,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.CheckBox
 import android.widget.CompoundButton
+import android.widget.LinearLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.activityViewModels
 
 /**
  * A DialogFrament that is used to change inventory settings
  */
-class CharInventorySettingsDialog(var packed: Boolean, var equipped: Boolean):
+class SettingsDialog(val edit_settings: Array<String>):
         DialogFragment(),
         CompoundButton.OnCheckedChangeListener
 {
 
+    internal val settings: SettingsViewModel by activityViewModels()
     internal lateinit var listener: DialogListener
+    private lateinit var container: LinearLayout
+    var values = mutableMapOf<Int, Any>()
 
-    private lateinit var cb_packed: CheckBox
-    private lateinit var cb_equipped: CheckBox
 
 
     /* The activity that creates an instance of this dialog fragment must
@@ -55,12 +58,10 @@ class CharInventorySettingsDialog(var packed: Boolean, var equipped: Boolean):
 
             val inflater: LayoutInflater = this.layoutInflater
             val content: View = inflater.inflate(R.layout.dialog_inventory_settings, null)
-            cb_packed = content.findViewById<CheckBox>(R.id.dia_invset_packed)
-            cb_equipped = content.findViewById<CheckBox>(R.id.dia_invset_equipped)
-            cb_packed.setOnCheckedChangeListener(this)
-            cb_equipped.setOnCheckedChangeListener(this)
-            cb_packed.isChecked = packed
-            cb_equipped.isChecked = equipped
+            if (content is LinearLayout) {
+                container = content
+                displaySettings()
+            }
 
             builder.setView(content)
 
@@ -77,21 +78,23 @@ class CharInventorySettingsDialog(var packed: Boolean, var equipped: Boolean):
         } ?: throw IllegalStateException("Activity cant't be null")
     }
 
-    override fun onCheckedChanged(button: CompoundButton?, state: Boolean) {
-        if (button is CheckBox) {
-            when (button.id) {
-                R.id.dia_invset_equipped -> {
-                    equipped = state
-                    if (equipped) {
-                        cb_packed.isChecked = false
-                        cb_packed.isEnabled = false
-                    } else {
-                        cb_packed.isEnabled = true
-                    }
-                }
-                R.id.dia_invset_packed -> packed = state
+    fun displaySettings(){
+        for (setting in edit_settings) {
+            val data = setting.split(":")
+            val identifier = "setting_" + data[0].replace(".", "_")
+            val text = getString(resources.getIdentifier(identifier, null, null))
+            val type = data[1]
+
+            if (type == "Boolean") {
+                val view = CheckBox(context)
+                view.setOnCheckedChangeListener(this)
+                view.setText(text)
+                container.addView(view)
             }
         }
+    }
+
+    override fun onCheckedChanged(button: CompoundButton?, state: Boolean) {
     }
 
 }

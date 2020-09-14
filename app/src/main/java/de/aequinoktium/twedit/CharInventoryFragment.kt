@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 
 class CharInventoryFragment : Fragment(),
-    CharInventorySettingsDialog.DialogListener
+    SettingsDialog.DialogListener
 {
     private val c: CharacterViewModel by activityViewModels()
     private val settings: SettingsViewModel by activityViewModels()
@@ -90,7 +90,11 @@ class CharInventoryFragment : Fragment(),
 
     fun settings() {
         val fm = this.parentFragmentManager
-        val dialog = CharInventorySettingsDialog(show_packed, show_equipped)
+        val names = arrayOf(
+            "inventory.show_equipped:Boolean",
+            "inventory.show_packed:Boolean"
+        )
+        val dialog = SettingsDialog(names)
         dialog.setTargetFragment(this, 301)
         dialog.show(fm, null)
     }
@@ -100,11 +104,9 @@ class CharInventoryFragment : Fragment(),
      * updates the show_packed and show_equipped settings
      */
     override fun onDialogPositiveClick(dialog: DialogFragment) {
-        if (dialog is CharInventorySettingsDialog) {
-            Log.d("info", "equipped: ${dialog.equipped}, packed: ${dialog.packed}, ")
-
-            show_equipped = settings.update("inventory.show_equipped", dialog.equipped)
-            show_packed = settings.update("inventory.show_packed", dialog.packed)
+        if (dialog is SettingsDialog) {
+            show_equipped = settings.update("inventory.show_equipped", dialog.values[0] as Boolean)
+            show_packed = settings.update("inventory.show_packed", dialog.values[1] as Boolean)
             rv_adapter.showBasedOnSettings()
         }
     }

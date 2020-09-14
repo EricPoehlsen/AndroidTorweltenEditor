@@ -47,9 +47,9 @@ class SettingsViewModel: ViewModel() {
      * @return the value
      */
     fun update(key: String, value: Boolean): Boolean {
-        val entry = if (value) 1 else 0
+        val entry = if (value) "1" else "0"
         this.viewModelScope.launch(Dispatchers.IO) {
-            update_setting(key,  entry.toString())
+            update_setting(key,  entry)
         }
         return value
     }
