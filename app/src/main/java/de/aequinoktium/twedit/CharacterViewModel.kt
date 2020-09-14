@@ -251,6 +251,9 @@ class CharacterViewModel: ViewModel() {
                     val caliber_data = caliber.split(".")
                     if (caliber_data.size == 2) item.caliber = caliber_data.toTypedArray()
                 }
+                if(value.startsWith("capacity:")) {
+                    item.capacity = value.split(":")[1].toInt()
+                }
             }
             items.add(item)
         }
@@ -312,6 +315,9 @@ class CharacterViewModel: ViewModel() {
         }
         if (!item.caliber[0].isEmpty()) {
             extra_data += "caliber:${item.caliber[0]}.${item.caliber[1]}|"
+        }
+        if (item.capacity > 0) {
+            extra_data += "capacity:${item.capacity}|"
         }
 
         val cv = ContentValues()

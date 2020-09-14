@@ -145,6 +145,7 @@ class CatalogItemFragment : Fragment(), ItemColorDialog.DialogListener {
         item.dmg = catalog_item.dmg
         item.chambers = catalog_item.chambers
         item.caliber = catalog_item.caliber
+        item.capacity = catalog_item.capacity
     }
 
 
@@ -380,6 +381,9 @@ class CatalogItemFragment : Fragment(), ItemColorDialog.DialogListener {
         return name
     }
 
+    /**
+     * set the caliber data
+     */
     fun setCaliber(mode: String, data: String) {
         Log.d("info", "CALIBER DATA: $mode - $data")
         if (mode == "weapon_type") {
@@ -401,7 +405,9 @@ class CatalogItemFragment : Fragment(), ItemColorDialog.DialogListener {
         }
     }
 
-
+    fun setCapacity(value: Int) {
+        item.capacity = value
+    }
 
     /**
      * recalculate price an weight and display results
@@ -459,6 +465,9 @@ class CatalogItemFragment : Fragment(), ItemColorDialog.DialogListener {
             }
             if (name == frgm.resources.getString(R.string.cinv_cal_caliber)) {
                 frgm.setCaliber("caliber", variants[selected].name)
+            }
+            if (name == frgm.resources.getString(R.string.cinv_capacity)) {
+                frgm.setCapacity(variants[selected].capacity)
             }
 
             frgm.setDamage()

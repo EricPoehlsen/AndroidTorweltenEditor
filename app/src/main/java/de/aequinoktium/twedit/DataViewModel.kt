@@ -258,9 +258,12 @@ class DataViewModel: ViewModel() {
                 item.chambers = entry.replace("chambers:","").toInt()
             }
             if (entry.startsWith("caliber:")) {
-                val caliber = entry.replace("chambers:","")
+                val caliber = entry.replace("caliber:","")
                 val caliber_data = caliber.split(".")
                 if (caliber_data.size == 2) item.caliber = caliber_data.toTypedArray()
+            }
+            if (entry.startsWith("capacity:")) {
+                item.capacity = entry.replace("capacity:","").toInt()
             }
         }
     }
@@ -302,6 +305,8 @@ class DataViewModel: ViewModel() {
                 } else if (e.startsWith("d")) {
                     val dmg_value = e.replace("d","")
                     item_variant.dmg = Damage(dmg_value)
+                } else if (e.startsWith("c")) {
+                    item_variant.capacity = e.replace("c","").toInt()
                 }
             }
             vars += item_variant

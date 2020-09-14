@@ -170,6 +170,7 @@
     <string name="cinv_money">%1$.2f IR</string>
     <string name="cinv_weight">Gewicht:</string>
     <string name="cinv_weight_limit">Kapazität:</string>
+    <string name="cinv_capacity">Kapazität</string>
     <string name="cinv_cal_caliber">Kaliber</string>
     <string name="cinv_cal_weapontype">Waffentyp</string>
     <string name="cinv_cal_light">leicht</string>

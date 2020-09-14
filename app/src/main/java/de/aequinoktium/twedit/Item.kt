@@ -14,6 +14,7 @@ class Item() {
     var cur_qual = 6
     var orig_qual = 6
     var weight_limit = 0
+    var capacity = 0
     var equipped = 0
     var equip_loc = emptyArray<String>()
     var price = 0f
@@ -38,6 +39,7 @@ class Item() {
         new.cur_qual = this.cur_qual
         new.orig_qual = this.orig_qual
         new.weight_limit = this.weight_limit
+        new.capacity = this.capacity
         new.equipped = this.equipped
         new.price = this.price
         new.container_name = this.container_name
@@ -67,6 +69,7 @@ class Item() {
             item.cur_qual == this.cur_qual &&
             item.orig_qual == this.orig_qual &&
             item.weight_limit == this.weight_limit &&
+            item.capacity == this.capacity &&
             item.equipped == this.equipped &&
             item.price == this.price &&
             item.container_name == this.container_name &&
@@ -86,6 +89,7 @@ class CatalogItem() {
     var weight = 0
     var avail = 0
     var weight_limit = 0
+    var capacity = 0
     var price = 0f
     var container_name = ""
     var dmg = Damage()
@@ -103,6 +107,7 @@ class CatalogItem() {
         var price_factor = 1f
         var weight_factor = 1f
         var weight_limit = 0
+        var capacity = 0
         var dmg_mod = ""
         var dmg = Damage()
         var selected = false

@@ -1,6 +1,7 @@
 package de.aequinoktium.twedit
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -66,7 +67,7 @@ class CharItemFragment : Fragment(),
         tv_title.text = item.name
 
         tv_desc = view.findViewById(R.id.char_item_desc)
-        tv_desc.text = item.desc
+        tv_desc.text = description()
 
         tv_qty = view.findViewById(R.id.char_item_qty)
         val qty_label = resources.getString(R.string.cinv_quantity)
@@ -339,4 +340,30 @@ class CharItemFragment : Fragment(),
             }
         }
     }
+
+    fun description(): String {
+        var desc = item.desc
+        return addCaliberInfoToString(desc)
+    }
+
+    fun addCaliberInfoToString(input: String):String {
+        Log.d("info", "in addCaliberInfoToString")
+        var result = ""
+        if (!item.caliber[0].isEmpty() && !item.caliber[1].isEmpty()) {
+            val weapons = mapOf(
+                "pistol" to getString(R.string.cinv_cal_pistol),
+                "rifle" to getString(R.string.cinv_cal_pistol),
+                "shotgun" to getString(R.string.cinv_cal_pistol)
+            )
+            val caliber = mapOf(
+                "light" to getString(R.string.cinv_cal_light),
+                "medium" to getString(R.string.cinv_cal_medium),
+                "heavy" to getString(R.string.cinv_cal_heavy)
+            )
+            result = "${weapons[item.caliber[0]]} - ${caliber[item.caliber[1]]}"
+        }
+        if (!input.isEmpty()) result = "\n" + result
+        return input + result
+    }
+
 }
