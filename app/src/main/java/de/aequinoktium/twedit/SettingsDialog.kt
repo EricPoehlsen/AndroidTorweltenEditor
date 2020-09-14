@@ -3,12 +3,14 @@ package de.aequinoktium.twedit
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.CheckBox
 import android.widget.CompoundButton
 import android.widget.LinearLayout
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.children
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 
@@ -79,23 +81,43 @@ class SettingsDialog(val edit_settings: Array<String>):
     }
 
     fun displaySettings(){
+        var i = 0
         for (setting in edit_settings) {
             val data = setting.split(":")
-            val identifier = "setting_" + data[0].replace(".", "_")
-            val text = getString(resources.getIdentifier(identifier, null, null))
+            val R_id = resources.getIdentifier(
+                "setting_" + data[0].replace(".", "_"),
+                "string",
+                "de.aequinoktium.twedit"
+            )
+            val text = getString(R_id)
             val type = data[1]
 
             if (type == "Boolean") {
+                values[i] = settings.find(data[0]) == "1"
                 val view = CheckBox(context)
+                view.isChecked = values[i] as Boolean
                 view.setOnCheckedChangeListener(this)
                 view.setText(text)
                 container.addView(view)
             }
+
+
+            i++
         }
     }
 
     override fun onCheckedChanged(button: CompoundButton?, state: Boolean) {
-    }
+        if (button is CheckBox) {
+            var i = 0
+            for (view in container.children) {
 
+                if (view == button) {
+                    values[i] = button.isChecked
+                    Log.d("info", "$i - ${button.isChecked}")
+                }
+                i++
+            }
+        }
+    }
 }
 

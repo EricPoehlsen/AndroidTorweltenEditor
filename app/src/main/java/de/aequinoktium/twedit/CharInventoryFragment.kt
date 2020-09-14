@@ -105,6 +105,8 @@ class CharInventoryFragment : Fragment(),
      */
     override fun onDialogPositiveClick(dialog: DialogFragment) {
         if (dialog is SettingsDialog) {
+            Log.d("info", "${dialog.values.values}")
+
             show_equipped = settings.update("inventory.show_equipped", dialog.values[0] as Boolean)
             show_packed = settings.update("inventory.show_packed", dialog.values[1] as Boolean)
             rv_adapter.showBasedOnSettings()
