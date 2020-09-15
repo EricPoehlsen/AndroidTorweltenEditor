@@ -7,6 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
@@ -30,6 +32,7 @@ class CharItemFragment : Fragment(),
     lateinit var tv_price: TextView
     lateinit var tv_weight: TextView
     lateinit var tv_dmg: TextView
+    lateinit var ll_actions: LinearLayout
 
     lateinit var bt_equip: Button
     lateinit var bt_pack: Button
@@ -118,6 +121,10 @@ class CharItemFragment : Fragment(),
             bt_pack.setText(resources.getString(R.string.cinv_unpack))
         }
         bt_pack.setOnClickListener { packItem() }
+        ll_actions = view.findViewById(R.id.char_item_actions)
+        setupActions()
+
+
     }
 
     /**
@@ -366,4 +373,26 @@ class CharItemFragment : Fragment(),
         return input + result
     }
 
+
+    /**
+     * add item_specific actions to the layout
+     */
+    fun setupActions() {
+        Log.d("info", "CLS: ${item.cls}, CAP: ${item.capacity} CAL: ${item.caliber[1]}")
+        if (item.cls == "clipsnmore" && item.capacity > 0 && !item.caliber[1].isEmpty()){
+            loadClipIcon()
+        }
+
+    }
+
+    fun loadClipIcon() {
+        val iv = ImageView(context)
+        iv.setImageResource(R.drawable.action_load_ammo)
+        val lp = LinearLayout.LayoutParams(px(32).toInt(),px(32).toInt())
+        iv.layoutParams = lp
+        ll_actions.addView(iv)
+    }
+
+    // calculate px for dp value
+    fun px(dp: Int): Float = dp * resources.displayMetrics.density
 }

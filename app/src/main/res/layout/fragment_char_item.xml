@@ -78,4 +78,12 @@
         android:text="@string/cinv_damage"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/char_item_price" />
+
+    <LinearLayout
+        android:id="@+id/char_item_actions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/char_item_equip"
+        app:layout_constraintEnd_toEndOf="parent"></LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

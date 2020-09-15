@@ -136,8 +136,9 @@ class CatalogItemFragment : Fragment(), ItemColorDialog.DialogListener {
 
     // transfer some initial data
     fun setInitialData() {
-        item.container_name = catalog_item.container_name
         item.name = catalog_item.name
+        item.container_name = catalog_item.container_name
+        item.cls = catalog_item.cls
         item.desc = catalog_item.desc
         item.price = catalog_item.price
         item.weight = catalog_item.weight
@@ -146,6 +147,7 @@ class CatalogItemFragment : Fragment(), ItemColorDialog.DialogListener {
         item.chambers = catalog_item.chambers
         item.caliber = catalog_item.caliber
         item.capacity = catalog_item.capacity
+        Log.d("info", "ITEM CLASS: ${item.cls}")
     }
 
 

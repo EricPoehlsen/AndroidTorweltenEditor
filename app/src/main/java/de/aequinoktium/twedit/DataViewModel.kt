@@ -229,6 +229,7 @@ class DataViewModel: ViewModel() {
             val item = CatalogItem()
 
             item.name = data.getString(data.getColumnIndex("name"))
+            item.cls = data.getString(data.getColumnIndex("cls"))
             item.weight = data.getInt(data.getColumnIndex("weight"))
             item.price = data.getFloat(data.getColumnIndex("price"))
             item.desc = data.getString(data.getColumnIndex("desc"))

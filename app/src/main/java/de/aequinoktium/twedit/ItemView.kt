@@ -128,6 +128,7 @@ class ItemView @JvmOverloads constructor(
                 textSize = px(14)
                 isAntiAlias = true
             }
+            paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD))
             val dmg = item.dmg.toString()
             val text_width = paint.measureText(dmg)
             val x = right - text_width - 6

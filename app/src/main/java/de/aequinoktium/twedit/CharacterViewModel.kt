@@ -210,9 +210,10 @@ class CharacterViewModel: ViewModel() {
         while (data.moveToNext()) {
             val item = Item()
 
-            val cls = data.getString(data.getColumnIndex("cls"))
+
 
             item.id = data.getInt(data.getColumnIndex("id"))
+            item.cls = data.getString(data.getColumnIndex("cls"))
             item.name = data.getString(data.getColumnIndex("name"))
             item.desc = data.getString(data.getColumnIndex("desc"))
             item.qty = data.getInt(data.getColumnIndex("qty"))
