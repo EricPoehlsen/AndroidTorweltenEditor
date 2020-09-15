@@ -79,11 +79,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/char_item_price" />
 
+    <Button
+        android:id="@+id/test_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/char_item_dmg" />
+
     <LinearLayout
         android:id="@+id/char_item_actions"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@+id/char_item_equip"
-        app:layout_constraintEnd_toEndOf="parent"></LinearLayout>
+        app:layout_constraintEnd_toEndOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

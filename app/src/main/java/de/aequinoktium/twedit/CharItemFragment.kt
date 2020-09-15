@@ -21,7 +21,8 @@ class CharItemFragment : Fragment(),
                          ItemPackDialog.DialogListener,
                          ItemQualDialog.DialogListener,
                          ItemSellDialog.DialogListener,
-                         ItemQtyDialog.DialogListener
+                         ItemQtyDialog.DialogListener,
+                         ItemLoadClipDialog.DialogListener
 {
     private val c: CharacterViewModel by activityViewModels()
     lateinit var item: Item
@@ -76,21 +77,21 @@ class CharItemFragment : Fragment(),
         val qty_label = resources.getString(R.string.cinv_quantity)
         val qty_text = "$qty_label ${item.qty}"
         tv_qty.text = qty_text
-        tv_qty.setOnClickListener {editQty()}
+        tv_qty.setOnClickListener {editQuantityDialog()}
 
         tv_qual = view.findViewById(R.id.char_item_qual)
         val qual_label = resources.getString(R.string.cinv_quality)
         val qualities = resources.getStringArray(R.array.cinv_qualities)
         val qual_text = "$qual_label ${qualities[item.cur_qual]} (${item.cur_qual})"
         tv_qual.text = qual_text
-        tv_qual.setOnClickListener {editQual()}
+        tv_qual.setOnClickListener {editQualityDialog()}
 
         tv_price = view.findViewById(R.id.char_item_price)
         val price_label = resources.getString(R.string.cinv_price)
         val price = resources.getString(R.string.cinv_money, item.price)
         val price_text =  "$price_label $price"
         tv_price.text = price_text
-        tv_price.setOnClickListener {sellItem()}
+        tv_price.setOnClickListener {sellItemDialog()}
 
         tv_weight = view.findViewById(R.id.char_item_weight)
         var s_wgt = " " + item.weight.toString() + " g"
@@ -121,6 +122,10 @@ class CharItemFragment : Fragment(),
             bt_pack.setText(resources.getString(R.string.cinv_unpack))
         }
         bt_pack.setOnClickListener { packItem() }
+
+
+        val test_button = view.findViewById<Button>(R.id.test_button)
+        test_button.setOnClickListener { loadClipDialog() }
         ll_actions = view.findViewById(R.id.char_item_actions)
         setupActions()
 
@@ -148,27 +153,33 @@ class CharItemFragment : Fragment(),
         }
     }
 
-    fun editQual() {
+    fun editQualityDialog() {
         val fm = this.parentFragmentManager
         val dialog = ItemQualDialog(item.cur_qual)
         dialog.setTargetFragment(this, 301)
         dialog.show(fm, null)
     }
 
-    fun editQty() {
+    fun editQuantityDialog() {
         val fm = this.parentFragmentManager
         val dialog = ItemQtyDialog(item.qty)
         dialog.setTargetFragment(this, 301)
         dialog.show(fm, null)
     }
 
-    fun sellItem() {
+    fun sellItemDialog() {
         val fm = this.parentFragmentManager
         val dialog = ItemSellDialog(item)
         dialog.setTargetFragment(this, 301)
         dialog.show(fm, null)
     }
 
+    fun loadClipDialog() {
+        val fm = this.parentFragmentManager
+        val dialog = ItemLoadClipDialog(item)
+        dialog.setTargetFragment(this, 301)
+        dialog.show(fm, null)
+    }
 
     /**
      * Equip or unequip an item
@@ -203,6 +214,9 @@ class CharItemFragment : Fragment(),
         }
         if (dialog is ItemQtyDialog) {
             changeQuantity(dialog.action, dialog.qty)
+        }
+        if (dialog is ItemLoadClipDialog) {
+
         }
     }
 
