@@ -91,6 +91,7 @@
         android:id="@+id/char_item_actions"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="6dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@+id/char_item_equip"
         app:layout_constraintEnd_toEndOf="parent"/>
