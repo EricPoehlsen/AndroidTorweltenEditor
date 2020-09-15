@@ -2,6 +2,7 @@ package de.aequinoktium.twedit
 
 import android.content.Context
 import android.graphics.*
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
@@ -20,6 +21,16 @@ class ItemView @JvmOverloads constructor(
     private var right = 0f
     private var bottom = 0f
 
+    private val dmg_icons = arrayOf(
+        resources.getDrawable(R.drawable.qual_broken, null),
+        resources.getDrawable(R.drawable.qual_bad, null),
+        resources.getDrawable(R.drawable.qual_normal, null),
+        resources.getDrawable(R.drawable.qual_high, null),
+        resources.getDrawable(R.drawable.qual_top, null)
+    )
+
+    private val container_icon = resources.getDrawable(R.drawable.itemview_container, null)
+
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
 
@@ -28,14 +39,16 @@ class ItemView @JvmOverloads constructor(
         if (canvas is Canvas) {
             Log.d("info", "DRAW")
             drawBackground(canvas)
+            drawQuantity(canvas)
             drawName(canvas)
             drawDamage(canvas)
             drawContainer(canvas)
+            drawQuality(canvas)
         }
 
     }
 
-    fun drawBackground(canvas: Canvas) {
+    private fun drawBackground(canvas: Canvas) {
         val paint = Paint().apply{
             color=Color.DKGRAY
         }
@@ -43,39 +56,72 @@ class ItemView @JvmOverloads constructor(
 
     }
 
-    fun drawName(canvas: Canvas) {
-        val paint = Paint().apply{
-            color= Color.WHITE
-            textSize = px(14)
-            isAntiAlias = true
-        }
-        canvas.drawText(item.name, left,top+baseline(paint),paint)
+    private fun drawName(canvas: Canvas) {
+        val paint = whiteTextColor()
+        canvas.drawText(item.name, left+px(32),top+textAlignCenter(paint),paint)
     }
 
-    fun drawContainer(canvas: Canvas) {
+    private fun drawQuantity(canvas: Canvas) {
+        val text = if (item.qty < 100) "${item.qty}x" else "99+"
+
+        val paint = whiteTextColor()
+        val max_width = paint.measureText("99x")
+        val width = paint.measureText(text)
+        val start = left + px(6) + max_width - width
+
+        canvas.drawText(text, start,top+textAlignCenter(paint),paint)
+    }
+
+    /**
+     * Displays container information
+     */
+    private fun drawContainer(canvas: Canvas) {
         if (item.weight_limit > 0) {
-            val icon = resources.getDrawable(R.drawable.itemview_container, null)
-            icon.setBounds(
+            container_icon.setBounds(
                 right.toInt()-100,
                 top.toInt()+5,
                 right.toInt()-50,
                 bottom.toInt()-5
             )
             if (item.has_contents) {
-                icon.alpha = 255
+                container_icon.alpha = 255
             } else {
-                icon.alpha = 50
+                container_icon.alpha = 50
             }
-
-            icon.draw(canvas)
+            container_icon.draw(canvas)
         }
+    }
+
+    /**
+     * Displays the quality icon
+     */
+    private fun drawQuality(canvas: Canvas) {
+        val icon: Drawable
+        if (item.cur_qual <= 2) {
+            icon = dmg_icons[0]
+        } else if (item.cur_qual <= 4) {
+            icon = dmg_icons[1]
+        } else if (item.cur_qual <= 6) {
+            icon = dmg_icons[2]
+        } else if (item.cur_qual <= 9) {
+            icon = dmg_icons[3]
+        } else {
+            icon = dmg_icons[4]
+        }
+        icon.setBounds(
+            (right-px(100)).toInt(),
+            (top+(bottom-top)/2-px(8)).toInt(),
+            (right-px(84)).toInt(),
+            (top+(bottom-top)/2+px(8)).toInt()
+        )
+        icon.draw(canvas)
     }
 
 
     /**
      * Display the damage text
      */
-    fun drawDamage(canvas: Canvas) {
+    private fun drawDamage(canvas: Canvas) {
         if (!item.dmg.isEmpty()) {
             val paint = Paint().apply {
                 color = Color.RED
@@ -85,7 +131,7 @@ class ItemView @JvmOverloads constructor(
             val dmg = item.dmg.toString()
             val text_width = paint.measureText(dmg)
             val x = right - text_width - 6
-            val y = bottom - paint.descent()
+            val y = top + textAlignCenter(paint)
             canvas.drawText(dmg, x, y, paint)
         }
     }
@@ -116,9 +162,24 @@ class ItemView @JvmOverloads constructor(
         setMeasuredDimension(width, height)
     }
 
-    fun baseline(paint: Paint):Float = -paint.ascent()
+    // text baseline
+    private fun textHeight(paint: Paint): Float = paint.descent() - paint.ascent()
+    private fun textAlignTop(paint: Paint):Float = -paint.ascent()
+    private fun textAlignBottom(paint: Paint): Float = -paint.descent()
+    private fun textAlignCenter(paint: Paint): Float {
+        return (top + .5*(bottom - top) + .5*textHeight(paint) - paint.descent()).toFloat()
+    }
 
 
+    private fun whiteTextColor(): Paint {
+        val paint = Paint().apply{
+            color= Color.WHITE
+            textSize = px(14)
+            isAntiAlias = true
+        }
+
+        return paint
+    }
 
 
 
