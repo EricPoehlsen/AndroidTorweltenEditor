@@ -123,9 +123,6 @@ class CharItemFragment : Fragment(),
         }
         bt_pack.setOnClickListener { packItem() }
 
-
-        val test_button = view.findViewById<Button>(R.id.test_button)
-        test_button.setOnClickListener { loadClipDialog() }
         ll_actions = view.findViewById(R.id.char_item_actions)
         setupActions()
 
@@ -216,6 +213,8 @@ class CharItemFragment : Fragment(),
             changeQuantity(dialog.action, dialog.qty)
         }
         if (dialog is ItemLoadClipDialog) {
+            val ammo = c.getItemById(dialog.selected_id)
+            loadIntoClip(ammo)
 
         }
     }
@@ -362,6 +361,38 @@ class CharItemFragment : Fragment(),
         }
     }
 
+
+    /**
+     * loads ammo into a clip
+     * Ammo is only loaded if the item has has free capacity.
+     * The ammo item is split into items of quantity 1.
+     * @param ammo an [Item] that is used as ammo
+     */
+    fun loadIntoClip(ammo: Item) {
+        var currently_loaded = 0
+        for (i in c.getItemContents(item)) {
+            currently_loaded += i.qty
+        }
+        val current_capacity = item.capacity - currently_loaded
+        for (i in 1..current_capacity) {
+            if (ammo.qty == 1) {
+                ammo.packed_into = item.id
+                c.viewModelScope.launch(Dispatchers.IO) { c.updateItem(ammo) }
+            } else if (ammo.qty > 1) {
+                ammo.qty -= 1
+                val new_ammo = ammo.copy()
+                new_ammo.qty = 1
+                new_ammo.packed_into = item.id
+                c.viewModelScope.launch(Dispatchers.IO) {
+                    c.updateItem(ammo)
+                    c.addToInventory(new_ammo)
+                }
+            }
+        }
+    }
+
+
+
     fun description(): String {
         var desc = item.desc
         return addCaliberInfoToString(desc)
@@ -392,7 +423,6 @@ class CharItemFragment : Fragment(),
      * add item_specific actions to the layout
      */
     fun setupActions() {
-        Log.d("info", "CLS: ${item.cls}, CAP: ${item.capacity} CAL: ${item.caliber[1]}")
         if (item.cls == "clipsnmore" && item.capacity > 0 && !item.caliber[1].isEmpty()){
             loadClipIcon()
         }
@@ -402,8 +432,9 @@ class CharItemFragment : Fragment(),
     fun loadClipIcon() {
         val iv = ImageView(context)
         iv.setImageResource(R.drawable.action_load_ammo)
-        val lp = LinearLayout.LayoutParams(px(32).toInt(),px(32).toInt())
+        val lp = LinearLayout.LayoutParams(px(48).toInt(),px(48).toInt())
         iv.layoutParams = lp
+        iv.setOnClickListener { loadClipDialog() }
         ll_actions.addView(iv)
     }
 
