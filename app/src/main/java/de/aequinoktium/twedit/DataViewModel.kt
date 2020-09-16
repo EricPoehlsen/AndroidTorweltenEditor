@@ -266,6 +266,9 @@ class DataViewModel: ViewModel() {
             if (entry.startsWith("capacity:")) {
                 item.capacity = entry.replace("capacity:","").toInt()
             }
+            if (entry.startsWith("clip")) {
+                item.clip = 0
+            }
         }
     }
 

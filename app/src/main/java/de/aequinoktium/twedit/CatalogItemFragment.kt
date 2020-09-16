@@ -147,7 +147,7 @@ class CatalogItemFragment : Fragment(), ItemColorDialog.DialogListener {
         item.chambers = catalog_item.chambers
         item.caliber = catalog_item.caliber
         item.capacity = catalog_item.capacity
-        Log.d("info", "ITEM CLASS: ${item.cls}")
+        item.clip = catalog_item.clip
     }
 
 

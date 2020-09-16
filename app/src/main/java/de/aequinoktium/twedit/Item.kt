@@ -21,6 +21,7 @@ class Item() {
     var container_name = ""
     var has_contents = false
     var dmg = Damage()
+    var clip = -1
     var chambers = 0
     var chambered = arrayOf<Int>() // item.id
     var caliber = arrayOf("","")  // type, size
@@ -44,12 +45,17 @@ class Item() {
         new.price = this.price
         new.container_name = this.container_name
         new.dmg = this.dmg
-        new.chambers = 0
+        new.chambers = this.chambers
         new.caliber = this.caliber
         new.color = this.color
         new.material = this.material
         new.cls = this.cls
         new.equip_loc = this.equip_loc
+        if (this.clip == -1) {
+            new.clip = -1
+        } else {
+            new.clip = 0
+        }
 
         return new
     }
@@ -75,7 +81,7 @@ class Item() {
             item.container_name == this.container_name &&
             item.dmg == this.dmg &&
             item.chambers == 0 &&
-            item.caliber == this.caliber &&
+            item.caliber.contentEquals(this.caliber) &&
             item.color == this.color &&
             item.material == this.material &&
             item.cls == this.cls
@@ -99,6 +105,7 @@ class CatalogItem() {
     var material = ""
     var variants = mutableMapOf<String,Array<Variant>>()
     var cls = ""
+    var clip = -1
     var grp = emptyArray<String>()
     var equip_loc = emptyArray<String>()
 

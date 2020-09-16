@@ -255,6 +255,9 @@ class CharacterViewModel: ViewModel() {
                 if(value.startsWith("capacity:")) {
                     item.capacity = value.split(":")[1].toInt()
                 }
+                if (value.startsWith("clip:")) {
+                    item.clip = value.split(":")[1].toInt()
+                }
             }
             items.add(item)
         }
@@ -319,6 +322,9 @@ class CharacterViewModel: ViewModel() {
         }
         if (item.capacity > 0) {
             extra_data += "capacity:${item.capacity}|"
+        }
+        if (item.clip > -1) {
+            extra_data += "clip:${item.clip}|"
         }
 
         val cv = ContentValues()
