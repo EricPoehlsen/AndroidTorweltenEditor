@@ -19,6 +19,7 @@ import androidx.fragment.app.activityViewModels
 class ItemLoadClipDialog(val item: Item): DialogFragment() {
     internal lateinit var listener: DialogListener
     private val c: CharacterViewModel by activityViewModels()
+    var selected_id = 0
 
 
     /* The activity that creates an instance of this dialog fragment must
@@ -69,11 +70,20 @@ class ItemLoadClipDialog(val item: Item): DialogFragment() {
     fun showAmmo(ll: LinearLayout) {
         Log.d("info", "TEST")
         val ammo = findAmmo()
+        val grey = ContextCompat.getColor(requireContext(), R.color.Grey)
+        val green = ContextCompat.getColor(requireContext(), R.color.Green)
+        val red = ContextCompat.getColor(requireContext(), R.color.Red)
+        var color = green
         for (i in 0..2) {
+            if (i == 1) color = grey
+            if (i == 2) color = red
             for (a in ammo[i]) {
                 val tv = TextView(context)
                 val text = "${a.qty}x ${a.name}"
+                tv.setTextColor(color)
+                tv.tag = a.id
                 tv.text = text
+                tv.setOnClickListener {v -> selectAmmo(v)}
                 ll.addView(tv)
             }
         }
@@ -99,6 +109,12 @@ class ItemLoadClipDialog(val item: Item): DialogFragment() {
             }
         }
         return arrayOf(unloaded_ammo, loaded_ammo, other_ammo)
+    }
+
+    fun selectAmmo(view: View) {
+        if (view is TextView) {
+            view.text = view.tag.toString()
+        }
     }
 }
 
