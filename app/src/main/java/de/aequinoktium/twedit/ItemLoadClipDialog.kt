@@ -3,22 +3,22 @@ package de.aequinoktium.twedit
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
-import androidx.core.view.contains
 import androidx.core.view.iterator
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 
 /**
- * A DialogFrament to load a clip with matching bullets
+ * A DialogFrament to assign ammo to clips or clips to weapons
+ * @param item the [Item] to which we are assigning
+ * @param cls the item class we would like to assign ("ammo" or "clipsnmore")
  */
-class ItemLoadClipDialog(val item: Item): DialogFragment() {
+class ItemLoadClipDialog(val item: Item, val cls:String): DialogFragment() {
     internal lateinit var listener: DialogListener
     private val c: CharacterViewModel by activityViewModels()
     var selected_id = 0
@@ -57,7 +57,7 @@ class ItemLoadClipDialog(val item: Item): DialogFragment() {
             val inflater: LayoutInflater = this.layoutInflater
             val content: View = inflater.inflate(R.layout.dialog_item_load, null)
             val container = content.findViewById<LinearLayout>(R.id.dia_load_container)
-            showAmmo(container)
+            show(container)
 
             builder.setView(content)
 
@@ -70,13 +70,13 @@ class ItemLoadClipDialog(val item: Item): DialogFragment() {
         } ?: throw IllegalStateException("Activity cant't be null")
     }
 
-    fun showAmmo(ll: LinearLayout) {
+    fun show(ll: LinearLayout) {
         var usable = ""
-        val ammo = findAmmo()
+        val items = find()
         for (i in 0..2) {
             if (i == 1) usable = " (?)"
             if (i == 2) usable = " (!)"
-            for (a in ammo[i]) {
+            for (a in items[i]) {
                 val tv = TextView(context)
                 val text = "${a.qty}x ${a.name} $usable"
                 val lp = LinearLayout.LayoutParams(
@@ -87,34 +87,34 @@ class ItemLoadClipDialog(val item: Item): DialogFragment() {
                 tv.setPadding(padding,padding,padding,padding)
                 tv.tag = a.id
                 tv.text = text
-                tv.setOnClickListener {v -> selectAmmo(v)}
+                tv.setOnClickListener {v -> select(v)}
                 ll.addView(tv)
             }
         }
     }
 
-    fun findAmmo(): Array<Array<Item>> {
-        var unloaded_ammo = arrayOf<Item>()
-        var loaded_ammo = arrayOf<Item>()
-        var other_ammo = arrayOf<Item>()
+    fun find(): Array<Array<Item>> {
+        var unloaded_items = arrayOf<Item>()
+        var loaded_items = arrayOf<Item>()
+        var other_items = arrayOf<Item>()
         for (i in c.getInventory()) {
-            if (i.cls == "ammo") {
+            if (i.cls == cls) {
                 if (i.caliber.contentEquals(item.caliber)) {
                     val packed_into = c.getItemById(i.packed_into)
                     if (packed_into.cls !in arrayOf("clipsnmore", "weapon")) {
-                        unloaded_ammo += i
+                        unloaded_items += i
                     } else {
-                        loaded_ammo += i
+                        loaded_items += i
                     }
                 } else {
-                    other_ammo += i
+                    other_items += i
                 }
             }
         }
-        return arrayOf(unloaded_ammo, loaded_ammo, other_ammo)
+        return arrayOf(unloaded_items, loaded_items, other_items)
     }
 
-    fun selectAmmo(view: View) {
+    fun select(view: View) {
         val grey = ContextCompat.getColor(requireContext(), R.color.Grey)
         val blue = ContextCompat.getColor(requireContext(), R.color.Blue)
         if (view is TextView) {

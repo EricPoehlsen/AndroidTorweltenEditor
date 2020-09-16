@@ -173,10 +173,18 @@ class CharItemFragment : Fragment(),
 
     fun loadClipDialog() {
         val fm = this.parentFragmentManager
-        val dialog = ItemLoadClipDialog(item)
+        val dialog = ItemLoadClipDialog(item,"ammo")
         dialog.setTargetFragment(this, 301)
         dialog.show(fm, null)
     }
+
+    fun insertClipDialog() {
+        val fm = this.parentFragmentManager
+        val dialog = ItemLoadClipDialog(item,"clipsnmore")
+        dialog.setTargetFragment(this, 301)
+        dialog.show(fm, null)
+    }
+
 
     /**
      * Equip or unequip an item
@@ -214,7 +222,11 @@ class CharItemFragment : Fragment(),
         }
         if (dialog is ItemLoadClipDialog) {
             val ammo = c.getItemById(dialog.selected_id)
-            loadIntoClip(ammo)
+            if (dialog.cls == "ammo") {
+                loadIntoClip(ammo)
+            } else {
+                insertClip(ammo)
+            }
 
         }
     }
@@ -391,7 +403,20 @@ class CharItemFragment : Fragment(),
         }
     }
 
-
+    fun insertClip(ammo: Item) {
+        if (item.clip > 0) {
+            val cur_clip = c.getItemById(item.clip)
+            cur_clip.packed_into = 0
+            c.viewModelScope.launch(Dispatchers.IO) {
+                c.updateItem(cur_clip)
+            }
+        }
+        ammo.packed_into = item.id
+        item.clip = ammo.id
+        c.viewModelScope.launch(Dispatchers.IO) {
+            c.updateItem(item)
+        }
+    }
 
     fun description(): String {
         var desc = item.desc
@@ -424,18 +449,26 @@ class CharItemFragment : Fragment(),
      */
     fun setupActions() {
         if (item.cls == "clipsnmore" && item.capacity > 0 && !item.caliber[1].isEmpty()){
-            loadClipIcon()
+            val iv = prepareIcon(R.drawable.action_load_ammo)
+            iv.setOnClickListener { loadClipDialog() }
+        }
+        if (item.clip == 0) {
+            val iv = prepareIcon(R.drawable.action_load_clip)
+            iv.setOnClickListener { insertClipDialog() }
+        }
+        if (item.clip > 0) {
+            val iv = prepareIcon(R.drawable.action_unload_clip)
         }
 
     }
 
-    fun loadClipIcon() {
+    fun prepareIcon(id: Int): ImageView {
         val iv = ImageView(context)
-        iv.setImageResource(R.drawable.action_load_ammo)
+        iv.setImageResource(id)
         val lp = LinearLayout.LayoutParams(px(48).toInt(),px(48).toInt())
         iv.layoutParams = lp
-        iv.setOnClickListener { loadClipDialog() }
         ll_actions.addView(iv)
+        return iv
     }
 
     // calculate px for dp value
