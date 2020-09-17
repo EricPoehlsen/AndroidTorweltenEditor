@@ -21,6 +21,7 @@ import androidx.fragment.app.activityViewModels
 class ItemLoadClipDialog(val item: Item, val cls:String): DialogFragment() {
     internal lateinit var listener: DialogListener
     private val c: CharacterViewModel by activityViewModels()
+    private val settings: SettingsViewModel by activityViewModels()
     var selected_id = 0
     var slots = 0
 
@@ -107,6 +108,7 @@ class ItemLoadClipDialog(val item: Item, val cls:String): DialogFragment() {
                         loaded_items += i
                     }
                 } else {
+                    if (!settings.getBoolean("inventory.check_caliber"))
                     other_items += i
                 }
             }
