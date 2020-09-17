@@ -6,7 +6,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -15,6 +14,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class CharItemFragment : Fragment(),
@@ -26,7 +26,7 @@ class CharItemFragment : Fragment(),
 {
     private val c: CharacterViewModel by activityViewModels()
     lateinit var item: Item
-    lateinit var tv_title: TextView
+    lateinit var tv_name: TextView
     lateinit var tv_desc: TextView
     lateinit var tv_qty: TextView
     lateinit var tv_qual: TextView
@@ -34,10 +34,6 @@ class CharItemFragment : Fragment(),
     lateinit var tv_weight: TextView
     lateinit var tv_dmg: TextView
     lateinit var ll_actions: LinearLayout
-
-    lateinit var bt_equip: Button
-    lateinit var bt_pack: Button
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,12 +63,13 @@ class CharItemFragment : Fragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        updateTexts()
-        setupActions()
+        setTexts()
+        showActions()
+
     }
 
     fun initViews(view: View) {
-        tv_title = view.findViewById(R.id.char_item_name)
+        tv_name = view.findViewById(R.id.char_item_name)
         tv_desc = view.findViewById(R.id.char_item_desc)
         tv_qty = view.findViewById(R.id.char_item_qty)
         tv_qty.setOnClickListener {editQuantityDialog()}
@@ -82,14 +79,10 @@ class CharItemFragment : Fragment(),
         tv_price.setOnClickListener {sellItemDialog()}
         tv_weight = view.findViewById(R.id.char_item_weight)
         tv_dmg = view.findViewById(R.id.char_item_dmg)
-        bt_equip = view.findViewById(R.id.char_item_equip)
-        bt_equip.setOnClickListener { equip() }
-        bt_pack = view.findViewById(R.id.char_item_pack)
-        bt_pack.setOnClickListener { packItem() }
         ll_actions = view.findViewById(R.id.char_item_actions)
     }
 
-    fun updateTexts() {
+    fun setTexts() {
         setNameAndDescText()
         setQuantityText()
         setQualityText()
@@ -99,6 +92,7 @@ class CharItemFragment : Fragment(),
     }
 
     fun setNameAndDescText() {
+        tv_name.text = item.name
         val desc = item.desc
         tv_desc.text = addCaliberInfoToString(desc)
     }
@@ -147,22 +141,11 @@ class CharItemFragment : Fragment(),
     /**
      * Pack or unpack an item
      */
-    fun packItem() {
-        if (item.packed_into > 0) { // unpack item
-
-            bt_pack.setText(R.string.cinv_pack)
-            c.viewModelScope.launch(Dispatchers.IO) {
-                c.unpackItem(item)
-            }
-            // set 0 after! ViewModel has handled the item.
-            item.packed_into = 0
-
-        } else { // display pack item dialog
-            val fm = this.parentFragmentManager
-            val dialog = ItemPackDialog(item, c)
-            dialog.setTargetFragment(this, 301)
-            dialog.show(fm, null)
-        }
+    fun packItemDialog() {
+        val fm = this.parentFragmentManager
+        val dialog = ItemPackDialog(item)
+        dialog.setTargetFragment(this, 301)
+        dialog.show(fm, null)
     }
 
     fun editQualityDialog() {
@@ -200,18 +183,20 @@ class CharItemFragment : Fragment(),
         dialog.show(fm, null)
     }
 
-
-    /**
-     * Equip or unequip an item
-     */
-    fun equip() {
-        val is_equipped = c.equipItem(item)
-        if (is_equipped == 1) {
-            bt_equip.setText(R.string.cinv_drop)
+    fun equipItem() {
+        if (item.equipped == 0) {
+            item.equipped = 1
+            item.packed_into = 0
         } else {
-            bt_equip.setText(R.string.cinv_equip)
+            item.equipped = 0
         }
 
+        c.viewModelScope.launch(Dispatchers.IO) {
+            c.updateItem(item)
+            withContext(Dispatchers.Main) {
+                showActions()
+            }
+        }
     }
 
     /**
@@ -253,10 +238,21 @@ class CharItemFragment : Fragment(),
     fun pack(cnt: Item) {
         item.packed_into = cnt.id
         item.equipped = 0
-        bt_equip.setText(R.string.cinv_equip)
-        bt_pack.setText(R.string.cinv_unpack)
         c.viewModelScope.launch(Dispatchers.IO) {
-            c.packItem(item)
+            c.updateItem(item)
+            withContext(Dispatchers.Main) {
+                showActions()
+            }
+        }
+    }
+
+    fun unpackItem() {
+        item.packed_into = 0
+        c.viewModelScope.launch(Dispatchers.IO) {
+            c.updateItem(item)
+            withContext(Dispatchers.Main) {
+                showActions()
+            }
         }
     }
 
@@ -265,13 +261,12 @@ class CharItemFragment : Fragment(),
      * @param q: Int quality in range 0-12
      */
     fun setQuality(q: Int) {
-        var text = resources.getString(R.string.cinv_quality)
-        val qualities = resources.getStringArray(R.array.cinv_qualities)
-        text += "${qualities[q]} ($q)"
-        tv_qual.text = text
         item.cur_qual = q
         c.viewModelScope.launch(Dispatchers.IO) {
             c.updateItem(item)
+            withContext(Dispatchers.Main) {
+                setQualityText()
+            }
         }
     }
 
@@ -430,10 +425,27 @@ class CharItemFragment : Fragment(),
         item.clip = ammo.id
         c.viewModelScope.launch(Dispatchers.IO) {
             c.updateItem(item)
+            c.updateItem(ammo)
+            withContext(Dispatchers.Main) {
+                showActions()
+            }
         }
     }
 
-
+    fun ejectClip() {
+        if (item.clip > 0) {
+            val cur_clip = c.getItemById(item.clip)
+            cur_clip.packed_into = 0
+            item.clip = 0
+            c.viewModelScope.launch(Dispatchers.IO) {
+                c.updateItem(cur_clip)
+                c.updateItem(item)
+                withContext(Dispatchers.Main) {
+                    showActions()
+                }
+            }
+        }
+    }
 
     fun addCaliberInfoToString(input: String):String {
         Log.d("info", "in addCaliberInfoToString")
@@ -459,7 +471,8 @@ class CharItemFragment : Fragment(),
     /**
      * add item_specific actions to the layout
      */
-    fun setupActions() {
+    fun showActions() {
+        ll_actions.removeAllViews()
         if (item.cls == "clipsnmore" && item.capacity > 0 && !item.caliber[1].isEmpty()){
             val iv = prepareIcon(R.drawable.action_load_ammo)
             iv.setOnClickListener { loadClipDialog() }
@@ -470,6 +483,23 @@ class CharItemFragment : Fragment(),
         }
         if (item.clip > 0) {
             val iv = prepareIcon(R.drawable.action_unload_clip)
+            iv.setOnClickListener { ejectClip() }
+        }
+
+        if (item.equipped == 0)  {
+            val iv = prepareIcon(R.drawable.action_equip)
+            iv.setOnClickListener { equipItem() }
+        } else {
+            val iv = prepareIcon(R.drawable.action_unequip)
+            iv.setOnClickListener { equipItem() }
+        }
+
+        if (item.packed_into == 0) {
+            val iv = prepareIcon(R.drawable.action_pack)
+            iv.setOnClickListener { packItemDialog() }
+        } else {
+            val iv = prepareIcon(R.drawable.action_unpack)
+            iv.setOnClickListener {unpackItem()}
         }
 
     }
@@ -478,6 +508,7 @@ class CharItemFragment : Fragment(),
         val iv = ImageView(context)
         iv.setImageResource(id)
         val lp = LinearLayout.LayoutParams(px(48).toInt(),px(48).toInt())
+        lp.setMargins(0,0,px(6).toInt(),px(6).toInt())
         iv.layoutParams = lp
         ll_actions.addView(iv)
         return iv

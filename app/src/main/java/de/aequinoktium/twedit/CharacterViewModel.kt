@@ -402,22 +402,6 @@ class CharacterViewModel: ViewModel() {
     }
 
     /**
-     * Equipping or unequipping an item
-     * @return 0: unequipped 1: equipped
-     */
-    fun equipItem(item: Item): Int {
-        if (item.equipped == 1) {
-            item.equipped = 0
-        } else {
-            item.equipped = 1
-        }
-        this.viewModelScope.launch(Dispatchers.IO) {
-            updateItem(item)
-        }
-        return item.equipped
-    }
-
-    /**
      * Retrieves the [Item]s content weights plus the own weight
      * @param item: The [Item] of interest
      * @return the total weight in grams

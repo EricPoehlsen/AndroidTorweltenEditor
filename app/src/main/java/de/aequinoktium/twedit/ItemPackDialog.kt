@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.activityViewModels
 
 /**
  * A DialogFrament that to pack an [Item] into another [Item]
@@ -17,8 +18,9 @@ import androidx.fragment.app.DialogFragment
  * @param c is the [CharacterViewModel] for this app.
  * @param v is the [View] calling this dialog
  */
-class ItemPackDialog(val item: Item, val c: CharacterViewModel): DialogFragment() {
+class ItemPackDialog(val item: Item): DialogFragment() {
     internal lateinit var listener: DialogListener
+    private val c: CharacterViewModel by activityViewModels()
     private lateinit var ll_container: LinearLayout
     internal var cont_state = arrayOf<Int>()
     var containers = arrayOf<Item>()
