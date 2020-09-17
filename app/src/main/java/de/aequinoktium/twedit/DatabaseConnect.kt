@@ -238,7 +238,9 @@ class DatabaseConnect(context: Context) : SQLiteOpenHelper(context, DB_NAME, nul
         // add basic settings
         sql = """
             INSERT INTO settings (name, value) VALUES
-            ('core.initial_xp', '330')
+            ('core.initial_xp', '330'),
+            ('inventory.check_weight_limit', '1'),
+            ('inventory.check_caliber', '1')
         """.trimIndent()
         db.execSQL(sql)
 

@@ -20,6 +20,7 @@ import androidx.fragment.app.activityViewModels
  */
 class ItemPackDialog(val item: Item): DialogFragment() {
     internal lateinit var listener: DialogListener
+    val settings: SettingsViewModel by activityViewModels()
     private val c: CharacterViewModel by activityViewModels()
     private lateinit var ll_container: LinearLayout
     internal var cont_state = arrayOf<Int>()

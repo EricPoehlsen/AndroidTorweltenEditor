@@ -22,7 +22,8 @@ class CharItemFragment : Fragment(),
                          ItemQualDialog.DialogListener,
                          ItemSellDialog.DialogListener,
                          ItemQtyDialog.DialogListener,
-                         ItemLoadClipDialog.DialogListener
+                         ItemLoadClipDialog.DialogListener,
+                         SettingsDialog.DialogListener
 {
     private val c: CharacterViewModel by activityViewModels()
     lateinit var item: Item
@@ -63,6 +64,8 @@ class CharItemFragment : Fragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val settings = view.findViewById<ImageView>(R.id.char_item_settings)
+        settings.setOnClickListener { settingsDialog() }
         setTexts()
         showActions()
 
@@ -183,6 +186,17 @@ class CharItemFragment : Fragment(),
         dialog.show(fm, null)
     }
 
+    fun settingsDialog() {
+        val fm = this.parentFragmentManager
+        val settings = arrayOf(
+            "inventory.check_weight_limit:Boolean",
+            "inventory.check_caliber:Boolean"
+        )
+        val dialog = SettingsDialog(settings)
+        dialog.setTargetFragment(this, 301)
+        dialog.show(fm, null)
+    }
+
     fun equipItem() {
         if (item.equipped == 0) {
             item.equipped = 1
@@ -190,7 +204,6 @@ class CharItemFragment : Fragment(),
         } else {
             item.equipped = 0
         }
-
         c.viewModelScope.launch(Dispatchers.IO) {
             c.updateItem(item)
             withContext(Dispatchers.Main) {
@@ -227,7 +240,11 @@ class CharItemFragment : Fragment(),
             } else {
                 insertClip(ammo)
             }
-
+        }
+        if (dialog is SettingsDialog) {
+            val settings: SettingsViewModel by activityViewModels()
+            settings.update("inventory.check_weight_limit", dialog.values[0] as Boolean)
+            settings.update("inventory.check_caliber", dialog.values[1] as Boolean)
         }
     }
 
