@@ -48,13 +48,13 @@ class CharItemFragment : Fragment(),
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val root: View
-
-        root = inflater.inflate(
+        val root = inflater.inflate(
             R.layout.fragment_char_item,
             container,
             false
         )
+
+        initViews(root)
 
         item = c.current_item
 
@@ -67,33 +67,56 @@ class CharItemFragment : Fragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        updateTexts()
+        setupActions()
+    }
+
+    fun initViews(view: View) {
         tv_title = view.findViewById(R.id.char_item_name)
-        tv_title.text = item.name
-
         tv_desc = view.findViewById(R.id.char_item_desc)
-        tv_desc.text = description()
-
         tv_qty = view.findViewById(R.id.char_item_qty)
+        tv_qty.setOnClickListener {editQuantityDialog()}
+        tv_qual = view.findViewById(R.id.char_item_qual)
+        tv_qual.setOnClickListener {editQualityDialog()}
+        tv_price = view.findViewById(R.id.char_item_price)
+        tv_price.setOnClickListener {sellItemDialog()}
+        tv_weight = view.findViewById(R.id.char_item_weight)
+        tv_dmg = view.findViewById(R.id.char_item_dmg)
+        bt_equip = view.findViewById(R.id.char_item_equip)
+        bt_equip.setOnClickListener { equip() }
+        bt_pack = view.findViewById(R.id.char_item_pack)
+        bt_pack.setOnClickListener { packItem() }
+        ll_actions = view.findViewById(R.id.char_item_actions)
+    }
+
+    fun updateTexts() {
+        setNameAndDescText()
+        setQuantityText()
+        setQualityText()
+        setWeightText()
+        setPriceText()
+        setDamageText()
+    }
+
+    fun setNameAndDescText() {
+        val desc = item.desc
+        tv_desc.text = addCaliberInfoToString(desc)
+    }
+
+    fun setQuantityText() {
         val qty_label = resources.getString(R.string.cinv_quantity)
         val qty_text = "$qty_label ${item.qty}"
         tv_qty.text = qty_text
-        tv_qty.setOnClickListener {editQuantityDialog()}
+    }
 
-        tv_qual = view.findViewById(R.id.char_item_qual)
+    fun setQualityText() {
         val qual_label = resources.getString(R.string.cinv_quality)
         val qualities = resources.getStringArray(R.array.cinv_qualities)
         val qual_text = "$qual_label ${qualities[item.cur_qual]} (${item.cur_qual})"
         tv_qual.text = qual_text
-        tv_qual.setOnClickListener {editQualityDialog()}
+    }
 
-        tv_price = view.findViewById(R.id.char_item_price)
-        val price_label = resources.getString(R.string.cinv_price)
-        val price = resources.getString(R.string.cinv_money, item.price)
-        val price_text =  "$price_label $price"
-        tv_price.text = price_text
-        tv_price.setOnClickListener {sellItemDialog()}
-
-        tv_weight = view.findViewById(R.id.char_item_weight)
+    fun setWeightText() {
         var s_wgt = " " + item.weight.toString() + " g"
         if (item.weight >= 1000) {
             s_wgt = " " + (item.weight.toFloat()/1000).toString() + " kg"
@@ -101,8 +124,9 @@ class CharItemFragment : Fragment(),
         val weight_label = resources.getString(R.string.cinv_weight)
         val weight_text =  "$weight_label $s_wgt"
         tv_weight.text = weight_text
+    }
 
-        tv_dmg = view.findViewById(R.id.char_item_dmg)
+    fun setDamageText() {
         val dmg_label = resources.getString(R.string.cinv_damage)
         val dmg_text = "$dmg_label: ${item.dmg}"
         if (item.dmg.isEmpty()) {
@@ -110,24 +134,15 @@ class CharItemFragment : Fragment(),
         } else {
             tv_dmg.text = dmg_text
         }
-
-        bt_equip = view.findViewById(R.id.char_item_equip)
-        if (item.equipped == 1) {
-            bt_equip.setText(R.string.cinv_drop)
-        }
-        bt_equip.setOnClickListener { equip() }
-
-        bt_pack = view.findViewById(R.id.char_item_pack)
-        if (item.packed_into > 0) {
-            bt_pack.setText(resources.getString(R.string.cinv_unpack))
-        }
-        bt_pack.setOnClickListener { packItem() }
-
-        ll_actions = view.findViewById(R.id.char_item_actions)
-        setupActions()
-
-
     }
+
+    fun setPriceText() {
+        val price_label = resources.getString(R.string.cinv_price)
+        val price = resources.getString(R.string.cinv_money, item.price)
+        val price_text =  "$price_label $price"
+        tv_price.text = price_text
+    }
+
 
     /**
      * Pack or unpack an item
@@ -418,10 +433,7 @@ class CharItemFragment : Fragment(),
         }
     }
 
-    fun description(): String {
-        var desc = item.desc
-        return addCaliberInfoToString(desc)
-    }
+
 
     fun addCaliberInfoToString(input: String):String {
         Log.d("info", "in addCaliberInfoToString")
