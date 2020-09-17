@@ -78,9 +78,6 @@ class ItemPackDialog(val item: Item): DialogFragment() {
     }
 
     fun findContainers() {
-        val green = ContextCompat.getColor(requireContext(), R.color.Green)
-        val red = ContextCompat.getColor(requireContext(), R.color.Red)
-
         fun selector(i: Item): Int = i.weight_limit
 
         for (i in c.getInventory()) {
@@ -90,8 +87,7 @@ class ItemPackDialog(val item: Item): DialogFragment() {
         containers.sortByDescending { selector(it) }
 
         for (i in containers) {
-            var state = 0
-            var tv = TextView(context)
+            var use_container = true
             var text = ""
             if (!i.container_name.isBlank()) {
                 text = i.container_name
@@ -99,50 +95,36 @@ class ItemPackDialog(val item: Item): DialogFragment() {
                 text = i.name
             }
 
-            // the item caliber == the container caliber
-            if (i.caliber contentEquals item.caliber) {
-                tv.setTextColor(green)
-                state = 1
+            // container has caliber check the caliber against the items caliber
+            if (!i.caliber[0].isEmpty() && !i.caliber[1].isEmpty()) {
+                if (!i.caliber.contentEquals(item.caliber)) {
+                    text += " !"
+                    if (settings.getBoolean("inventory.check_caliber")) use_container = false
+                }
             }
 
-            // the remaining capacity in the container is insufficient
+            // check if the remaining capacity of the container is sufficient
             if (i.weight_limit < c.getItemTotalWeight(item) + c.getItemContentWeight(i)) {
-                text += " (!)"
-                state = 2
+                if (settings.getBoolean("inventory.check_weight_limit")) use_container = false
+                text += " !"
             }
 
-            // the item is just too big/heavy for this container
-            if (i.weight_limit < item.weight) {
-                tv.setTextColor(red)
-                state = 3
-            }
-
+            val tv = TextView(context)
             tv.text = text
             tv.setOnClickListener { v -> select(v) }
 
-            ll_container.addView(tv)
-            cont_state += state
+            if (use_container) ll_container.addView(tv)
         }
     }
 
     fun select(view: View) {
         val grey = ContextCompat.getColor(requireContext(), R.color.Grey)
-        val red = ContextCompat.getColor(requireContext(), R.color.Red)
-        val green = ContextCompat.getColor(requireContext(), R.color.Green)
         val blue = ContextCompat.getColor(requireContext(), R.color.Blue)
 
         for (i in 0..ll_container.childCount-1) {
             var tv = ll_container.getChildAt(i)
             tv as TextView
-
-
-
-            when (cont_state[i]) {
-                0 -> tv.setTextColor(grey)
-                1 -> tv.setTextColor(green)
-                2 -> tv.setTextColor(grey)
-                3 -> tv.setTextColor(red)
-            }
+            tv.setTextColor(grey)
             if (tv == view) selected = i
 
         }
