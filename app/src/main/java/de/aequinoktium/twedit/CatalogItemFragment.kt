@@ -271,7 +271,7 @@ class CatalogItemFragment : Fragment(), ItemColorDialog.DialogListener {
     }
 
     fun calcDamage(): Damage {
-        var damage = Damage() + catalog_item.dmg
+        var damage = catalog_item.dmg
         for (all in catalog_item.variants.values) {
             for (variant in all) {
                 if (variant.selected){
