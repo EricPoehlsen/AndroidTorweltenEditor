@@ -324,7 +324,7 @@ class CharacterViewModel: ViewModel() {
         if (item.chambered.size > 0) {
             var chambered_rounds = "chambered:"
             for (id in item.chambered) chambered_rounds += "${id}."
-            extra_data = chambered_rounds.drop(1)  + "|"
+            extra_data += chambered_rounds.dropLast(1)  + "|"
         }
         if (!item.caliber[0].isEmpty()) {
             extra_data += "caliber:${item.caliber[0]}.${item.caliber[1]}|"

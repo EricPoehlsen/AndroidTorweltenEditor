@@ -470,9 +470,10 @@ class CharItemFragment : Fragment(),
         val clip_ammo = c.getItemContents(clip)
 
         if (chambered.size == item.chambers) {
-            chambered[0].packed_into = 0
+            val loaded = chambered[0]
+            loaded.packed_into = 0
             c.viewModelScope.launch(Dispatchers.IO) {
-                c.updateItem(chambered[0])
+                c.updateItem(loaded)
             }
             chambered.removeAt(0)
         }
