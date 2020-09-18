@@ -210,8 +210,6 @@ class CharacterViewModel: ViewModel() {
         while (data.moveToNext()) {
             val item = Item()
 
-
-
             item.id = data.getInt(data.getColumnIndex("id"))
             item.cls = data.getString(data.getColumnIndex("cls"))
             item.name = data.getString(data.getColumnIndex("name"))
@@ -269,6 +267,7 @@ class CharacterViewModel: ViewModel() {
 
         for (item in inv) {
             item.has_contents = getItemContents(item,1).size != 0
+            item.cur_dmg = getItemEffectiveDamage(item)
         }
 
     }
@@ -304,6 +303,15 @@ class CharacterViewModel: ViewModel() {
             loaded += ammo
         }
         return loaded
+    }
+
+    fun getItemEffectiveDamage(item: Item): Damage {
+        var damage = item.dmg
+        if (item.chambered.size > 0) {
+            val ammo = getItemById(item.chambered[0])
+            damage = ammo.dmg
+        }
+        return damage
     }
 
     /**

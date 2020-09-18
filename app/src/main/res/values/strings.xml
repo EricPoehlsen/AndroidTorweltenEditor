@@ -209,5 +209,5 @@
     <string name="setting_inventory_show_equipped">Zeige nur ausgerüstete Gegenstände</string>
     <string name="setting_inventory_check_weight_limit">Gewichtslimits berücksichtigen</string>
     <string name="setting_inventory_check_caliber">Kaliber beachten</string>
-
+    <string name="setting_inventory_allow_empty_weapons">Schadenscode bei leeren Waffen</string>
 </resources>

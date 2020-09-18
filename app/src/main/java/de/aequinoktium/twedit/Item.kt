@@ -21,6 +21,7 @@ class Item() {
     var container_name = ""
     var has_contents = false
     var dmg = Damage()
+    var cur_dmg = Damage()
     var clip = -1
     var chambers = 0
     var chambered = arrayOf<Int>() // item.id
@@ -45,6 +46,7 @@ class Item() {
         new.price = this.price
         new.container_name = this.container_name
         new.dmg = this.dmg
+        new.cur_dmg = this.dmg
         new.chambers = this.chambers
         new.caliber = this.caliber
         new.color = this.color

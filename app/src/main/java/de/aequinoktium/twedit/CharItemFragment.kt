@@ -125,8 +125,8 @@ class CharItemFragment : Fragment(),
 
     fun setDamageText() {
         val dmg_label = resources.getString(R.string.cinv_damage)
-        val dmg_text = "$dmg_label: ${item.dmg}"
-        if (item.dmg.isEmpty()) {
+        val dmg_text = "$dmg_label: ${item.cur_dmg}"
+        if (item.cur_dmg.isEmpty()) {
             tv_dmg.visibility = View.GONE
         } else {
             tv_dmg.text = dmg_text
@@ -490,6 +490,10 @@ class CharItemFragment : Fragment(),
         }
         c.viewModelScope.launch(Dispatchers.IO) {
             c.updateItem(item)
+            withContext(Dispatchers.Main) {
+                item.cur_dmg = c.getItemEffectiveDamage(item)
+                setDamageText()
+            }
         }
     }
 

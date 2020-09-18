@@ -25,6 +25,7 @@ class CharInventoryFragment : Fragment(),
 
     private var show_packed = false
     private var show_equipped = false
+    private var empty_damage = false
 
     private lateinit var tv_cash: TextView
     private lateinit var rv_container: RecyclerView
@@ -92,7 +93,8 @@ class CharInventoryFragment : Fragment(),
         val fm = this.parentFragmentManager
         val names = arrayOf(
             "inventory.show_equipped:Boolean",
-            "inventory.show_packed:Boolean"
+            "inventory.show_packed:Boolean",
+            "inventory.allow_empty_weapons:Boolean"
         )
         val dialog = SettingsDialog(names)
         dialog.setTargetFragment(this, 301)
@@ -109,6 +111,7 @@ class CharInventoryFragment : Fragment(),
 
             show_equipped = settings.update("inventory.show_equipped", dialog.values[0] as Boolean)
             show_packed = settings.update("inventory.show_packed", dialog.values[1] as Boolean)
+            settings.update("inventory.allow_empty_weapons", dialog.values[2] as Boolean)
             rv_adapter.showBasedOnSettings()
         }
     }
@@ -128,6 +131,7 @@ class CharInventoryFragment : Fragment(),
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val iv = ItemView(parent.context)
+            iv.empty_damage = frgm.empty_damage
             val lp = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,0)
             lp.setMargins(6,6,6,6)
             iv.layoutParams = lp

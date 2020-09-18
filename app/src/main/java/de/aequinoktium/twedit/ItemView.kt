@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
+import androidx.activity.viewModels
 
 class ItemView @JvmOverloads constructor(
     context: Context?,
@@ -20,6 +21,7 @@ class ItemView @JvmOverloads constructor(
     private var left = 0f
     private var right = 0f
     private var bottom = 0f
+    var empty_damage = false
 
     private val dmg_icons = arrayOf(
         resources.getDrawable(R.drawable.qual_broken, null),
