@@ -297,6 +297,15 @@ class CharacterViewModel: ViewModel() {
         return result
     }
 
+    fun getChamberedAmmo(item: Item): Array<Item> {
+        var loaded = arrayOf<Item>()
+        for (id in item.chambered) {
+            val ammo = getItemById(id)
+            loaded += ammo
+        }
+        return loaded
+    }
+
     /**
      * Prepares an item for storage in the database
      * @param item: [Item] to store

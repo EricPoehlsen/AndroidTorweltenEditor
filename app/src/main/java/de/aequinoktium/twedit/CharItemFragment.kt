@@ -464,6 +464,34 @@ class CharItemFragment : Fragment(),
         }
     }
 
+    fun cycleGun() {
+        val chambered = c.getChamberedAmmo(item).toMutableList()
+        val clip = c.getItemById(item.clip)
+        val clip_ammo = c.getItemContents(clip)
+
+        if (chambered.size == item.chambers) {
+            chambered[0].packed_into = 0
+            c.viewModelScope.launch(Dispatchers.IO) {
+                c.updateItem(chambered[0])
+            }
+            chambered.removeAt(0)
+        }
+        if (clip_ammo.size > 0) {
+            clip_ammo[0].packed_into = item.id
+            c.viewModelScope.launch(Dispatchers.IO) {
+                c.updateItem(clip_ammo[0])
+            }
+            chambered.add(clip_ammo[0])
+        }
+        item.chambered = arrayOf()
+        for (i in chambered) {
+            item.chambered += i.id
+        }
+        c.viewModelScope.launch(Dispatchers.IO) {
+            c.updateItem(item)
+        }
+    }
+
     fun addCaliberInfoToString(input: String):String {
         Log.d("info", "in addCaliberInfoToString")
         var result = ""
@@ -490,6 +518,11 @@ class CharItemFragment : Fragment(),
      */
     fun showActions() {
         ll_actions.removeAllViews()
+        if (item.chambers > 0 && item.clip >= 0) {
+            val iv = prepareIcon(R.drawable.action_cycle_gun)
+            iv.setOnClickListener { cycleGun() }
+        }
+
         if (item.cls == "clipsnmore" && item.capacity > 0 && !item.caliber[1].isEmpty()){
             val iv = prepareIcon(R.drawable.action_load_ammo)
             iv.setOnClickListener { loadClipDialog() }
