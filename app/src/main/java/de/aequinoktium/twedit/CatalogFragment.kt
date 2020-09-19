@@ -179,7 +179,6 @@ class CatalogFragment : Fragment() {
 
     fun setScrollPosition() {
         val x = px(48).toInt() * item_classes.indexOf(cls)
-        Log.d("info", "X: $x")
         sc_container.smoothScrollTo(x,0)
     }
 

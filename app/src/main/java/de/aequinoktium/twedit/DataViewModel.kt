@@ -308,7 +308,6 @@ class DataViewModel: ViewModel() {
                     item_variant.weight_limit = weight_limit
                 } else if (e.startsWith("d")) {
                     val dmg_value = e.replace("d","")
-                    Log.d("info", "${item.name}: ${item_variant.name} - d:$dmg_value")
                     item_variant.dmg = Damage(dmg_value)
                 } else if (e.startsWith("c")) {
                     item_variant.capacity = e.replace("c","").toInt()

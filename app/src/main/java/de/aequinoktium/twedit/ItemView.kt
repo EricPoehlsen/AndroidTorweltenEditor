@@ -38,7 +38,6 @@ class ItemView @JvmOverloads constructor(
         this.setBackgroundColor(Color.BLUE)
 
         if (canvas is Canvas) {
-            Log.d("info", "DRAW")
             drawBackground(canvas)
             drawQuantity(canvas)
             drawName(canvas)
