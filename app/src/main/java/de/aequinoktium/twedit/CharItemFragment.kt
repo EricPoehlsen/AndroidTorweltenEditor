@@ -71,9 +71,8 @@ class CharItemFragment : Fragment(),
         settings.setOnClickListener { settingsDialog() }
         setupShowContentsButton(view)
         setTexts()
-        if (item.id > 0) { // no actions on meta items!
-            showActions()
-        }
+        showActions()
+        metaItem()
     }
 
     fun initViews(view: View) {
@@ -88,6 +87,15 @@ class CharItemFragment : Fragment(),
         tv_weight = view.findViewById(R.id.char_item_weight)
         tv_dmg = view.findViewById(R.id.char_item_dmg)
         ll_actions = view.findViewById(R.id.char_item_actions)
+    }
+
+    fun metaItem() {
+        if (item.id < 0) {
+            ll_actions.visibility = View.GONE
+            tv_qty.visibility = View.GONE
+            tv_price.visibility = View.GONE
+            tv_qual.visibility = View.GONE
+        }
     }
 
     fun setupShowContentsButton(view: View) {
@@ -132,9 +140,15 @@ class CharItemFragment : Fragment(),
     }
 
     fun setWeightText() {
-        var s_wgt = " " + item.weight.toString() + " g"
+        var wgt = item.weight
+        if (item.id == -1) {
+            item.weight = 0
+            wgt = 0 + c.getItemTotalWeight(item)
+        }
+        var s_wgt = " $wgt g"
         if (item.weight >= 1000) {
-            s_wgt = " " + (item.weight.toFloat()/1000).toString() + " kg"
+            val wgt = wgt.toFloat()/1000
+            s_wgt = " $wgt kg"
         }
         val weight_label = resources.getString(R.string.cinv_weight)
         val weight_text =  "$weight_label $s_wgt"
