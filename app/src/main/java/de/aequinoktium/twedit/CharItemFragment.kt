@@ -6,12 +6,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.fragment.findNavController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -35,6 +37,7 @@ class CharItemFragment : Fragment(),
     lateinit var tv_weight: TextView
     lateinit var tv_dmg: TextView
     lateinit var ll_actions: LinearLayout
+    lateinit var bt_content: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,9 +69,11 @@ class CharItemFragment : Fragment(),
 
         val settings = view.findViewById<ImageView>(R.id.char_item_settings)
         settings.setOnClickListener { settingsDialog() }
+        setupShowContentsButton(view)
         setTexts()
-        showActions()
-
+        if (item.id > 0) { // no actions on meta items!
+            showActions()
+        }
     }
 
     fun initViews(view: View) {
@@ -83,6 +88,19 @@ class CharItemFragment : Fragment(),
         tv_weight = view.findViewById(R.id.char_item_weight)
         tv_dmg = view.findViewById(R.id.char_item_dmg)
         ll_actions = view.findViewById(R.id.char_item_actions)
+    }
+
+    fun setupShowContentsButton(view: View) {
+        val bt = view.findViewById<Button>(R.id.char_item_contents)
+        var contents = 0
+        for (i in c.getInventory()) {
+            if (i.packed_into == item.id) contents++
+        }
+        if (contents > 0) {
+            bt.setOnClickListener { showContents() }
+        } else {
+            bt.visibility = View.GONE
+        }
     }
 
     fun setTexts() {
@@ -507,7 +525,6 @@ class CharItemFragment : Fragment(),
     }
 
     fun addCaliberInfoToString(input: String):String {
-        Log.d("info", "in addCaliberInfoToString")
         var result = ""
         if (!item.caliber[0].isEmpty() && !item.caliber[1].isEmpty()) {
             val weapons = mapOf(
@@ -526,6 +543,10 @@ class CharItemFragment : Fragment(),
         return input + result
     }
 
+    fun showContents() {
+        c.current_item = item
+        this.findNavController().navigate(R.id.action_citem_to_cinv)
+    }
 
     /**
      * add item_specific actions to the layout

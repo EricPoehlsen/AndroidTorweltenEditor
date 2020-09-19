@@ -228,10 +228,12 @@ class CharInventoryFragment : Fragment(),
         }
 
         init {
-            showBasedOnSettings()
-            for (i in full_inventory) {
-                Log.d("info", "${i.name} is filled: ${i.has_contents}")
+            if (frgm.c.current_item.id == 0) {
+                showBasedOnSettings()
+            } else {
+                showContents(frgm.c.current_item)
             }
+
         }
     }
 }

@@ -150,6 +150,7 @@
     <string name="cinv_equipped">Ausgerüstete</string>
     <string name="cinv_all">Alle</string>
     <string name="cinv_desc">Beschreibung: </string>
+    <string name="cinv_show_content">Inhalt anzeigen</string>
     <string name="cinv_equip">ausrüsten</string>
     <string name="cinv_pack">einpacken</string>
     <string name="cinv_unpack">auspacken</string>

@@ -47,7 +47,7 @@ class CharacterViewModel: ViewModel() {
     var edit_trait = 0
     var char_traits = emptyArray<Int>()
 
-    lateinit var current_item: Item
+    var current_item = Item()
 
     private var accounts = mutableListOf<Account>()
 
@@ -450,8 +450,6 @@ class CharacterViewModel: ViewModel() {
         }
         data.close()
 
-        Log.d("info", "accounts: ${accounts.size}")
-
         // retrieve account balances
         for (acc in accounts) {
             sql = """
@@ -463,7 +461,6 @@ class CharacterViewModel: ViewModel() {
             val acc_value = db.rawQuery(sql, null)
             if (acc_value.moveToFirst()) {
                 acc.balance = acc_value.getFloat(0)
-                Log.d("info", "Account: ${acc.name} - Amount: ${acc.balance}")
             }
             acc_value.close()
         }
