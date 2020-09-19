@@ -41,9 +41,17 @@
                 app:srcCompat="@drawable/icon_tools" />
 
             <ImageView
-                android:id="@+id/catalog_icon_weapons"
+                android:id="@+id/catalog_icon_weapons_melee"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
+                android:background="@drawable/icon_tab_dark"
+                app:srcCompat="@drawable/icon_sword" />
+
+            <ImageView
+                android:id="@+id/catalog_icon_weapons_ranged"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
                 android:background="@drawable/icon_tab_dark"
                 app:srcCompat="@drawable/icon_gun" />
 

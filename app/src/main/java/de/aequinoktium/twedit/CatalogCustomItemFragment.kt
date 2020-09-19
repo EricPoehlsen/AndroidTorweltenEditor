@@ -94,7 +94,8 @@ class CatalogCustomItemFragment : Fragment(),
             getString(R.string.cinv_cls_clothing),
             getString(R.string.cinv_cls_container),
             getString(R.string.cinv_cls_tool),
-            getString(R.string.cinv_cls_weapon),
+            getString(R.string.cinv_cls_weapon_melee),
+            getString(R.string.cinv_cls_weapon_ranged),
             getString(R.string.cinv_cls_clipsnmore),
             getString(R.string.cinv_cls_ammo),
             getString(R.string.cinv_cls_implant)
@@ -300,10 +301,11 @@ class CatalogCustomItemFragment : Fragment(),
             2 -> item.cls = "clothing"
             3 -> item.cls = "container"
             4 -> item.cls = "tool"
-            5 -> item.cls = "weapon"
-            6 -> item.cls = "clipsnmore"
-            7 -> item.cls = "ammo"
-            8 -> item.cls = "implant"
+            5 -> item.cls = "weapon_melee"
+            6 -> item.cls = "weapon_ranged"
+            7 -> item.cls = "clipsnmore"
+            8 -> item.cls = "ammo"
+            9 -> item.cls = "implant"
         }
     }
 

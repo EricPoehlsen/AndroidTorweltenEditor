@@ -182,7 +182,8 @@
     <string name="cinv_cls_clothing">Kleidungsstück</string>
     <string name="cinv_cls_container">Behälter</string>
     <string name="cinv_cls_tool">Werkzeug</string>
-    <string name="cinv_cls_weapon">Waffe</string>
+    <string name="cinv_cls_weapon_melee">Nahkampfwaffe</string>
+    <string name="cinv_cls_weapon_ranged">Fernkampfwaffe</string>
     <string name="cinv_cls_clipsnmore">Waffenzubehör</string>
     <string name="cinv_cls_ammo">Munition</string>
     <string name="cinv_cls_implant">Implantat</string>
