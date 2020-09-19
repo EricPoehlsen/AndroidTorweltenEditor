@@ -201,9 +201,16 @@ class CharItemFragment : Fragment(),
     fun equipItem() {
         if (item.equipped == 0) {
             item.equipped = 1
-            item.packed_into = 0
+            if (item.cls == "clothing") {
+                item.packed_into = -1
+            } else if (item.cls.startsWith("weapon_")) {
+                item.packed_into = -2
+            } else {
+                item.packed_into = 0
+            }
         } else {
             item.equipped = 0
+            item.packed_into = 0
         }
         c.viewModelScope.launch(Dispatchers.IO) {
             c.updateItem(item)
@@ -297,7 +304,8 @@ class CharItemFragment : Fragment(),
         for (i in c.getInventory()) {
             if (i.packed_into == item.id) {
                 c.viewModelScope.launch(Dispatchers.IO) {
-                    c.unpackItem(i)
+                    i.packed_into = 0
+                    c.updateItem(i)
                 }
             }
         }

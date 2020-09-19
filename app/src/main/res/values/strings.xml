@@ -189,6 +189,8 @@
     <string name="cinv_cls_implant">Implantat</string>
     <string name="cinv_cls_valuable">Wertgegenstand</string>
     <string name="cinv_cls_generic">Gegenstand</string>
+    <string name="cinv_equipped_clothing">getragene Kleidung</string>
+    <string name="cinv_equipped_weapons">gezogene Waffen</string>
     <string-array name="cinv_qualities">
         <item>zerstört</item>
         <item>kaputt</item>

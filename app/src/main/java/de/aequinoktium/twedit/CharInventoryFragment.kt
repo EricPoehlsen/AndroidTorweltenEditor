@@ -139,7 +139,6 @@ class CharInventoryFragment : Fragment(),
 
         override fun onBindViewHolder(holder: ViewHolder, pos: Int) {
             holder.iv.item = inventory[pos]
-            // holder.iv.item.cur_dmg = frgm.c.getItemEffectiveDamage(holder.iv.item)
         }
 
         override fun getItemCount(): Int = inventory.size
@@ -152,17 +151,42 @@ class CharInventoryFragment : Fragment(),
 
         override fun onLongClick(view: View): Boolean {
             if (view is ItemView) {
-                inventory = arrayOf(view.item)
-                for (item in full_inventory) {
-                    if (item.packed_into == view.item.id) {
-                        inventory += item
-                    }
-                }
-                notifyDataSetChanged()
+                showContents(view.item)
+            }
+            return true
+        }
+
+        fun metaItems(): Array<Item> {
+            var result = arrayOf<Item>()
+            var show_clothing = false
+            var show_weapons = false
+
+            val clothing = Item().apply {
+                id = -1
+                name = frgm.getString(R.string.cinv_equipped_clothing)
+            }
+            val weapons = Item().apply {
+                id = -2
+                name = frgm.getString(R.string.cinv_equipped_weapons)
             }
 
-            Log.d("info", "LONG CLICK!")
-            return true
+            for (item in full_inventory) {
+                if (item.packed_into == -1) show_clothing = true
+                if (item.packed_into == -2) show_weapons = true
+            }
+            if (show_clothing) result += clothing
+            if (show_weapons) result += weapons
+            return result
+        }
+
+        fun showContents(item: Item) {
+            inventory = arrayOf(item)
+            for (i in full_inventory) {
+                if (i.packed_into == item.id) {
+                    inventory += i
+                }
+            }
+            notifyDataSetChanged()
         }
 
         fun showAll() {
@@ -184,7 +208,7 @@ class CharInventoryFragment : Fragment(),
         }
 
         fun showUnpackedItems() {
-            inventory = arrayOf()
+            inventory = metaItems()
             for (item in full_inventory) {
                 if (item.packed_into == 0) {
                     inventory += item
@@ -208,11 +232,6 @@ class CharInventoryFragment : Fragment(),
             for (i in full_inventory) {
                 Log.d("info", "${i.name} is filled: ${i.has_contents}")
             }
-
         }
     }
-
-
-
-
 }

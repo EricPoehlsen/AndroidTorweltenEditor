@@ -380,35 +380,6 @@ class CharacterViewModel: ViewModel() {
         db.update("char_items", cv, "id=${item.id}", null)
     }
 
-    suspend fun packItem(item: Item) {
-        updateItemHasContents(getItemById(item.packed_into))
-        val sql = """
-            UPDATE char_items 
-            SET 
-                packed_into=${item.packed_into},
-                equipped=0
-            WHERE
-                id=${item.id}
-        """.trimIndent()
-        db.execSQL(sql)
-    }
-
-    suspend fun unpackItem(item: Item) {
-        updateItemHasContents(getItemById(item.packed_into))
-        val sql = """
-            UPDATE char_items 
-            SET 
-                packed_into=0
-            WHERE
-                id=${item.id}
-        """.trimIndent()
-        db.execSQL(sql)
-    }
-
-    fun updateItemHasContents(item: Item) {
-        item.has_contents = getItemContents(item,1).size != 0
-    }
-
     suspend fun removeItem(item: Item) {
         inv.remove(item)
         val sql = """
