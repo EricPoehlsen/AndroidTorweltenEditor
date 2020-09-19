@@ -21,7 +21,6 @@ class ItemView @JvmOverloads constructor(
     private var left = 0f
     private var right = 0f
     private var bottom = 0f
-    var empty_damage = false
 
     private val dmg_icons = arrayOf(
         resources.getDrawable(R.drawable.qual_broken, null),
@@ -124,14 +123,14 @@ class ItemView @JvmOverloads constructor(
      * Display the damage text
      */
     private fun drawDamage(canvas: Canvas) {
-        if (!item.dmg.isEmpty()) {
+        if (!item.cur_dmg.isEmpty()) {
             val paint = Paint().apply {
                 color = Color.RED
                 textSize = px(14)
                 isAntiAlias = true
             }
             paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD))
-            val dmg = item.dmg.toString()
+            val dmg = item.cur_dmg.toString()
             val text_width = paint.measureText(dmg)
             val x = right - text_width - 6
             val y = top + textAlignCenter(paint)

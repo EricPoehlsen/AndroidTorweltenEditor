@@ -306,10 +306,10 @@ class CharacterViewModel: ViewModel() {
     }
 
     fun getItemEffectiveDamage(item: Item): Damage {
-        var damage = item.dmg
+        var damage = Damage() + item.dmg
         if (item.chambered.size > 0) {
             val ammo = getItemById(item.chambered[0])
-            damage = ammo.dmg
+            damage += ammo.dmg
         }
         return damage
     }

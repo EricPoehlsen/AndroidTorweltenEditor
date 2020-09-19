@@ -177,6 +177,7 @@ class Damage {
         s += b.s
         d += b.d
         t = b.t
+        mod = mod
         return this
     }
 

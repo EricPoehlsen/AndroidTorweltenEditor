@@ -130,6 +130,7 @@ class CharItemFragment : Fragment(),
             tv_dmg.visibility = View.GONE
         } else {
             tv_dmg.text = dmg_text
+            tv_dmg.visibility = View.VISIBLE
         }
     }
 
