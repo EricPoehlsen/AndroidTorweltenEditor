@@ -46,6 +46,7 @@ class CharacterViewModel: ViewModel() {
 
     var edit_trait = 0
     var char_traits = emptyArray<Int>()
+    var char_skills = arrayOf<Skill>()
 
     var current_item = Item()
 
@@ -88,6 +89,7 @@ class CharacterViewModel: ViewModel() {
 
         data.close()
 
+        loadSkills()
         loadInfo()
         loadAccounts()
         loadInventory()
@@ -172,7 +174,7 @@ class CharacterViewModel: ViewModel() {
      * @param new_value: the new value for this attribute
      * @param xp_cost: the xp cost for the modification
      */
-    fun updateAttrib(attr: String, new_value: Int, xp_cost: Int) {
+    suspend fun updateAttrib(attr: String, new_value: Int, xp_cost: Int) {
         attribs[attr] = new_value
         val data = ContentValues()
         data.put(attr, new_value)
@@ -189,7 +191,7 @@ class CharacterViewModel: ViewModel() {
         }
     }
 
-    fun updateVital(attr: String, new_value: Float) {
+    suspend fun updateVital(attr: String, new_value: Float) {
         vitals[attr] = new_value
         val sql = """
             UPDATE char_core
@@ -199,6 +201,68 @@ class CharacterViewModel: ViewModel() {
         this.viewModelScope.launch(Dispatchers.IO) {
             db.execSQL(sql)
         }
+    }
+
+    suspend fun updateSkill(skill_id: Int, skill_lvl: Int) {
+        var sql = ""
+        if (skill_lvl >= 0) {
+            sql = """
+                    UPDATE char_skills
+                    SET lvl = $skill_lvl
+                    WHERE char_id = $char_id AND skill_id = $skill_id
+                """.trimIndent()
+        } else {
+            sql = """
+                    DELETE FROM char_skills
+                    WHERE char_id = $char_id AND skill_id = $skill_id
+                """.trimIndent()
+        }
+        db.execSQL(sql)
+    }
+
+    suspend fun updateXP(xp: Int) {
+        // update xp ...
+        val sql = """
+                UPDATE char_core
+                SET xp_used = xp_used + $xp
+                WHERE id = $char_id
+            """.trimIndent()
+        db.execSQL(sql)
+    }
+
+    /**
+     * Read the character skills from the database
+     * @return array of SkillData
+     */
+    suspend fun loadSkills() {
+        var result = emptyArray<Skill>()
+
+        val sql: String = """                            
+            SELECT char_skills.skill_id as id, 
+                   char_skills.lvl as lvl,
+                   skills.name as name, 
+                   skills.parent_id as parent_id,
+                   skills.spec as spec, 
+                   skills.is_active as active 
+                   FROM char_skills
+                   JOIN skills 
+                   ON char_skills.skill_id = skills.id
+                   WHERE char_skills.char_id = $char_id
+        """.trimIndent()
+        val skills: Cursor = db.rawQuery(sql, null)
+
+        while (skills.moveToNext()) {
+            val skill = Skill()
+            skill.id = skills.getInt(0)
+            skill.name = skills.getString(2)
+            skill.lvl = skills.getInt(1)
+            skill.parent_id = skills.getInt(3)
+            skill.spec = skills.getInt(4)
+            skill.is_active = (skills.getInt(5) == 1)
+            result += skill
+        }
+        skills.close()
+        char_skills = result
     }
 
     suspend fun loadInventory() {
@@ -553,15 +617,25 @@ class CharacterViewModel: ViewModel() {
         db.execSQL(sql)
     }
 
-    class Info() {
+    class Info {
         var info_id = 0
         var name = ""
         var txt = ""
     }
 
-    class Account() {
+    class Account {
         var nr = 0
         var name = ""
         var balance = 0f
+    }
+
+    // Used to store skill data ...
+    class Skill {
+        var id: Int = 0
+        var name: String = ""
+        var lvl: Int = 0
+        var parent_id: Int = 0
+        var spec: Int = 0
+        var is_active: Boolean = false
     }
 }
