@@ -69,7 +69,6 @@ class CharInfoFragment(private var dataset: String) : Fragment(),
                 false
             )
         } else {
-            Log.d("info","dataset: $dataset")
             root = createLayout(c.info[dataset]!!.size)
         }
 

@@ -128,8 +128,6 @@ class ItemQtyDialog(val cur_qty: Int): DialogFragment(),
         } else {
             et_amount.setTextColor(resources.getColor(R.color.White))
         }
-
-        Log.d("info", "Auswahl: $pos")
     }
     override fun onNothingSelected(parent: AdapterView<*>) {}
 

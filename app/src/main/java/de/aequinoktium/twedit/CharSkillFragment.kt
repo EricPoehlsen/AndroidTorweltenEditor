@@ -3,14 +3,12 @@ package de.aequinoktium.twedit
 import android.database.Cursor
 import android.graphics.Typeface
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
@@ -27,15 +25,7 @@ class CharSkillFragment : Fragment(),
     private val c: CharacterViewModel by activityViewModels()
     private var char_id: Int = 0
 
-    // Used to store skill data ...
-    class SkillData {
-        var id: Int = 0
-        var name: String = ""
-        var lvl: Int = 0
-        var parent_id: Int = 0
-        var spec: Int = 0
-        var is_active: Boolean = false
-    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,53 +49,21 @@ class CharSkillFragment : Fragment(),
         b_add_skills.setOnClickListener {
             this.findNavController().navigate(R.id.action_cs_to_ss)
         }
-        c.viewModelScope.launch {
-            val skills = loadSkills()
+
+        c.viewModelScope.launch(Dispatchers.IO) {
+            c.loadSkills()
             withContext(Dispatchers.Main) {
-                displaySkills(skills)
+                displaySkills(c.char_skills)
             }
         }
     }
 
-    /**
-     * Read the character skills from the database
-     * @return array of SkillData
-     */
-    suspend fun loadSkills(): Array<SkillData> {
-        var result = emptyArray<SkillData>()
 
-        var sql: String = """                            
-            SELECT char_skills.skill_id as id, 
-                   char_skills.lvl as lvl,
-                   skills.name as name, 
-                   skills.parent_id as parent_id,
-                   skills.spec as spec, 
-                   skills.is_active as active 
-                   FROM char_skills
-                   JOIN skills 
-                   ON char_skills.skill_id = skills.id
-                   WHERE char_skills.char_id = $char_id
-        """.trimIndent()
-        var skills: Cursor = c.db.rawQuery(sql, null)
-
-        while (skills.moveToNext()) {
-            val skill = SkillData()
-            skill.id = skills.getInt(0)
-            skill.name = skills.getString(2)
-            skill.lvl = skills.getInt(1)
-            skill.parent_id = skills.getInt(3)
-            skill.spec = skills.getInt(4)
-            skill.is_active = (skills.getInt(5) == 1)
-        result += skill
-        }
-        skills.close()
-        return result
-    }
 
     /**
      * Updates the View with the characters skills
      */
-    fun displaySkills(skills: Array<SkillData>) {
+    fun displaySkills(skills: Array<CharacterViewModel.Skill>) {
 
         val act = activity as MainActivity
         val skill_container = act.findViewById<LinearLayout>(R.id.charskills_layout)
@@ -195,9 +153,9 @@ class CharSkillFragment : Fragment(),
     override fun onNewSkillDialogPositiveClick(dialog: NewSkillDialog) {
         c.viewModelScope.launch {
             createNewSkill(dialog.skill)
-            val skills = loadSkills()
+            c.loadSkills()
             withContext(Dispatchers.Main) {
-                displaySkills(skills)
+                displaySkills(c.char_skills)
             }
         }
     }
@@ -277,38 +235,16 @@ class CharSkillFragment : Fragment(),
 
     // update skill when user confirms dialog
     override fun onEditSkillDialogPositiveClick(dialog: EditSkillDialog) {
-        var sql = ""
         val skill_id = dialog.skill_id
         val skill_lvl = dialog.new_value
         val xp_cost = dialog.xp_cost
 
         c.viewModelScope.launch {
-            // update or remove skill ...
-            if (skill_lvl >= 0) {
-                sql = """
-                    UPDATE char_skills
-                    SET lvl = $skill_lvl
-                    WHERE char_id = $char_id AND skill_id = $skill_id
-                """.trimIndent()
-            } else {
-                sql = """
-                    DELETE FROM char_skills
-                    WHERE char_id = $char_id AND skill_id = $skill_id
-                """.trimIndent()
-            }
-            c.db.execSQL(sql)
-
-            // update xp ...
-            sql = """
-                UPDATE char_core
-                SET xp_used = xp_used + $xp_cost
-                WHERE id = $char_id
-            """.trimIndent()
-            c.db.execSQL(sql)
-
-            val skills = loadSkills()
+            c.updateSkill(skill_id, skill_lvl)
+            c.loadSkills()
+            c.updateXP(xp_cost)
             withContext(Dispatchers.Main) {
-                displaySkills(skills)
+                displaySkills(c.char_skills)
             }
         }
     }

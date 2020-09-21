@@ -29,7 +29,8 @@ class CatalogFragment : Fragment() {
         "clothing",
         "container",
         "tool",
-        "weapon",
+        "weapon_melee",
+        "weapon_ranged",
         "ammo",
         "clipsnmore",
         "generic",
@@ -71,7 +72,8 @@ class CatalogFragment : Fragment() {
             R.id.catalog_icon_clothing,
             R.id.catalog_icon_container,
             R.id.catalog_icon_tools,
-            R.id.catalog_icon_weapons,
+            R.id.catalog_icon_weapons_melee,
+            R.id.catalog_icon_weapons_ranged,
             R.id.catalog_icon_ammo,
             R.id.catalog_icon_clipsnmore,
             R.id.catalog_icon_generic,
@@ -104,6 +106,13 @@ class CatalogFragment : Fragment() {
         ll_list.removeAllViews()
         for (item in d.current_catalog) {
             val tv = TextView(context)
+            val lp = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+            val m = px(6).toInt()
+            lp.setMargins(m,m,m,m)
+            tv.layoutParams = lp
             tv.text = item.name
             tv.setOnClickListener{ _ -> showItem(item) }
 
@@ -170,7 +179,6 @@ class CatalogFragment : Fragment() {
 
     fun setScrollPosition() {
         val x = px(48).toInt() * item_classes.indexOf(cls)
-        Log.d("info", "X: $x")
         sc_container.smoothScrollTo(x,0)
     }
 

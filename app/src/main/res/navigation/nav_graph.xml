@@ -113,7 +113,12 @@
     <fragment
         android:id="@+id/charItemFragment"
         android:name="de.aequinoktium.twedit.CharItemFragment"
-        android:label="CharItemFragment" />
+        android:label="CharItemFragment" >
+        <action
+            android:id="@+id/action_citem_to_cinv"
+            app:destination="@id/charInventoryFragment"
+            app:popUpTo="@id/characterFragment"/>
+    </fragment>
     <fragment
         android:id="@+id/itemCatalogFragment"
         android:name="de.aequinoktium.twedit.CatalogFragment"

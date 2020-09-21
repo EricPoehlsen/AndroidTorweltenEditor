@@ -271,7 +271,9 @@ class CatalogItemFragment : Fragment(), ItemColorDialog.DialogListener {
     }
 
     fun calcDamage(): Damage {
-        var damage = catalog_item.dmg
+        var damage = Damage()
+        damage.mod = catalog_item.dmg.mod
+        damage += catalog_item.dmg
         for (all in catalog_item.variants.values) {
             for (variant in all) {
                 if (variant.selected){
@@ -387,7 +389,6 @@ class CatalogItemFragment : Fragment(), ItemColorDialog.DialogListener {
      * set the caliber data
      */
     fun setCaliber(mode: String, data: String) {
-        Log.d("info", "CALIBER DATA: $mode - $data")
         if (mode == "weapon_type") {
             val types = mapOf(
                 getString(R.string.cinv_cal_pistol) to "pistol",

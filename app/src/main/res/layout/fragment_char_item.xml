@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -27,48 +26,63 @@
         android:id="@+id/char_item_qty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
         android:text="@string/cinv_quantity"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/char_item_desc" />
+        app:layout_constraintBottom_toTopOf="@+id/char_item_weight"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/char_item_weight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
         android:text="@string/cinv_weight"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/char_item_qty" />
+        app:layout_constraintBottom_toTopOf="@+id/char_item_qual"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/char_item_qual"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
         android:text="@string/cinv_quality"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/char_item_weight" />
+        app:layout_constraintBottom_toTopOf="@+id/char_item_price"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/char_item_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
         android:text="@string/cinv_price"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/char_item_qual" />
+        app:layout_constraintBottom_toTopOf="@+id/char_item_dmg"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/char_item_dmg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:paddingTop="6dp"
         android:text="@string/cinv_damage"
+        app:layout_constraintBottom_toTopOf="@+id/char_item_contents"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/char_item_price" />
+        android:paddingBottom="6dp" />
 
     <LinearLayout
         android:id="@+id/char_item_actions"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/char_item_contents"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <ImageView
@@ -80,4 +94,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/settings" />
+
+    <Button
+        android:id="@+id/char_item_contents"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/cinv_show_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

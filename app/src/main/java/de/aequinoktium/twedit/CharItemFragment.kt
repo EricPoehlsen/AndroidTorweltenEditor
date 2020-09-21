@@ -6,12 +6,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.fragment.findNavController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -23,6 +25,8 @@ class CharItemFragment : Fragment(),
                          ItemSellDialog.DialogListener,
                          ItemQtyDialog.DialogListener,
                          ItemLoadClipDialog.DialogListener,
+                         ItemAttackDialog.DialogListener,
+                         ItemSelectSkillDialog.DialogListener,
                          SettingsDialog.DialogListener
 {
     private val c: CharacterViewModel by activityViewModels()
@@ -66,9 +70,10 @@ class CharItemFragment : Fragment(),
 
         val settings = view.findViewById<ImageView>(R.id.char_item_settings)
         settings.setOnClickListener { settingsDialog() }
+        setupShowContentsButton(view)
         setTexts()
         showActions()
-
+        metaItem()
     }
 
     fun initViews(view: View) {
@@ -83,6 +88,28 @@ class CharItemFragment : Fragment(),
         tv_weight = view.findViewById(R.id.char_item_weight)
         tv_dmg = view.findViewById(R.id.char_item_dmg)
         ll_actions = view.findViewById(R.id.char_item_actions)
+    }
+
+    fun metaItem() {
+        if (item.id < 0) {
+            ll_actions.visibility = View.GONE
+            tv_qty.visibility = View.GONE
+            tv_price.visibility = View.GONE
+            tv_qual.visibility = View.GONE
+        }
+    }
+
+    fun setupShowContentsButton(view: View) {
+        val bt = view.findViewById<Button>(R.id.char_item_contents)
+        var contents = 0
+        for (i in c.getInventory()) {
+            if (i.packed_into == item.id) contents++
+        }
+        if (contents > 0) {
+            bt.setOnClickListener { showContents() }
+        } else {
+            bt.visibility = View.GONE
+        }
     }
 
     fun setTexts() {
@@ -114,9 +141,15 @@ class CharItemFragment : Fragment(),
     }
 
     fun setWeightText() {
-        var s_wgt = " " + item.weight.toString() + " g"
+        var wgt = item.weight
+        if (item.id == -1) {
+            item.weight = 0
+            wgt = 0 + c.getItemTotalWeight(item)
+        }
+        var s_wgt = " $wgt g"
         if (item.weight >= 1000) {
-            s_wgt = " " + (item.weight.toFloat()/1000).toString() + " kg"
+            val wgt = wgt.toFloat()/1000
+            s_wgt = " $wgt kg"
         }
         val weight_label = resources.getString(R.string.cinv_weight)
         val weight_text =  "$weight_label $s_wgt"
@@ -130,6 +163,7 @@ class CharItemFragment : Fragment(),
             tv_dmg.visibility = View.GONE
         } else {
             tv_dmg.text = dmg_text
+            tv_dmg.visibility = View.VISIBLE
         }
     }
 
@@ -186,6 +220,20 @@ class CharItemFragment : Fragment(),
         dialog.show(fm, null)
     }
 
+    fun attackDialog() {
+        val fm = this.parentFragmentManager
+        val dialog = ItemAttackDialog()
+        dialog.setTargetFragment(this, 301)
+        dialog.show(fm, null)
+    }
+
+    fun skillDialog() {
+        val fm = this.parentFragmentManager
+        val dialog = ItemSelectSkillDialog()
+        dialog.setTargetFragment(this, 301)
+        dialog.show(fm, null)
+    }
+
     fun settingsDialog() {
         val fm = this.parentFragmentManager
         val settings = arrayOf(
@@ -200,9 +248,16 @@ class CharItemFragment : Fragment(),
     fun equipItem() {
         if (item.equipped == 0) {
             item.equipped = 1
-            item.packed_into = 0
+            if (item.cls == "clothing") {
+                item.packed_into = -1
+            } else if (item.cls.startsWith("weapon_")) {
+                item.packed_into = -2
+            } else {
+                item.packed_into = 0
+            }
         } else {
             item.equipped = 0
+            item.packed_into = 0
         }
         c.viewModelScope.launch(Dispatchers.IO) {
             c.updateItem(item)
@@ -241,6 +296,10 @@ class CharItemFragment : Fragment(),
                 insertClip(ammo)
             }
         }
+        if (dialog is ItemSelectSkillDialog) {
+            setSkill(dialog.selected)
+        }
+        if (dialog is ItemAttackDialog) {attack()}
         if (dialog is SettingsDialog) {
             val settings: SettingsViewModel by activityViewModels()
             settings.update("inventory.check_weight_limit", dialog.values[0] as Boolean)
@@ -287,6 +346,16 @@ class CharItemFragment : Fragment(),
         }
     }
 
+    fun setSkill(skill_id: Int) {
+        item.skill = skill_id
+        c.viewModelScope.launch(Dispatchers.IO) {
+            c.updateItem(item)
+            withContext(Dispatchers.Main) {
+                showActions()
+            }
+         }
+    }
+
     /**
      * sell the item for the given price
      * @param price: total price to sell the item(stack)
@@ -296,7 +365,8 @@ class CharItemFragment : Fragment(),
         for (i in c.getInventory()) {
             if (i.packed_into == item.id) {
                 c.viewModelScope.launch(Dispatchers.IO) {
-                    c.unpackItem(i)
+                    i.packed_into = 0
+                    c.updateItem(i)
                 }
             }
         }
@@ -400,6 +470,10 @@ class CharItemFragment : Fragment(),
         }
     }
 
+    fun attack() {
+
+    }
+
 
     /**
      * loads ammo into a clip
@@ -498,7 +572,6 @@ class CharItemFragment : Fragment(),
     }
 
     fun addCaliberInfoToString(input: String):String {
-        Log.d("info", "in addCaliberInfoToString")
         var result = ""
         if (!item.caliber[0].isEmpty() && !item.caliber[1].isEmpty()) {
             val weapons = mapOf(
@@ -517,17 +590,29 @@ class CharItemFragment : Fragment(),
         return input + result
     }
 
+    fun showContents() {
+        c.current_item = item
+        this.findNavController().navigate(R.id.action_citem_to_cinv)
+    }
 
     /**
      * add item_specific actions to the layout
      */
     fun showActions() {
         ll_actions.removeAllViews()
+
+        if (!item.cur_dmg.isEmpty()) {
+            val iv = prepareIcon(R.drawable.action_attack)
+            if (item.skill < 0) {
+                iv.setOnClickListener { skillDialog() }
+            } else {
+                iv.setOnClickListener { attackDialog() }
+            }
+        }
         if (item.chambers > 0 && item.clip >= 0) {
             val iv = prepareIcon(R.drawable.action_cycle_gun)
             iv.setOnClickListener { cycleGun() }
         }
-
         if (item.cls == "clipsnmore" && item.capacity > 0 && !item.caliber[1].isEmpty()){
             val iv = prepareIcon(R.drawable.action_load_ammo)
             iv.setOnClickListener { loadClipDialog() }
@@ -535,12 +620,10 @@ class CharItemFragment : Fragment(),
         if (item.clip == 0) {
             val iv = prepareIcon(R.drawable.action_load_clip)
             iv.setOnClickListener { insertClipDialog() }
-        }
-        if (item.clip > 0) {
+        } else if (item.clip > 0) {
             val iv = prepareIcon(R.drawable.action_unload_clip)
             iv.setOnClickListener { ejectClip() }
         }
-
         if (item.equipped == 0)  {
             val iv = prepareIcon(R.drawable.action_equip)
             iv.setOnClickListener { equipItem() }
@@ -548,7 +631,6 @@ class CharItemFragment : Fragment(),
             val iv = prepareIcon(R.drawable.action_unequip)
             iv.setOnClickListener { equipItem() }
         }
-
         if (item.packed_into == 0) {
             val iv = prepareIcon(R.drawable.action_pack)
             iv.setOnClickListener { packItemDialog() }

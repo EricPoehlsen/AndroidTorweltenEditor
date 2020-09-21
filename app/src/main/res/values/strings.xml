@@ -71,6 +71,9 @@
     <string name="dialog_item_dmg_title">Schadenswerte: </string>
     <string name="dialog_item_dmg_code">Schadenscode: </string>
     <string name="dialog_item_dmg_mod">modifiziert einen anderen Schaden.</string>
+    <string name="dialog_item_skill">Fertigkeit wählen</string>
+    <string name="dialog_item_skill_none">keine passende Fertigkeit</string>
+    <string name="dialog_item_attack_title">Attacke …</string>
     <string name="dialog_remove_trait_title">Eigenschaft löschen …</string>
     <string name="dialog_remove_trait_msg">Entfernt %1$s und korrigiert die Erfahrungspunkte.</string>
     <string name="dialog_collapse_trait_title">Varianten bearbeiten …</string>
@@ -150,6 +153,7 @@
     <string name="cinv_equipped">Ausgerüstete</string>
     <string name="cinv_all">Alle</string>
     <string name="cinv_desc">Beschreibung: </string>
+    <string name="cinv_show_content">Inhalt anzeigen</string>
     <string name="cinv_equip">ausrüsten</string>
     <string name="cinv_pack">einpacken</string>
     <string name="cinv_unpack">auspacken</string>
@@ -182,12 +186,15 @@
     <string name="cinv_cls_clothing">Kleidungsstück</string>
     <string name="cinv_cls_container">Behälter</string>
     <string name="cinv_cls_tool">Werkzeug</string>
-    <string name="cinv_cls_weapon">Waffe</string>
+    <string name="cinv_cls_weapon_melee">Nahkampfwaffe</string>
+    <string name="cinv_cls_weapon_ranged">Fernkampfwaffe</string>
     <string name="cinv_cls_clipsnmore">Waffenzubehör</string>
     <string name="cinv_cls_ammo">Munition</string>
     <string name="cinv_cls_implant">Implantat</string>
     <string name="cinv_cls_valuable">Wertgegenstand</string>
     <string name="cinv_cls_generic">Gegenstand</string>
+    <string name="cinv_equipped_clothing">getragene Kleidung</string>
+    <string name="cinv_equipped_weapons">gezogene Waffen</string>
     <string-array name="cinv_qualities">
         <item>zerstört</item>
         <item>kaputt</item>

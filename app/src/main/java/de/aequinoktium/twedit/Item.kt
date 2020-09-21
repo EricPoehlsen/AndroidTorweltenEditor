@@ -29,6 +29,7 @@ class Item() {
     var color = ""
     var material = ""
     var cls = ""
+    var skill = -1
 
 
     fun copy(): Item {
@@ -177,6 +178,7 @@ class Damage {
         s += b.s
         d += b.d
         t = b.t
+        mod = mod
         return this
     }
 

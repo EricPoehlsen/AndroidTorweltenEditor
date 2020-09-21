@@ -7,23 +7,16 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <Button
-        android:id="@+id/cinv_new_item"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/add"
-        app:layout_constraintStart_toEndOf="@+id/cinv_all"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/cinv_container"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="8dp"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/cinv_cash"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cinv_all"></androidx.recyclerview.widget.RecyclerView>
+        app:layout_constraintTop_toBottomOf="@+id/cinv_settings" />
 
     <TextView
         android:id="@+id/cinv_cash"
@@ -33,19 +26,46 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <Button
-        android:id="@+id/cinv_all"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/cinv_all"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <ImageView
         android:id="@+id/cinv_settings"
         android:layout_width="32dp"
         android:layout_height="32dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/settings" />
+
+    <EditText
+        android:id="@+id/cinv_search"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:ems="10"
+        android:hint="@string/search"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toTopOf="@+id/cinv_container"
+        app:layout_constraintEnd_toStartOf="@+id/cinv_all"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/cinv_new_item"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/cinv_settings"
+        app:layout_constraintEnd_toStartOf="@+id/cinv_settings"
+        app:layout_constraintTop_toTopOf="@+id/cinv_settings"
+        app:srcCompat="@drawable/icon_plus" />
+
+    <ImageView
+        android:id="@+id/cinv_all"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/cinv_new_item"
+        app:layout_constraintEnd_toStartOf="@+id/cinv_new_item"
+        app:layout_constraintTop_toTopOf="@+id/cinv_new_item"
+        app:srcCompat="@drawable/filter_all" />
 </androidx.constraintlayout.widget.ConstraintLayout>

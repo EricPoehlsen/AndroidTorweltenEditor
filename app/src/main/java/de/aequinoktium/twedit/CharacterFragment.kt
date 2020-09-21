@@ -164,7 +164,10 @@ class CharacterFragment: Fragment(),
         val view: TextView = act.findViewById(view_id)
         view.text = dialog.new_value.toString()
 
-        c.updateAttrib(dialog.char_attrib, dialog.new_value, dialog.xp_cost)
+        c.viewModelScope.launch(Dispatchers.IO) {
+            c.updateAttrib(dialog.char_attrib, dialog.new_value, dialog.xp_cost)
+        }
+
         if (dialog.char_attrib in arrayOf("lp", "ep", "mp")) {
             val bars = mapOf(
                 "lp" to lp_bar,
@@ -173,7 +176,9 @@ class CharacterFragment: Fragment(),
             )
             bars[dialog.char_attrib]!!.max_value = dialog.new_value
             bars[dialog.char_attrib]!!.cur_value = dialog.new_value.toFloat()
-            c.updateVital(dialog.char_attrib, dialog.new_value.toFloat())
+            c.viewModelScope.launch(Dispatchers.IO) {
+                c.updateVital(dialog.char_attrib, dialog.new_value.toFloat())
+            }
         }
     }
 
@@ -207,6 +212,8 @@ class CharacterFragment: Fragment(),
         val dmg = dialog.action * dialog.delta
         val new_value = bars[dialog.attr]!!.cur_value + dmg
         bars[dialog.attr]!!.cur_value = new_value
-        c.updateVital(dialog.attr, new_value)
+        c.viewModelScope.launch(Dispatchers.IO) {
+            c.updateVital(dialog.attr, new_value)
+        }
     }
 }
