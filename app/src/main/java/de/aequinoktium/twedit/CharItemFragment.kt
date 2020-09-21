@@ -299,7 +299,10 @@ class CharItemFragment : Fragment(),
         if (dialog is ItemSelectSkillDialog) {
             setSkill(dialog.selected)
         }
-        if (dialog is ItemAttackDialog) {attack()}
+        if (dialog is ItemAttackDialog) {
+            if (dialog.remove_skill) setSkill(-1)
+            attack()
+        }
         if (dialog is SettingsDialog) {
             val settings: SettingsViewModel by activityViewModels()
             settings.update("inventory.check_weight_limit", dialog.values[0] as Boolean)
@@ -353,7 +356,7 @@ class CharItemFragment : Fragment(),
             withContext(Dispatchers.Main) {
                 showActions()
             }
-         }
+        }
     }
 
     /**

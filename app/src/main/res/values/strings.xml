@@ -74,6 +74,7 @@
     <string name="dialog_item_skill">Fertigkeit wählen</string>
     <string name="dialog_item_skill_none">ungeübt</string>
     <string name="dialog_item_attack_title">Attacke …</string>
+    <string name="dialog_item_attack_modifier">Modifikator</string>
     <string name="dialog_remove_trait_title">Eigenschaft löschen …</string>
     <string name="dialog_remove_trait_msg">Entfernt %1$s und korrigiert die Erfahrungspunkte.</string>
     <string name="dialog_collapse_trait_title">Varianten bearbeiten …</string>
