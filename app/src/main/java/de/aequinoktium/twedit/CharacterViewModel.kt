@@ -181,13 +181,7 @@ class CharacterViewModel: ViewModel() {
 
         this.viewModelScope.launch(Dispatchers.IO) {
             db.update("char_core", data, "id = $char_id", null)
-
-            val sql = """
-                UPDATE char_core 
-                SET xp_used = xp_used + ${xp_cost}
-                WHERE id = ${char_id}
-            """.trimIndent()
-            db.execSQL(sql)
+            updateXP(xp_cost)
         }
     }
 
@@ -320,6 +314,9 @@ class CharacterViewModel: ViewModel() {
                 if (value.startsWith("clip:")) {
                     item.clip = value.split(":")[1].toInt()
                 }
+                if (value.startsWith("skill:")) {
+                    item.skill = value.split(":")[1].toInt()
+                }
             }
             items.add(item)
         }
@@ -406,6 +403,9 @@ class CharacterViewModel: ViewModel() {
         }
         if (item.clip > -1) {
             extra_data += "clip:${item.clip}|"
+        }
+        if (item.skill >= 0) {
+            extra_data += "skill:${item.skill}|"
         }
 
         val cv = ContentValues()

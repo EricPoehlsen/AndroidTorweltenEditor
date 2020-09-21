@@ -25,6 +25,8 @@ class CharItemFragment : Fragment(),
                          ItemSellDialog.DialogListener,
                          ItemQtyDialog.DialogListener,
                          ItemLoadClipDialog.DialogListener,
+                         ItemAttackDialog.DialogListener,
+                         ItemSelectSkillDialog.DialogListener,
                          SettingsDialog.DialogListener
 {
     private val c: CharacterViewModel by activityViewModels()
@@ -37,7 +39,6 @@ class CharItemFragment : Fragment(),
     lateinit var tv_weight: TextView
     lateinit var tv_dmg: TextView
     lateinit var ll_actions: LinearLayout
-    lateinit var bt_content: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -219,6 +220,20 @@ class CharItemFragment : Fragment(),
         dialog.show(fm, null)
     }
 
+    fun attackDialog() {
+        val fm = this.parentFragmentManager
+        val dialog = ItemAttackDialog()
+        dialog.setTargetFragment(this, 301)
+        dialog.show(fm, null)
+    }
+
+    fun skillDialog() {
+        val fm = this.parentFragmentManager
+        val dialog = ItemSelectSkillDialog()
+        dialog.setTargetFragment(this, 301)
+        dialog.show(fm, null)
+    }
+
     fun settingsDialog() {
         val fm = this.parentFragmentManager
         val settings = arrayOf(
@@ -281,6 +296,10 @@ class CharItemFragment : Fragment(),
                 insertClip(ammo)
             }
         }
+        if (dialog is ItemSelectSkillDialog) {
+            setSkill(dialog.selected)
+        }
+        if (dialog is ItemAttackDialog) {attack()}
         if (dialog is SettingsDialog) {
             val settings: SettingsViewModel by activityViewModels()
             settings.update("inventory.check_weight_limit", dialog.values[0] as Boolean)
@@ -325,6 +344,16 @@ class CharItemFragment : Fragment(),
                 setQualityText()
             }
         }
+    }
+
+    fun setSkill(skill_id: Int) {
+        item.skill = skill_id
+        c.viewModelScope.launch(Dispatchers.IO) {
+            c.updateItem(item)
+            withContext(Dispatchers.Main) {
+                showActions()
+            }
+         }
     }
 
     /**
@@ -439,6 +468,10 @@ class CharItemFragment : Fragment(),
                 c.removeItem(i)
             }
         }
+    }
+
+    fun attack() {
+
     }
 
 
@@ -567,11 +600,19 @@ class CharItemFragment : Fragment(),
      */
     fun showActions() {
         ll_actions.removeAllViews()
+
+        if (!item.cur_dmg.isEmpty()) {
+            val iv = prepareIcon(R.drawable.action_attack)
+            if (item.skill < 0) {
+                iv.setOnClickListener { skillDialog() }
+            } else {
+                iv.setOnClickListener { attackDialog() }
+            }
+        }
         if (item.chambers > 0 && item.clip >= 0) {
             val iv = prepareIcon(R.drawable.action_cycle_gun)
             iv.setOnClickListener { cycleGun() }
         }
-
         if (item.cls == "clipsnmore" && item.capacity > 0 && !item.caliber[1].isEmpty()){
             val iv = prepareIcon(R.drawable.action_load_ammo)
             iv.setOnClickListener { loadClipDialog() }
@@ -579,12 +620,10 @@ class CharItemFragment : Fragment(),
         if (item.clip == 0) {
             val iv = prepareIcon(R.drawable.action_load_clip)
             iv.setOnClickListener { insertClipDialog() }
-        }
-        if (item.clip > 0) {
+        } else if (item.clip > 0) {
             val iv = prepareIcon(R.drawable.action_unload_clip)
             iv.setOnClickListener { ejectClip() }
         }
-
         if (item.equipped == 0)  {
             val iv = prepareIcon(R.drawable.action_equip)
             iv.setOnClickListener { equipItem() }
@@ -592,7 +631,6 @@ class CharItemFragment : Fragment(),
             val iv = prepareIcon(R.drawable.action_unequip)
             iv.setOnClickListener { equipItem() }
         }
-
         if (item.packed_into == 0) {
             val iv = prepareIcon(R.drawable.action_pack)
             iv.setOnClickListener { packItemDialog() }

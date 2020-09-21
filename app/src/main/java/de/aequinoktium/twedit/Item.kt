@@ -29,6 +29,7 @@ class Item() {
     var color = ""
     var material = ""
     var cls = ""
+    var skill = -1
 
 
     fun copy(): Item {

@@ -50,9 +50,12 @@ class CharSkillFragment : Fragment(),
             this.findNavController().navigate(R.id.action_cs_to_ss)
         }
 
-        displaySkills(c.char_skills)
-
-
+        c.viewModelScope.launch(Dispatchers.IO) {
+            c.loadSkills()
+            withContext(Dispatchers.Main) {
+                displaySkills(c.char_skills)
+            }
+        }
     }
 
 
