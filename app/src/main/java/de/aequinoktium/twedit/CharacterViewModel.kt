@@ -289,6 +289,7 @@ class CharacterViewModel: ViewModel() {
                 }
                 if (value.startsWith("dmg:")) {
                     item.dmg = Damage(value.split(":")[1])
+                    item.cur_dmg = Damage() + item.dmg
                 }
                 if (value.startsWith("var.")) {
                     val split = value.split(":")

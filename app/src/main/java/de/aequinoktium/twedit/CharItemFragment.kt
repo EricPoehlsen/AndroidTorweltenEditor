@@ -222,7 +222,7 @@ class CharItemFragment : Fragment(),
 
     fun attackDialog() {
         val fm = this.parentFragmentManager
-        val dialog = ItemAttackDialog()
+        val dialog = ItemAttackDialog(item)
         dialog.setTargetFragment(this, 301)
         dialog.show(fm, null)
     }
