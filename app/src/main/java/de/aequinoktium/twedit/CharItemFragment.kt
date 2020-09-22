@@ -1,7 +1,6 @@
 package de.aequinoktium.twedit
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -26,6 +25,7 @@ class CharItemFragment : Fragment(),
                          ItemQtyDialog.DialogListener,
                          ItemLoadClipDialog.DialogListener,
                          ItemAttackDialog.DialogListener,
+                         EffectDialog.DialogListener,
                          ItemSelectSkillDialog.DialogListener,
                          SettingsDialog.DialogListener
 {
@@ -227,6 +227,13 @@ class CharItemFragment : Fragment(),
         dialog.show(fm, null)
     }
 
+    fun effectDialog(dmg: Damage) {
+        val fm = this.parentFragmentManager
+        val dialog = EffectDialog(dmg)
+        dialog.setTargetFragment(this, 301)
+        dialog.show(fm, null)
+    }
+
     fun skillDialog() {
         val fm = this.parentFragmentManager
         val dialog = ItemSelectSkillDialog()
@@ -300,8 +307,13 @@ class CharItemFragment : Fragment(),
             setSkill(dialog.selected)
         }
         if (dialog is ItemAttackDialog) {
-            if (dialog.remove_skill) setSkill(-1)
-            attack()
+            if (dialog.remove_skill) {
+                setSkill(-1)
+            } else {
+                if (dialog.success > 0) {
+                    effectDialog(item.dmg)
+                }
+            }
         }
         if (dialog is SettingsDialog) {
             val settings: SettingsViewModel by activityViewModels()

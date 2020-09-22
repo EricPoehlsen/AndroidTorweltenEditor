@@ -29,6 +29,7 @@ class ItemAttackDialog(val item: Item): DialogFragment() {
     private var rolls = arrayOf<Int>()
 
     var remove_skill = false
+    var success = 0
 
     private val c: CharacterViewModel by activityViewModels()
     /* The activity that creates an instance of this dialog fragment must
@@ -246,6 +247,7 @@ class ItemAttackDialog(val item: Item): DialogFragment() {
             tv.text = result.toString()
             if (result <= attrib) {
                 tv.setBackgroundColor(green)
+                success += 1
             } else {
                 tv.setBackgroundColor(red)
             }
