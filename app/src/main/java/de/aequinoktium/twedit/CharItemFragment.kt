@@ -311,7 +311,8 @@ class CharItemFragment : Fragment(),
                 setSkill(-1)
             } else {
                 if (dialog.success > 0) {
-                    effectDialog(item.dmg)
+                    val dmg = Damage() + item.dmg
+                    effectDialog(dmg)
                 }
             }
         }

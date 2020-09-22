@@ -73,6 +73,8 @@
     <string name="dialog_item_dmg_mod">modifiziert einen anderen Schaden.</string>
     <string name="dialog_item_skill">Fertigkeit wählen</string>
     <string name="dialog_item_skill_none">ungeübt</string>
+    <string name="dialog_effect_title">Effektwurf …</string>
+    <string name="dialog_effect">Effekt:</string>
     <string name="dialog_item_attack_title">Attacke …</string>
     <string name="dialog_item_attack_modifier">Modifikator</string>
     <string name="dialog_remove_trait_title">Eigenschaft löschen …</string>

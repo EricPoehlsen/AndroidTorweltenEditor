@@ -13,6 +13,10 @@ class EWT() {
         "O" to 0f
     )
 
+    fun roll(dmg: Damage): Array<Any> {
+        return roll(dmg.s, dmg.d)
+    }
+
     fun roll(dice: Int, modifier: Int):Array<Any> {
         var rolled = arrayOf<Int>()
         var result = 0f

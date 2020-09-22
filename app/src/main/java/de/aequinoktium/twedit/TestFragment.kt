@@ -32,28 +32,20 @@ class TestFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
-        val ll = view.findViewById<LinearLayout>(R.id.test_linear)
-        addItemView(ll)
+        val bt = view.findViewById<Button>(R.id.test_button)
+        bt.setOnClickListener { v -> clicked(v) }
     }
 
-    fun addItemView(ll: LinearLayout) {
-        val item = Item()
-        item.name = "Gegenstand"
-        item.dmg.s = 1
-        val iv = ItemView(context)
-        iv.item = item
-        val lp = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,0)
-        lp.setMargins(6,6,6,6)
-        iv.setPadding(6,6,6,6)
-        iv.layoutParams = lp
-        ll.addView(iv)
-    }
 
     fun clicked(v: View) {
 
         if (v is Button) {
-            v.text = ewt.roll(3,-2)[0].toString()
+            v.text
+            var d = 0f
+            for (i in 0..10000) {
+                d += ewt.roll(1,9)[0] as Float
+            }
+            v.text = (d/9999).toString()
         }
     }
 

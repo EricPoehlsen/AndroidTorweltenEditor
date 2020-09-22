@@ -1,8 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/dia_item_effect"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical" />
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/dia_effect_s"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1"
+        android:textSize="48sp"
+        app:layout_constraintEnd_toEndOf="@+id/dia_effect_s_inc"
+        app:layout_constraintStart_toStartOf="@+id/dia_effect_s_inc"
+        app:layout_constraintTop_toBottomOf="@+id/dia_effect_s_inc" />
+
+    <TextView
+        android:id="@+id/dia_effect_d"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:textSize="48sp"
+        app:layout_constraintEnd_toEndOf="@+id/dia_effect_d_inc"
+        app:layout_constraintStart_toStartOf="@+id/dia_effect_d_inc"
+        app:layout_constraintTop_toBottomOf="@+id/dia_effect_d_inc" />
+
+    <TextView
+        android:id="@+id/dia_effect_result"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="/"
+        android:textSize="48sp"
+        app:layout_constraintEnd_toStartOf="@+id/dia_effect_d"
+        app:layout_constraintStart_toEndOf="@+id/dia_effect_s"
+        app:layout_constraintTop_toTopOf="@+id/dia_effect_s" />
+
+    <ImageView
+        android:id="@+id/dia_effect_s_dec"
+        android:layout_width="64dp"
+        android:layout_height="32dp"
+        app:layout_constraintEnd_toEndOf="@+id/dia_effect_s"
+        app:layout_constraintStart_toStartOf="@+id/dia_effect_s"
+        app:layout_constraintTop_toBottomOf="@+id/dia_effect_s"
+        app:srcCompat="@drawable/arrow_down" />
+
+    <ImageView
+        android:id="@+id/dia_effect_d_dec"
+        android:layout_width="64dp"
+        android:layout_height="32dp"
+        app:layout_constraintEnd_toEndOf="@+id/dia_effect_d"
+        app:layout_constraintStart_toStartOf="@+id/dia_effect_d"
+        app:layout_constraintTop_toBottomOf="@+id/dia_effect_d"
+        app:srcCompat="@drawable/arrow_down" />
+
+    <ImageView
+        android:id="@+id/dia_effect_s_inc"
+        android:layout_width="64dp"
+        android:layout_height="32dp"
+        app:layout_constraintEnd_toStartOf="@+id/dia_effect_d_inc"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dia_effect_title"
+        app:srcCompat="@drawable/arrow_up" />
+
+    <ImageView
+        android:id="@+id/dia_effect_d_inc"
+        android:layout_width="64dp"
+        android:layout_height="32dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/dia_effect_s_inc"
+        app:layout_constraintTop_toBottomOf="@+id/dia_effect_title"
+        app:srcCompat="@drawable/arrow_up" />
+
+    <Button
+        android:id="@+id/dia_effect_roll"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/dialog_dmg_roll"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dia_effect_s_dec" />
+
+    <TextView
+        android:id="@+id/dia_effect_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/dialog_effect_title"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
