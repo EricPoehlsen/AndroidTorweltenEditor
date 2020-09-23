@@ -4,6 +4,7 @@ import java.time.LocalDateTime
 import kotlin.random.Random
 
 class EWT() {
+    //                   overflow(     EWT    )overflow
     private val table = "###########XXXX////OOOOOOOOOOO"
 
     private val values = mapOf(

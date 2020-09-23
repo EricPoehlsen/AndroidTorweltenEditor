@@ -311,15 +311,27 @@ class CharItemFragment : Fragment(),
                 setSkill(-1)
             } else {
                 if (dialog.success > 0) {
-                    val dmg = Damage() + item.dmg
+                    val dmg = Damage() + item.cur_dmg
                     effectDialog(dmg)
                 }
+                expendAmmo()
             }
         }
         if (dialog is SettingsDialog) {
             val settings: SettingsViewModel by activityViewModels()
             settings.update("inventory.check_weight_limit", dialog.values[0] as Boolean)
             settings.update("inventory.check_caliber", dialog.values[1] as Boolean)
+        }
+    }
+
+    fun expendAmmo() {
+        if (item.clip >= 0) {
+            val ammo = c.getItemById(item.chambered[0])
+            cycleGun()
+            c.viewModelScope.launch(Dispatchers.IO) {
+                c.removeItem(ammo)
+            }
+            showActions()
         }
     }
 
@@ -486,11 +498,6 @@ class CharItemFragment : Fragment(),
         }
     }
 
-    fun attack() {
-
-    }
-
-
     /**
      * loads ammo into a clip
      * Ammo is only loaded if the item has has free capacity.
@@ -583,6 +590,7 @@ class CharItemFragment : Fragment(),
             withContext(Dispatchers.Main) {
                 item.cur_dmg = c.getItemEffectiveDamage(item)
                 setDamageText()
+                showActions()
             }
         }
     }
