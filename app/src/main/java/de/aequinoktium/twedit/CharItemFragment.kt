@@ -40,6 +40,7 @@ class CharItemFragment : Fragment(),
     lateinit var tv_weight: TextView
     lateinit var tv_dmg: TextView
     lateinit var ll_actions: LinearLayout
+    lateinit var bt_contents: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -101,15 +102,20 @@ class CharItemFragment : Fragment(),
     }
 
     fun setupShowContentsButton(view: View) {
-        val bt = view.findViewById<Button>(R.id.char_item_contents)
+        bt_contents = view.findViewById<Button>(R.id.char_item_contents)
+        bt_contents.setOnClickListener { showContents() }
+        showContentsButton()
+    }
+
+    fun showContentsButton() {
         var contents = 0
         for (i in c.getInventory()) {
             if (i.packed_into == item.id) contents++
         }
         if (contents > 0) {
-            bt.setOnClickListener { showContents() }
+            bt_contents.visibility = View.VISIBLE
         } else {
-            bt.visibility = View.GONE
+            bt_contents.visibility = View.GONE
         }
     }
 
@@ -330,7 +336,6 @@ class CharItemFragment : Fragment(),
     }
 
     fun expendAmmo() {
-        Log.d("info", "Clip: ${item.clip}")
         if (item.chambered.size > 0) {
             val used = c.getItemById(item.chambered[0])
             if (item.clip >= 0) {
@@ -341,14 +346,19 @@ class CharItemFragment : Fragment(),
                     chambered += item.chambered[i]
                 }
                 item.chambered = chambered
+                if (item.chambered.size == 0) {
+                    item.cur_dmg = Damage() + item.dmg
+                }
             }
             c.viewModelScope.launch(Dispatchers.IO) {
                 c.updateItem(item)
                 c.removeItem(used)
+                withContext(Dispatchers.Main) {
+                    showActions()
+                    showContentsButton()
+                }
             }
         }
-
-        showActions()
     }
 
     /**
@@ -538,6 +548,7 @@ class CharItemFragment : Fragment(),
                 c.viewModelScope.launch(Dispatchers.IO) {
                     c.updateItem(ammo)
                     c.addToInventory(new_ammo)
+                    showContentsButton()
                 }
             }
         }
@@ -558,6 +569,7 @@ class CharItemFragment : Fragment(),
             c.updateItem(ammo)
             withContext(Dispatchers.Main) {
                 showActions()
+                showContentsButton()
             }
         }
     }
@@ -572,6 +584,7 @@ class CharItemFragment : Fragment(),
                 c.updateItem(item)
                 withContext(Dispatchers.Main) {
                     showActions()
+                    showContentsButton()
                 }
             }
         }
@@ -599,6 +612,7 @@ class CharItemFragment : Fragment(),
                     item.cur_dmg = c.getItemEffectiveDamage(item)
                     setDamageText()
                     showActions()
+                    showContentsButton()
                 }
             }
         }
@@ -628,11 +642,16 @@ class CharItemFragment : Fragment(),
         for (i in chambered) {
             item.chambered += i.id
         }
+
+        if (item.chambered.size == 0) {
+            item.cur_dmg = Damage() + item.dmg
+        }
         c.viewModelScope.launch(Dispatchers.IO) {
             c.updateItem(item)
             withContext(Dispatchers.Main) {
                 item.cur_dmg = c.getItemEffectiveDamage(item)
                 setDamageText()
+                showContentsButton()
                 showActions()
             }
         }
