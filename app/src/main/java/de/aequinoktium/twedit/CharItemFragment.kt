@@ -1,6 +1,7 @@
 package de.aequinoktium.twedit
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -298,7 +299,11 @@ class CharItemFragment : Fragment(),
         if (dialog is ItemLoadClipDialog) {
             val ammo = c.getItemById(dialog.selected_id)
             if (dialog.cls == "ammo") {
-                loadIntoClip(ammo)
+                if (item.cls == "clipsnmore") {
+                    loadIntoClip(ammo)
+                } else {
+                    chamberRound(ammo)
+                }
             } else {
                 insertClip(ammo)
             }
@@ -325,14 +330,25 @@ class CharItemFragment : Fragment(),
     }
 
     fun expendAmmo() {
-        if (item.clip >= 0) {
-            val ammo = c.getItemById(item.chambered[0])
-            cycleGun()
-            c.viewModelScope.launch(Dispatchers.IO) {
-                c.removeItem(ammo)
+        Log.d("info", "Clip: ${item.clip}")
+        if (item.chambered.size > 0) {
+            val used = c.getItemById(item.chambered[0])
+            if (item.clip >= 0) {
+                cycleGun()
+            } else {
+                var chambered = arrayOf<Int>()
+                for (i in 1..item.chambered.size-1) {
+                    chambered += item.chambered[i]
+                }
+                item.chambered = chambered
             }
-            showActions()
+            c.viewModelScope.launch(Dispatchers.IO) {
+                c.updateItem(item)
+                c.removeItem(used)
+            }
         }
+
+        showActions()
     }
 
     /**
@@ -561,6 +577,33 @@ class CharItemFragment : Fragment(),
         }
     }
 
+    fun chamberRound(ammo: Item) {
+        var chambered = c.getChamberedAmmo(item)
+        if (chambered.size < item.chambers) {
+            if (ammo.qty > 1) {
+                val new_ammo = ammo.copy()
+                new_ammo.qty = ammo.qty-1
+                ammo.qty = 1
+                c.viewModelScope.launch(Dispatchers.IO) {
+                    c.addToInventory(new_ammo)
+                }
+            }
+
+            item.chambered += ammo.id
+            ammo.packed_into = item.id
+            c.viewModelScope.launch(Dispatchers.IO) {
+
+                c.updateItem(item)
+                c.updateItem(ammo)
+                withContext(Dispatchers.Main) {
+                    item.cur_dmg = c.getItemEffectiveDamage(item)
+                    setDamageText()
+                    showActions()
+                }
+            }
+        }
+    }
+
     fun cycleGun() {
         val chambered = c.getChamberedAmmo(item).toMutableList()
         val clip = c.getItemById(item.clip)
@@ -633,9 +676,14 @@ class CharItemFragment : Fragment(),
                 iv.setOnClickListener { attackDialog() }
             }
         }
-        if (item.chambers > 0 && item.clip >= 0) {
-            val iv = prepareIcon(R.drawable.action_cycle_gun)
-            iv.setOnClickListener { cycleGun() }
+        if (item.chambers > 0) {
+            if(item.clip >= 0) {
+                val iv = prepareIcon(R.drawable.action_cycle_gun)
+                iv.setOnClickListener { cycleGun() }
+            } else {
+                val iv = prepareIcon(R.drawable.action_chamber_round)
+                iv.setOnClickListener { loadClipDialog() }
+            }
         }
         if (item.cls == "clipsnmore" && item.capacity > 0 && !item.caliber[1].isEmpty()){
             val iv = prepareIcon(R.drawable.action_load_ammo)

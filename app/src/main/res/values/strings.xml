@@ -185,6 +185,7 @@
     <string name="cinv_cal_pistol">Faustfeuerwaffen</string>
     <string name="cinv_cal_rifle">Langwaffen</string>
     <string name="cinv_cal_shotgun">Schrotflinten</string>
+    <string name="cinv_cal_energy">Energiewaffen</string>
     <string name="cinv_cls">Klasse: </string>
     <string name="cinv_cls_clothing">Kleidungsstück</string>
     <string name="cinv_cls_container">Behälter</string>

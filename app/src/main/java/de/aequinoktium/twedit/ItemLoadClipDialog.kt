@@ -102,7 +102,7 @@ class ItemLoadClipDialog(val item: Item, val cls:String): DialogFragment() {
             if (i.cls == cls) {
                 if (i.caliber.contentEquals(item.caliber)) {
                     val packed_into = c.getItemById(i.packed_into)
-                    if (packed_into.cls !in arrayOf("clipsnmore", "weapon")) {
+                    if (packed_into.cls !in arrayOf("clipsnmore", "weapon_ranged")) {
                         unloaded_items += i
                     } else {
                         loaded_items += i

@@ -144,6 +144,7 @@ class CatalogItemFragment : Fragment(), ItemColorDialog.DialogListener {
         item.weight = catalog_item.weight
         item.weight_limit = catalog_item.weight_limit
         item.dmg = catalog_item.dmg
+        item.cur_dmg = catalog_item.dmg
         item.chambers = catalog_item.chambers
         item.caliber = catalog_item.caliber
         item.capacity = catalog_item.capacity
@@ -393,7 +394,8 @@ class CatalogItemFragment : Fragment(), ItemColorDialog.DialogListener {
             val types = mapOf(
                 getString(R.string.cinv_cal_pistol) to "pistol",
                 getString(R.string.cinv_cal_rifle) to "rifle",
-                getString(R.string.cinv_cal_shotgun) to "shotgun"
+                getString(R.string.cinv_cal_shotgun) to "shotgun",
+                getString(R.string.cinv_cal_energy) to "energy"
             )
             item.caliber[0] = types[data]!!
         }
