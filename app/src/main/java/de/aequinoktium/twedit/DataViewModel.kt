@@ -309,8 +309,11 @@ class DataViewModel: ViewModel() {
                 } else if (e.startsWith("d")) {
                     val dmg_value = e.replace("d","")
                     item_variant.dmg = Damage(dmg_value)
-                } else if (e.startsWith("c")) {
+                } else if (e.matches("c\\d+".toRegex())) {
                     item_variant.capacity = e.replace("c","").toInt()
+                } else if (e.startsWith("cal")) {
+                    val data = e.replace("cal", "")
+                    item_variant.caliber = data.split("-").toTypedArray()
                 }
             }
             vars += item_variant

@@ -124,6 +124,7 @@ class CatalogItem() {
         var prefix = false
         var suffix = false
         var rename = false
+        var caliber = arrayOf("","")
     }
 }
 
