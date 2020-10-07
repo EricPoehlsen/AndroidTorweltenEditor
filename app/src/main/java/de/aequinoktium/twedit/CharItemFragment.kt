@@ -335,6 +335,9 @@ class CharItemFragment : Fragment(),
         }
     }
 
+    /**
+     * uses the currently loaded round and makes the next round available
+     */
     fun expendAmmo() {
         if (item.chambered.size > 0) {
             val used = c.getItemById(item.chambered[0])
@@ -620,9 +623,11 @@ class CharItemFragment : Fragment(),
 
     fun cycleGun() {
         val chambered = c.getChamberedAmmo(item).toMutableList()
-        val clip = c.getItemById(item.clip)
-        val clip_ammo = c.getItemContents(clip)
-
+        var clip_ammo = arrayOf<Item>()
+        if (item.clip > 0) {
+            val clip = c.getItemById(item.clip)
+            clip_ammo = c.getItemContents(clip)
+        }
         if (chambered.size == item.chambers) {
             val loaded = chambered[0]
             loaded.packed_into = 0
@@ -642,7 +647,6 @@ class CharItemFragment : Fragment(),
         for (i in chambered) {
             item.chambered += i.id
         }
-
         if (item.chambered.size == 0) {
             item.cur_dmg = Damage() + item.dmg
         }
@@ -729,7 +733,6 @@ class CharItemFragment : Fragment(),
             val iv = prepareIcon(R.drawable.action_unpack)
             iv.setOnClickListener {unpackItem()}
         }
-
     }
 
     fun prepareIcon(id: Int): ImageView {
