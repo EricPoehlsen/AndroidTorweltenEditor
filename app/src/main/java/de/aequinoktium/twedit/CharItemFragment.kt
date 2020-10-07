@@ -691,7 +691,7 @@ class CharItemFragment : Fragment(),
     fun showActions() {
         ll_actions.removeAllViews()
 
-        if (!item.cur_dmg.isEmpty()) {
+        if (!item.cur_dmg.isEmpty() && item.cls != "ammo") {
             val iv = prepareIcon(R.drawable.action_attack)
             if (item.skill < 0) {
                 iv.setOnClickListener { skillDialog() }
