@@ -104,6 +104,7 @@
     <string name="cv_del">Der Charakter ist als gelöscht markiert! \nTippe diesen Text lange an,
         um den Charakter wiederherzustellen.
     </string>
+    <string name="cv_xp">XP: %1$d / %2$d</string>
     <string name="ts_title">Eigenschaft wählen</string>
     <string name="ts_advantages">Vorteile</string>
     <string name="ts_disadvantages">Nachteile</string>

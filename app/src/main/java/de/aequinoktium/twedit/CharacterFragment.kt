@@ -30,6 +30,7 @@ class CharacterFragment: Fragment(),
     private lateinit var ep_bar: VitalAttribView
     private lateinit var mp_bar: VitalAttribView
     private lateinit var tv_del: TextView
+    private lateinit var tv_xp: TextView
 
     private lateinit var bars: Map<String, VitalAttribView>
 
@@ -104,6 +105,9 @@ class CharacterFragment: Fragment(),
             tv_del.visibility = View.GONE
         }
 
+        tv_xp = view.findViewById(R.id.char_xp)
+        showXp()
+
         // button: switch to skills
         val b_skills = view.findViewById<Button>(R.id.cv_skills)
         b_skills.setOnClickListener {
@@ -145,6 +149,11 @@ class CharacterFragment: Fragment(),
         dialog.show(fm, null)
     }
 
+    fun showXp() {
+        val xp_free = c.xp_total-c.xp_used
+        tv_xp.text = getString(R.string.cv_xp, xp_free, c.xp_total)
+    }
+
     /**
      * Handles the result of a attribute modification ...
      */
@@ -166,6 +175,9 @@ class CharacterFragment: Fragment(),
 
         c.viewModelScope.launch(Dispatchers.IO) {
             c.updateAttrib(dialog.char_attrib, dialog.new_value, dialog.xp_cost)
+            withContext(Dispatchers.Main) {
+                showXp()
+            }
         }
 
         if (dialog.char_attrib in arrayOf("lp", "ep", "mp")) {

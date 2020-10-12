@@ -178,11 +178,9 @@ class CharacterViewModel: ViewModel() {
         attribs[attr] = new_value
         val data = ContentValues()
         data.put(attr, new_value)
+        db.update("char_core", data, "id = $char_id", null)
+        updateXP(xp_cost)
 
-        this.viewModelScope.launch(Dispatchers.IO) {
-            db.update("char_core", data, "id = $char_id", null)
-            updateXP(xp_cost)
-        }
     }
 
     suspend fun updateVital(attr: String, new_value: Float) {
@@ -215,6 +213,7 @@ class CharacterViewModel: ViewModel() {
     }
 
     suspend fun updateXP(xp: Int) {
+        xp_used += xp
         // update xp ...
         val sql = """
                 UPDATE char_core
